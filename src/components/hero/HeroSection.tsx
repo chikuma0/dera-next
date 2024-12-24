@@ -3,10 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
-<<<<<<< HEAD
-
-// Component code as above...
-=======
 import MatrixBackground from './MatrixBackground';
 
 const HeroSection = () => {
@@ -138,4 +134,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
->>>>>>> e8a6dd5 (Add Hero section with Matrix background and typewriter effect)
