@@ -62,10 +62,8 @@ const HeroSection = () => {
   return (
     <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">
       <MatrixBackground />
-      
-      {/* Main content */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 text-center max-w-4xl"
+    </div>
+  );
+};
+
+export default HeroSection;
