@@ -1,4 +1,4 @@
-import type { NewsItem, AICategory } from '@/types/news';
+import type { NewsItem, AICategory } from '../../types/news';
 
 export interface ScraperOptions {
   translate?: boolean;
