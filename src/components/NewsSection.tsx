@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { NewsItem, AIApplication } from '@/types/news';
 
 interface NewsSectionProps {
-  news: NewsItem[];
+  initialNews: NewsItem[];
   className?: string;
 }
 
@@ -21,11 +21,73 @@ const categoryColors: Record<AIApplication, { bg: string; text: string }> = {
   [AIApplication.AI_INFRASTRUCTURE]: { bg: 'bg-gray-100', text: 'text-gray-800' },
 };
 
-export function NewsSection({ news, className = '' }: NewsSectionProps) {
+export function NewsSection({ initialNews, className = '' }: NewsSectionProps) {
+  const [news, setNews] = React.useState(initialNews);
+  const [selectedCategory, setSelectedCategory] = React.useState<AIApplication | null>(null);
+  const [page, setPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const [loading, setLoading] = React.useState(false);
+
+  const fetchNews = React.useCallback(async (category?: AIApplication, pageNum: number = 1) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: pageNum.toString(),
+        limit: '12',
+      });
+      if (category) {
+        params.set('category', category);
+      }
+
+      const response = await fetch(`/api/news?${params}`);
+      const data = await response.json();
+
+      setNews(data.data);
+      setTotalPages(data.pagination.totalPages);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchNews(selectedCategory, page);
+  }, [selectedCategory, page, fetchNews]);
+
   return (
     <section className={`py-12 ${className}`}>
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8">Latest AI News & Insights</h2>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold">Latest AI News & Insights</h2>
+          
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            <button
+              onClick={() => {
+                setSelectedCategory(null);
+                setPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                ${!selectedCategory ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              All
+            </button>
+            {Object.entries(categoryColors).map(([category, colors]) => (
+              <button
+                key={category}
+                onClick={() => {
+                  setSelectedCategory(category as AIApplication);
+                  setPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors
+                  ${selectedCategory === category ? `${colors.bg} ${colors.text}` : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {category.replace(/_/g, ' ')}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {news.map((item, index) => (
             <motion.article
@@ -84,6 +146,28 @@ export function NewsSection({ news, className = '' }: NewsSectionProps) {
             </motion.article>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1 || loading}
+              className="px-4 py-2 rounded bg-gray-100 text-gray-800 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages || loading}
+              className="px-4 py-2 rounded bg-gray-100 text-gray-800 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
