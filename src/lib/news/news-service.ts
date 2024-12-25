@@ -1,4 +1,4 @@
-import { NewsItem } from '@/types/news';
+import { NewsItem, NewsSource, AICategory } from '../../types';
 import { HackerNewsScraper } from './scrapers/hackernews';
 
 export class NewsService {
