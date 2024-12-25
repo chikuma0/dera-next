@@ -1,5 +1,3 @@
-'use client';
-
 import { Suspense } from 'react';
 import { NewsService } from '@/lib/news/news-service';
 import { NewsSection } from '@/components/news/NewsSection';
