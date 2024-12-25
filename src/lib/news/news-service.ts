@@ -1,19 +1,22 @@
-'use client';
+import type { NewsResponse } from '@/types';
+import { HackerNewsScraper } from './scrapers/hackernews';
 
 export class NewsService {
-  async fetchAllNews() {
-    try {
-      // Use absolute URL based on window.location
-      const baseUrl = typeof window !== 'undefined' 
-        ? window.location.origin 
-        : 'http://localhost:3000';
+  private scraper: HackerNewsScraper;
 
-      const response = await fetch(`${baseUrl}/api/news`);
-      const data = await response.json();
-      return data;
+  constructor() {
+    this.scraper = new HackerNewsScraper();
+  }
+
+  async getNews(): Promise<NewsResponse> {
+    try {
+      const items = await this.scraper.fetchNews();
+      return { items };
     } catch (error) {
-      console.error('Error fetching news:', error);
-      return [];
+      return {
+        items: [],
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 }

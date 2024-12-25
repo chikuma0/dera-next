@@ -2,37 +2,19 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { NewsItem, AICategory } from '@/types/news';
+import type { NewsItem } from '@/types';
 
 interface NewsSectionProps {
-  news: NewsItem[];
-  className?: string;
+  items: NewsItem[];
 }
 
-export function NewsSection({ news: initialNews, className = '' }: NewsSectionProps) {
-  const [selectedCategory, setSelectedCategory] = React.useState<AICategory | null>(null);
-  const [news, setNews] = React.useState(initialNews);
-
-  React.useEffect(() => {
-    if (!selectedCategory) {
-      setNews(initialNews);
-      return;
-    }
-
-    const filtered = initialNews.filter(item => 
-      item.primaryCategory === selectedCategory ||
-      item.secondaryCategories?.includes(selectedCategory)
-    );
-
-    setNews(filtered);
-  }, [selectedCategory, initialNews]);
-
+export function NewsSection({ items }: NewsSectionProps) {
   return (
     <section className="min-h-screen bg-black text-green-400">
       <div className="container mx-auto px-4 py-20">
-        {news.length > 0 ? (
+        {items.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {news.map((item, index) => (
+            {items.map((item, index) => (
               <motion.article
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -41,12 +23,7 @@ export function NewsSection({ news: initialNews, className = '' }: NewsSectionPr
                 className="bg-black/20 backdrop-blur-sm border border-green-900 rounded-lg overflow-hidden"
               >
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3">
-                    {item.title.ja || item.title.en}
-                  </h3>
-                  <p className="text-gray-400 mb-4">
-                    {item.summary.ja || item.summary.en}
-                  </p>
+                  <h3 className="text-xl font-bold mb-3">{item.title}</h3>
                   <div className="flex justify-between items-end">
                     <a
                       href={item.url}
