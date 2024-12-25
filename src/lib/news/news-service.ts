@@ -1,66 +1,12 @@
-import { NewsItem, NewsSource, AICategory } from '../../types';
-import { HackerNewsScraper } from './scrapers/hackernews';
-
 export class NewsService {
-  private scrapers = [
-    new HackerNewsScraper({ translate: true }),
-    // TODO: Add more scrapers
-  ];
-
-  async fetchAllNews(): Promise<NewsItem[]> {
+  async fetchAllNews() {
     try {
-      // Run all scrapers in parallel
-      const results = await Promise.allSettled(
-        this.scrapers.map(scraper => {
-          console.log(`Fetching from ${scraper.name}...`);
-          return scraper.fetchNews();
-        })
-      );
-
-      // Collect successful results
-      const allNews: NewsItem[] = [];
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          console.log(`Successfully fetched ${result.value.length} items from ${this.scrapers[index].name}`);
-          allNews.push(...result.value);
-        } else {
-          console.error(`Failed to fetch from ${this.scrapers[index].name}:`, result.reason);
-        }
-      });
-
-      // Sort by importance and date
-      return this.sortNews(allNews);
+      const response = await fetch('/api/news');
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Error in fetchAllNews:', error);
+      console.error('Error fetching news:', error);
       return [];
     }
-  }
-
-  private sortNews(news: NewsItem[]): NewsItem[] {
-    return news.sort((a, b) => {
-      // First sort by importance
-      const importanceDiff = b.importance - a.importance;
-      if (importanceDiff !== 0) return importanceDiff;
-      
-      // Then by date
-      return b.publishedAt.getTime() - a.publishedAt.getTime();
-    });
-  }
-
-  getTopNews(news: NewsItem[], count: number = 5): NewsItem[] {
-    return news.slice(0, count);
-  }
-
-  getDailyDigest(news: NewsItem[]): NewsItem[] {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return news
-      .filter(item => {
-        const itemDate = new Date(item.publishedAt);
-        itemDate.setHours(0, 0, 0, 0);
-        return itemDate.getTime() === today.getTime();
-      })
-      .slice(0, 10); // Top 10 items
   }
 }
