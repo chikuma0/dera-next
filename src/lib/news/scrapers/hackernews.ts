@@ -1,5 +1,3 @@
-'use client';
-
 import axios from 'axios';
 import type { NewsItem } from '@/types';
 import { NewsScraper, type ScraperOptions } from '../base-scraper';

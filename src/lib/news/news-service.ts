@@ -13,6 +13,7 @@ export class NewsService {
       const items = await this.scraper.fetchNews();
       return { items };
     } catch (error) {
+      console.error('Error fetching news:', error);
       return {
         items: [],
         error: error instanceof Error ? error.message : 'Unknown error'
