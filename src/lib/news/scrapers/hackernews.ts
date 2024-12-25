@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import type { NewsItem } from '@/types';
+import { NewsScraper, type ScraperOptions } from '../base-scraper';
 
 interface HNItem {
   id: number;
@@ -13,13 +14,17 @@ interface HNItem {
   by: string;
 }
 
-export class HackerNewsScraper {
+export class HackerNewsScraper extends NewsScraper {
   private baseUrl = 'https://hacker-news.firebaseio.com/v0';
   
-  async fetchNews(limit = 30): Promise<NewsItem[]> {
+  constructor(options?: ScraperOptions) {
+    super(options);
+  }
+
+  async fetchNews(): Promise<NewsItem[]> {
     try {
       const response = await axios.get(`${this.baseUrl}/topstories.json`);
-      const storyIds = response.data.slice(0, limit);
+      const storyIds = response.data.slice(0, this.options.limit || 30);
       
       const items = await Promise.all(
         storyIds.map(async (id: number) => {
@@ -35,7 +40,7 @@ export class HackerNewsScraper {
     }
   }
 
-  private parseContent(items: HNItem[]): NewsItem[] {
+  protected parseContent(items: HNItem[]): NewsItem[] {
     return items.map(item => ({
       id: `hn-${item.id}`,
       title: item.title,
