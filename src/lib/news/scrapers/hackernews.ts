@@ -1,4 +1,6 @@
-import type { NewsItem, NewsSource, AICategory } from '../../../types/news';
+'use client';
+
+import { NewsItem, NewsSource, AICategory } from '../../../types/news';
 import { NewsScraper, type ScraperOptions } from '../base-scraper';
 import axios from 'axios';
 
@@ -59,31 +61,35 @@ export class HackerNewsScraper extends NewsScraper {
   }
 
   protected parseContent(items: HNItem[]): NewsItem[] {
-    return items.map(item => ({
-      id: `hn-${item.id}`,
-      title: {
-        en: item.title,
-      },
-      summary: {
-        en: `A discussion on HackerNews with ${item.descendants || 0} comments and ${item.score || 0} points.`,
-      },
-      url: item.url || `https://news.ycombinator.com/item?id=${item.id}`,
-      source: NewsSource.HACKER_NEWS,
-      primaryCategory: this.categorizeNews(item).primary,
-      secondaryCategories: this.categorizeNews(item).secondary,
-      publishedAt: new Date(item.time * 1000),
-      importance: this.calculateImportance({
+    return items.map(item => {
+      const categorization = this.categorizeNews(item);
+      return {
+        id: `hn-${item.id}`,
+        title: {
+          en: item.title,
+        },
+        summary: {
+          en: `A discussion on HackerNews with ${item.descendants || 0} comments and ${item.score || 0} points.`,
+        },
+        url: item.url || `https://news.ycombinator.com/item?id=${item.id}`,
+        source: NewsSource.HACKER_NEWS,
+        primaryCategory: categorization.primary,
+        secondaryCategories: categorization.secondary,
         publishedAt: new Date(item.time * 1000),
+        importance: this.calculateImportance({
+          publishedAt: new Date(item.time * 1000),
+          engagement: {
+            points: item.score,
+            comments: item.descendants,
+          },
+          primaryCategory: categorization.primary
+        }),
         engagement: {
           points: item.score,
           comments: item.descendants,
         },
-      }),
-      engagement: {
-        points: item.score,
-        comments: item.descendants,
-      },
-    }));
+      };
+    });
   }
 
   protected categorizeNews(item: HNItem): {
