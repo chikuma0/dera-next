@@ -57,7 +57,7 @@ const HeroSection = () => {
       clearTimeout(timeoutId);
       clearInterval(cursorInterval);
     };
-  }, []);
+  }, [phrases]); // Added phrases to the dependency array
 
   return (
     <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">
