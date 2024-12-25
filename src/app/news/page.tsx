@@ -1,18 +1,16 @@
-import { NewsService } from '@/lib/news/news-service';
-import { NewsSection } from '@/components/news/NewsSection';
-
-export const dynamic = 'force-dynamic';
+import { NewsService } from '@/lib/news/news-service'
+import { NewsTicker } from '@/components/news/NewsTicker'
 
 export default async function NewsPage() {
-    const newsService = new NewsService();
-    const news = await newsService.getNews();
-    
-    return (
-        <main className="min-h-screen bg-black text-green-400">
-            <div className="container mx-auto px-4 py-20">
-                <h1 className="text-3xl font-bold mb-8">Latest AI News</h1>
-                <NewsSection items={news.items} />
-            </div>
-        </main>
-    );
+  const newsService = new NewsService()
+  const news = await newsService.getNews()
+  
+  return (
+    <main className="min-h-screen bg-black">
+      <div className="container mx-auto py-8">
+        <h1 className="text-4xl font-bold text-green-400 mb-8">Latest News</h1>
+        <NewsTicker items={news.items} />
+      </div>
+    </main>
+  )
 }

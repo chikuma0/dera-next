@@ -3,14 +3,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
-import { NewsTicker } from '../news/NewsTicker';
-import type { NewsItem } from '@/types';
+import Link from 'next/link';
 
-interface HeroSectionProps {
-  news: NewsItem[];
-}
-
-const HeroSection = ({ news }: HeroSectionProps) => {
+const HeroSection = () => {
   return (
     <div className="min-h-screen flex flex-col relative">
       {/* Matrix Background with full coverage */}
@@ -29,6 +24,18 @@ const HeroSection = ({ news }: HeroSectionProps) => {
         >
           <h1 className="text-2xl font-bold text-green-400">DERA</h1>
         </motion.div>
+
+        {/* Navigation */}
+        <motion.nav
+          className="absolute top-8 right-8"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Link href="/news" className="text-green-400 hover:text-green-300 transition-colors">
+            News
+          </Link>
+        </motion.nav>
 
         {/* Hero Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4">
@@ -88,11 +95,6 @@ const HeroSection = ({ news }: HeroSectionProps) => {
               <p className="text-sm">Possibilities</p>
             </div>
           </motion.div>
-        </div>
-
-        {/* News Ticker - Fixed to bottom */}
-        <div className="w-full">
-          <NewsTicker items={news} />
         </div>
       </div>
     </div>

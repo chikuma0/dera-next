@@ -1,13 +1,9 @@
 import HeroSection from '@/components/hero/HeroSection'
-import { NewsService } from '@/lib/news/news-service'
 
-export default async function Home() {
-  const newsService = new NewsService()
-  const news = await newsService.getNews()
-  
+export default function Home() {
   return (
     <main>
-      <HeroSection news={news.items} />
+      <HeroSection />
     </main>
   )
 }
