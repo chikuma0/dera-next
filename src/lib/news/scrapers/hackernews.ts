@@ -1,5 +1,5 @@
-import { NewsItem, NewsSource, AICategory } from '@/types/news';
-import { NewsScraper, ScraperOptions } from '../base-scraper';
+import type { NewsItem, NewsSource, AICategory } from '../../../types/news';
+import { NewsScraper, type ScraperOptions } from '../base-scraper';
 import axios from 'axios';
 
 interface HNItem {
@@ -67,7 +67,7 @@ export class HackerNewsScraper extends NewsScraper {
       summary: {
         en: `A discussion on HackerNews with ${item.descendants || 0} comments and ${item.score || 0} points.`,
       },
-      url: item.url,
+      url: item.url || `https://news.ycombinator.com/item?id=${item.id}`,
       source: NewsSource.HACKER_NEWS,
       primaryCategory: this.categorizeNews(item).primary,
       secondaryCategories: this.categorizeNews(item).secondary,
