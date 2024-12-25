@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import { Metadata } from 'next';
 import { NewsService } from '@/lib/news/news-service';
 import { NewsTicker } from '@/components/news/NewsTicker';
+import { Header } from '@/components/layout/Header';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -26,12 +27,16 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* Only show ticker if we have news */}
-        {topNews.length > 0 && <NewsTicker news={topNews} />}
-        {/* Add padding to account for fixed news ticker */}
-        <div className={`${topNews.length > 0 ? 'pt-12' : ''}`}>
-          {children}
+      <body className={`${inter.className} bg-black text-white`}>
+        <Header />
+        {/* Add spacing for header */}
+        <div className="pt-16">
+          {/* Only show ticker if we have news */}
+          {topNews.length > 0 && <NewsTicker news={topNews} />}
+          {/* Add padding to account for news ticker */}
+          <div className={`${topNews.length > 0 ? 'pt-12' : ''}`}>
+            {children}
+          </div>
         </div>
       </body>
     </html>
