@@ -30,7 +30,7 @@ export function NewsTicker({ items }: NewsTickerProps) {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
-              className="text-green-400 font-mono"
+              className="text-green-400 font-mono overflow-hidden whitespace-nowrap"
             >
               {items[currentIndex]?.title || 'Loading news...'}
             </motion.div>
