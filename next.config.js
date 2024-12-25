@@ -6,6 +6,10 @@ const nextConfig = {
   images: {
     domains: ['placeholder.com'],
   },
+  // Ensure TypeScript and other features are preserved
+  typescript: {
+    ignoreBuildErrors: false,
+  },
 };
 
 module.exports = nextConfig;
