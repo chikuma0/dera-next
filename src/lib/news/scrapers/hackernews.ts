@@ -69,7 +69,8 @@ export class HackerNewsScraper extends NewsScraper {
       },
       url: item.url,
       source: NewsSource.HACKER_NEWS,
-      ...this.categorizeNews(item),
+      primaryCategory: this.categorizeNews(item).primary,
+      secondaryCategories: this.categorizeNews(item).secondary,
       publishedAt: new Date(item.time * 1000),
       importance: this.calculateImportance({
         publishedAt: new Date(item.time * 1000),
