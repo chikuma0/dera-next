@@ -1,22 +1,25 @@
-import { ReactNode } from 'react';
-import { NewsTicker } from '@/components/NewsTicker';
-import { getLatestNews } from '@/lib/supabase';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
-export default async function RootLayout({
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'DERA - AI Solutions',
+  description: 'Forward-thinking company specializing in leveraging artificial intelligence (AI) to deliver high-quality, efficient solutions.',
+};
+
+export default function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
-  const news = await getLatestNews();
-  const topNews = news.slice(0, 5); // Get top 5 news items for the ticker
-
   return (
     <html lang="en">
-      <body>
-        <NewsTicker news={topNews} />
-        <div className="pt-12"> {/* Add padding for the fixed ticker */}
+      <body className={inter.className}>
+        <main className="min-h-screen">
           {children}
-        </div>
+        </main>
       </body>
     </html>
   );
