@@ -1,87 +1,106 @@
-import { NewsItem, NewsSource, AIApplication } from '../../types/News';
+import { NewsItem, NewsSource, AIApplication } from '@/types/news';
 import { NewsScraper } from './base';
+import axios from 'axios';
+
+interface HNItem {
+  id: number;
+  title: string;
+  url: string;
+  score: number;
+  descendants: number;
+  time: number;
+}
 
 export class HackerNewsScraper extends NewsScraper {
   name = 'HackerNews';
   private baseUrl = 'https://hacker-news.firebaseio.com/v0';
-  
+  private aiKeywords = [
+    'artificial intelligence',
+    'machine learning',
+    'AI',
+    'LLM',
+    'deep learning',
+    'neural network',
+    'GPT',
+    'stable diffusion',
+    'openai',
+    'anthropic',
+    'claude',
+    'gemini'
+  ];
+
   async fetchNews(): Promise<NewsItem[]> {
     try {
-      // Fetch top stories
-      const response = await this.fetchWithTimeout(`${this.baseUrl}/topstories.json`);
-      const storyIds = await response.json();
-      
-      // Get details for top 100 stories
+      // Fetch top 100 stories
+      const response = await axios.get(`${this.baseUrl}/topstories.json`);
+      const storyIds = response.data.slice(0, 100);
+
+      // Fetch details for each story
       const stories = await Promise.all(
-        storyIds.slice(0, 100).map(id =>
-          this.fetchWithTimeout(`${this.baseUrl}/item/${id}.json`)
-            .then(r => r.json())
+        storyIds.map(id =>
+          axios.get(`${this.baseUrl}/item/${id}.json`)
+            .then(response => response.data)
         )
       );
-      
-      // Filter and parse AI-related stories
-      return this.parseContent(stories);
+
+      // Filter AI-related stories and parse them
+      const aiStories = stories.filter(story =>
+        story.title && this.isAIRelated(story.title)
+      );
+
+      return this.parseContent(aiStories);
     } catch (error) {
       console.error('Error fetching from HackerNews:', error);
       return [];
     }
   }
-  
-  parseContent(stories: any[]): NewsItem[] {
-    return stories
-      .filter(story => 
-        story && 
-        story.title && 
-        this.isAIRelated(story.title + (story.text || ''))
-      )
-      .map(story => ({
-        id: `hn-${story.id}`,
-        title: {
-          en: story.title,
-        },
-        summary: {
-          en: this.generateSummary(story.text || story.title),
-        },
-        url: story.url || `https://news.ycombinator.com/item?id=${story.id}`,
-        sourceType: this.determineSourceType(story),
-        applicationCategory: {
-          primary: this.determineCategory(story),
-        },
-        source: NewsSource.HACKER_NEWS,
-        publishedAt: new Date(story.time * 1000),
-        importance: this.calculateImportance(story),
-        language: 'en'
-      }));
+
+  protected parseContent(items: HNItem[]): NewsItem[] {
+    return items.map(item => ({
+      id: `hn-${item.id}`,
+      title: {
+        en: item.title,
+      },
+      summary: {
+        en: `A discussion on HackerNews with ${item.descendants} comments and ${item.score} points.`,
+      },
+      url: item.url,
+      source: NewsSource.HACKER_NEWS,
+      applicationCategory: {
+        primary: this.categorizeNews({ title: { en: item.title } }),
+      },
+      publishedAt: new Date(item.time * 1000),
+      importance: this.calculateImportance({
+        points: item.score,
+        comments: item.descendants,
+        publishedAt: new Date(item.time * 1000),
+      }),
+      points: item.score,
+      comments: item.descendants,
+    }));
   }
-  
-  private determineSourceType(story: any): NewsItem['sourceType'] {
-    const title = story.title.toLowerCase();
-    if (title.includes('research') || title.includes('paper')) return 'research';
-    if (title.includes('startup') || title.includes('raises')) return 'startup';
-    if (title.includes('launch') || title.includes('released')) return 'product';
-    return 'industry';
-  }
-  
-  private determineCategory(story: any): AIApplication {
-    const text = (story.title + ' ' + (story.text || '')).toLowerCase();
+
+  protected categorizeNews(item: Partial<NewsItem>): AIApplication {
+    const title = item.title?.en.toLowerCase() || '';
     
-    if (text.includes('vision') || text.includes('image')) return AIApplication.COMPUTER_VISION;
-    if (text.includes('nlp') || text.includes('language')) return AIApplication.NATURAL_LANGUAGE;
-    if (text.includes('autonomous') || text.includes('self-driving')) return AIApplication.AUTONOMOUS_SYSTEMS;
-    if (text.includes('security') || text.includes('privacy')) return AIApplication.AI_SECURITY;
-    
+    if (title.includes('generat') || title.includes('llm') || title.includes('gpt') || title.includes('claude')) {
+      return AIApplication.GENERATIVE_AI;
+    } else if (title.includes('vision') || title.includes('image') || title.includes('diffusion')) {
+      return AIApplication.COMPUTER_VISION;
+    } else if (title.includes('nlp') || title.includes('language') || title.includes('chat')) {
+      return AIApplication.NATURAL_LANGUAGE;
+    } else if (title.includes('automat') || title.includes('robot')) {
+      return AIApplication.AUTOMATION;
+    } else if (title.includes('security') || title.includes('privacy')) {
+      return AIApplication.AI_SECURITY;
+    }
+    // Default category
     return AIApplication.AI_INFRASTRUCTURE;
   }
-  
-  private calculateImportance(story: any): number {
-    const score = story.score || 0;
-    const commentCount = story.descendants || 0;
-    
-    // Simple scoring based on points and comments
-    const normalizedScore = Math.min(score / 200, 1); // Normalize to max 200 points
-    const normalizedComments = Math.min(commentCount / 100, 1); // Normalize to max 100 comments
-    
-    const importance = Math.ceil((normalizedScore * 0.7 + normalizedComments * 0.3) * 5);
-    return Math.max(1, Math.min(5, importance)); // Ensure between 1-5
+
+  private isAIRelated(title: string): boolean {
+    return this.aiKeywords.some(keyword =>
+      title.toLowerCase().includes(keyword.toLowerCase())
+    );
   }
 }
