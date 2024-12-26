@@ -8,6 +8,8 @@ import MatrixBackground from './MatrixBackground';
 type MotionDivProps = MotionProps & React.HTMLAttributes<HTMLDivElement>;
 type MotionSpanProps = MotionProps & React.HTMLAttributes<HTMLSpanElement>;
 
+const MotionButton = motion.button;
+
 const HeroSection = () => {
   const [text, setText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
@@ -91,22 +93,20 @@ const HeroSection = () => {
           </div>
           
           <div className="flex justify-center gap-6">
-            <motion.div 
+            <MotionButton 
+              className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <button className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors">
-                Explore Solutions
-              </button>
-            </motion.div>
-            <motion.div 
+              Explore Solutions
+            </MotionButton>
+            <MotionButton 
+              className="border-2 border-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <button className="border-2 border-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors">
-                View Portfolio
-              </button>
-            </motion.div>
+              View Portfolio
+            </MotionButton>
           </div>
         </motion.div>
       </div>
