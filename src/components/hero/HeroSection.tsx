@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Terminal } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, MotionProps } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
+
+type MotionDivProps = MotionProps & React.HTMLAttributes<HTMLDivElement>;
+type MotionSpanProps = MotionProps & React.HTMLAttributes<HTMLSpanElement>;
 
 const HeroSection = () => {
   const [text, setText] = useState('');
@@ -77,14 +80,15 @@ const HeroSection = () => {
             </span>
           </h1>
           
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="text-xl mb-12 text-green-300"
-          >
-            Leveraging AI to transform your business vision into reality
-          </motion.p>
+          <div className="text-xl mb-12 text-green-300">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              Leveraging AI to transform your business vision into reality
+            </motion.span>
+          </div>
           
           <div className="flex justify-center gap-6">
             <motion.div 
