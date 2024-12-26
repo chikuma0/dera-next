@@ -4,7 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import type { NewsItem } from '@/types/news';
 
-export function NewsTicker({ maxItems = 5, initialNews }) {
+interface NewsTickerProps {
+  maxItems?: number;
+  initialNews?: NewsItem[];
+}
+
+export function NewsTicker({ maxItems = 5, initialNews }: NewsTickerProps) {
   const [news, setNews] = useState<NewsItem[]>(initialNews || []);
   const [error, setError] = useState<string | null>(null);
 
