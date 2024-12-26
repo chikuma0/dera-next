@@ -1,15 +1,19 @@
+import { NewsService } from '@/lib/news/news-service';
 import { NextResponse } from 'next/server';
-import { HackerNewsScraper } from '@/lib/news/scrapers/hackernews';
 
 export async function GET() {
   try {
-    const scraper = new HackerNewsScraper();
-    const news = await scraper.fetchNews();
+    const newsService = new NewsService();
+    const news = await newsService.getNews();
     
-    return NextResponse.json({ items: news });
+    return NextResponse.json(news);
   } catch (error) {
+    console.error('News API error:', error);
     return NextResponse.json(
-      { items: [], error: 'Failed to fetch news' },
+      { 
+        items: [], 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }

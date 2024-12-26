@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { NewsItem } from '@/types';
+import type { NewsItem, ContentPriority } from '@/types';
 import { NewsScraper, type ScraperOptions } from '../base-scraper';
 
 interface HNItem {
@@ -47,7 +47,9 @@ export class HackerNewsScraper extends NewsScraper {
       publishedAt: new Date(item.time * 1000).toISOString(),
       score: item.score,
       comments: item.descendants,
-      by: item.by
+      by: item.by,
+      priority: this.determinePriority(item.title),
+      contentCategory: this.categorizeContent(item.title)
     }));
   }
 }

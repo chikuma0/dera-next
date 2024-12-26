@@ -1,3 +1,5 @@
+export type ContentPriority = 'business' | 'industry' | 'implementation' | 'general';
+
 export type NewsItem = {
     id: string;
     title: string;
@@ -8,6 +10,9 @@ export type NewsItem = {
     comments?: number;
     by?: string;
     summary?: string;
+    priority?: ContentPriority;
+    relevanceScore?: number;
+    contentCategory?: string[];
 };
 
 export type NewsResponse = {

@@ -9,16 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.1",
-    "axios": "^1.6.5",
-    "cheerio": "1.0.0-rc.12",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@supabase/auth-helpers-nextjs": "^0.8.1",
+    "@supabase/supabase-js": "^2.38.4",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.30.0",
-    "framer-motion": "^11.0.0",
-    "geist": "^1.2.0",
-    "lucide-react": "^0.469.0",
-    "next": "15.1.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "framer-motion": "^10.16.4",
+    "lucide-react": "^0.292.0",
+    "next": "^15.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "@types/node": "^20",

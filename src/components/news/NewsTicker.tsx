@@ -1,43 +1,54 @@
 'use client';
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { NewsItem } from '@/types';
-import { Terminal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import type { NewsItem } from '@/types/news';
 
-interface NewsTickerProps {
-  items: NewsItem[];
-}
+export function NewsTicker({ maxItems = 5, initialNews }) {
+  const [news, setNews] = useState<NewsItem[]>(initialNews || []);
+  const [error, setError] = useState<string | null>(null);
 
-export function NewsTicker({ items }: NewsTickerProps) {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+  useEffect(() => {
+    if (!initialNews) {
+      async function fetchNews() {
+        try {
+          const res = await fetch('/api/news');
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          const data = await res.json();
+          if (data.items) {
+            setNews(data.items.slice(0, maxItems));
+          }
+        } catch (e) {
+          setError(e instanceof Error ? e.message : 'Failed to fetch news');
+          console.error('News fetch error:', e);
+        }
+      }
+      fetchNews();
+    }
+  }, [maxItems, initialNews]);
 
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % items.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [items.length]);
+  if (error) {
+    return <div className="text-red-500">Error: {error}</div>;
+  }
+
+  if (news.length === 0) {
+    return <div>Loading news...</div>;
+  }
 
   return (
-    <div className="bg-black/60 border-t border-b border-green-900 backdrop-blur-sm">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center space-x-4">
-          <Terminal className="text-green-400 animate-pulse" size={20} />
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-green-400 font-mono overflow-hidden whitespace-nowrap text-sm md:text-base"
-            >
-              {items[currentIndex]?.title || 'Loading news...'}
-            </motion.div>
-          </AnimatePresence>
+    <div className="bg-black/50 backdrop-blur-sm p-4">
+      {news.map(item => (
+        <div key={item.id} className="text-white mb-2">
+          <a 
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-400"
+          >
+            {item.title} <ArrowUpRight className="inline w-4 h-4" />
+          </a>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
