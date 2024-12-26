@@ -1,19 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
+import { validateEnv } from '../config/env'  // Make sure this path is correct based on your file structure
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-  console.error('Missing NEXT_PUBLIC_SUPABASE_URL');
-  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
-}
-
-if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  console.error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
-  throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
-}
+// Run validation first
+const env = validateEnv();
 
 console.log('Supabase: Initializing client');
 export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  env.supabase.url,
+  env.supabase.anonKey,
   {
     auth: {
       persistSession: false
@@ -26,4 +20,4 @@ supabase
   .from('news_items')
   .select('count')
   .then(() => console.log('Supabase: Connection successful'))
-  .catch(err => console.error('Supabase: Connection error:', err)); 
+  .catch(err => console.error('Supabase: Connection error:', err));
