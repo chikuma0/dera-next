@@ -16,12 +16,18 @@ export default function Home() {
         }>
           <NewsTicker 
             maxItems={5}
+            presentation={{
+              brandName: 'DERA News',
+              displayStyle: 'ticker',
+              showSource: true,
+              showTimestamp: true
+            }}
             initialNews={[
               {
                 id: 'placeholder',
                 title: 'Loading latest AI news...',
                 url: '#',
-                source: 'DERA News',
+                source: 'Hacker News',
                 publishedAt: new Date().toISOString(),
                 priority: 'general',
                 contentCategory: ['ai-tools']

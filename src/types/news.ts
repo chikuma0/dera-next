@@ -34,9 +34,17 @@ export interface NewsResponse {
   errors?: Error[];
 }
 
+export interface NewsPresentation {
+  brandName: string;
+  displayStyle: 'ticker' | 'card' | 'list';
+  showSource: boolean;
+  showTimestamp: boolean;
+}
+
 export interface NewsTickerProps {
   initialNews?: NewsItem[];
   interval?: number;
   maxItems?: number;
+  presentation?: NewsPresentation;
   onNewsClick?: (item: NewsItem) => void;
-} 
+}

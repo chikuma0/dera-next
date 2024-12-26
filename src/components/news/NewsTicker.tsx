@@ -2,14 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import type { NewsItem } from '@/types/news';
+import type { NewsItem, NewsPresentation } from '@/types/news';
+import { NEWS_CONFIG } from '@/lib/config/newsConfig';
 
 interface NewsTickerProps {
   maxItems?: number;
   initialNews?: NewsItem[];
+  presentation?: NewsPresentation;
+  interval?: number;
 }
 
-export function NewsTicker({ maxItems = 5, initialNews }: NewsTickerProps) {
+export function NewsTicker({ 
+  maxItems = 5, 
+  initialNews,
+  presentation = {
+    brandName: NEWS_CONFIG.brandName,
+    displayStyle: NEWS_CONFIG.displayStyle,
+    showSource: NEWS_CONFIG.showSource,
+    showTimestamp: NEWS_CONFIG.showTimestamp
+  },
+  interval = NEWS_CONFIG.tickerSpeed
+}: NewsTickerProps) {
   const [news, setNews] = useState<NewsItem[]>(initialNews || []);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +55,9 @@ export function NewsTicker({ maxItems = 5, initialNews }: NewsTickerProps) {
 
   return (
     <div className="bg-black/50 backdrop-blur-sm p-4">
+      <div className="text-sm text-gray-400 mb-2">
+        {presentation.brandName}
+      </div>
       {news.map(item => (
         <div key={item.id} className="text-white mb-2">
           <a 
@@ -50,7 +66,18 @@ export function NewsTicker({ maxItems = 5, initialNews }: NewsTickerProps) {
             rel="noopener noreferrer"
             className="hover:text-blue-400"
           >
-            {item.title} <ArrowUpRight className="inline w-4 h-4" />
+            {item.title}
+            {presentation.showSource && (
+              <span className="text-gray-400 text-sm ml-2">
+                via {item.source}
+              </span>
+            )}
+            {presentation.showTimestamp && (
+              <span className="text-gray-400 text-sm ml-2">
+                {new Date(item.publishedAt).toLocaleDateString()}
+              </span>
+            )}
+            <ArrowUpRight className="inline w-4 h-4 ml-1" />
           </a>
         </div>
       ))}
