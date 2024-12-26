@@ -2,8 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Terminal } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
+
+// Add type for the motion div
+type MotionDivProps = HTMLMotionProps<"div">;
+type MotionButtonProps = HTMLMotionProps<"button">;
+type MotionParagraphProps = HTMLMotionProps<"p">;
 
 const HeroSection = () => {
   const [text, setText] = useState('');
@@ -67,6 +72,7 @@ const HeroSection = () => {
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl"
         whileHover={{ scale: 1 }}
+        as="div"
       >
         <div className="mb-6">
           <Terminal className="inline-block w-16 h-16 mb-4" />
@@ -83,6 +89,7 @@ const HeroSection = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
           className="text-xl mb-12 text-green-300"
+          as="p"
         >
           Leveraging AI to transform your business vision into reality
         </motion.p>
@@ -92,6 +99,7 @@ const HeroSection = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
+            as="button"
           >
             Explore Solutions
           </motion.button>
@@ -99,6 +107,7 @@ const HeroSection = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="border-2 border-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors"
+            as="button"
           >
             View Portfolio
           </motion.button>
