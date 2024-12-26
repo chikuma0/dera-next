@@ -2,7 +2,7 @@ import { Logo } from './Logo'
 
 export function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-none">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center">
         <div className="flex-1">
           <Logo className="relative -ml-1.5" />

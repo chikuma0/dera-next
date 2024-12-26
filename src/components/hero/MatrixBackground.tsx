@@ -12,7 +12,6 @@ const MatrixBackground = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -21,13 +20,11 @@ const MatrixBackground = () => {
     setCanvasSize();
     window.addEventListener('resize', setCanvasSize);
 
-    // Matrix character set
     const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const fontSize = 16;
     const columns = Math.floor(canvas.width / fontSize);
-    const drops: number[] = new Array(columns).fill(1);
+    const drops = new Array(columns).fill(1);
 
-    // Drawing function
     const draw = () => {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -42,7 +39,6 @@ const MatrixBackground = () => {
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
-
         drops[i]++;
       }
     };
@@ -59,7 +55,10 @@ const MatrixBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full opacity-20"
-      style={{ zIndex: 0 }}
+      style={{ 
+        zIndex: 0,
+        mixBlendMode: 'screen'
+      }}
     />
   );
 };
