@@ -66,6 +66,7 @@ const HeroSection = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="relative z-10 text-center max-w-4xl"
+        whileHover={{ scale: 1 }}
       >
         <div className="mb-6">
           <Terminal className="inline-block w-16 h-16 mb-4" />
