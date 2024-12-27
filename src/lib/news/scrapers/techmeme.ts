@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import type { NewsItem } from '@/types';
-import { NewsScraper } from '../base-scraper';
+import type { NewsItem, ContentPriority } from '@/types';
+import { NewsScraper, type ScraperOptions } from '../base-scraper';
 
 export class TechmemeScraper extends NewsScraper {
   private baseUrl = 'https://www.techmeme.com';

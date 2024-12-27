@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { NewsItem } from '@/types';
+import type { NewsItem, ContentPriority } from '@/types';
 import { NewsScraper, type ScraperOptions } from '../base-scraper';
 
 interface PHProduct {

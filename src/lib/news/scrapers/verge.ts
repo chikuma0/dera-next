@@ -1,4 +1,4 @@
-import type { NewsItem } from '@/types';
+import type { NewsItem, ContentPriority } from '@/types';
 import { BaseRssScraper } from './base-rss-scraper';
 
 export class VergeScraper extends BaseRssScraper {
