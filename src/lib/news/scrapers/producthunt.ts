@@ -19,10 +19,10 @@ export class ProductHuntScraper extends NewsScraper {
   private apiToken = process.env.PRODUCT_HUNT_TOKEN;
 
   constructor(options?: ScraperOptions) {
-    super({ limit: 10, ...options });
+    super('Product Hunt', { limit: 10, ...options });
   }
 
-  async fetchNews(): Promise<NewsItem[]> {
+  protected async fetchNewsInternal(): Promise<NewsItem[]> {
     try {
       const query = `
         query {
@@ -65,8 +65,7 @@ export class ProductHuntScraper extends NewsScraper {
       const products = response.data.data.posts.edges.map((edge: any) => edge.node);
       return this.parseContent(products);
     } catch (error) {
-      console.error('Error fetching from ProductHunt:', error);
-      return [];
+      throw this.handleError(error);
     }
   }
 
@@ -89,15 +88,17 @@ export class ProductHuntScraper extends NewsScraper {
     });
   }
 
-  private determinePriority(text: string): ContentPriority {
-    if (text.includes('business') || text.includes('enterprise')) return 'business';
-    if (text.includes('launch') || text.votes_count > 100) return 'industry';
-    if (text.includes('tutorial') || text.includes('guide')) return 'implementation';
+  protected determinePriority(text: string): ContentPriority {
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes('business') || lowerText.includes('enterprise')) return 'business';
+    if (lowerText.includes('launch') || lowerText.includes('startup')) return 'industry';
+    if (lowerText.includes('tutorial') || lowerText.includes('guide')) return 'implementation';
     return 'general';
   }
 
-  private categorizeContent(text: string): string[] {
+  protected categorizeContent(text: string): string[] {
     const categories: string[] = [];
+    const lowerText = text.toLowerCase();
 
     const categoryMap = {
       'ai-tools': ['ai tool', 'platform', 'automation', 'bot'],
@@ -107,7 +108,7 @@ export class ProductHuntScraper extends NewsScraper {
     };
 
     Object.entries(categoryMap).forEach(([category, keywords]) => {
-      if (keywords.some(keyword => text.includes(keyword))) {
+      if (keywords.some(keyword => lowerText.includes(keyword))) {
         categories.push(category);
       }
     });
