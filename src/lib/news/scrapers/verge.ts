@@ -23,7 +23,7 @@ export class VergeScraper extends BaseRssScraper {
     };
   }
 
-  private determinePriority(text: string): ContentPriority {
+  protected determinePriority(text: string): ContentPriority {
     if (text.includes('ai') && (
       text.includes('business') || 
       text.includes('enterprise') || 
@@ -47,7 +47,7 @@ export class VergeScraper extends BaseRssScraper {
     return 'general';
   }
 
-  private categorizeContent(text: string): string[] {
+  protected categorizeContent(text: string): string[] {
     const categories: string[] = [];
 
     const categoryMap = {
