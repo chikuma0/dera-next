@@ -6,8 +6,8 @@ export abstract class BaseRssScraper extends NewsScraper {
   private parser: Parser;
   private feedUrl: string;
 
-  constructor(feedUrl: string) {
-    super();
+  constructor(source: string, feedUrl: string) {
+    super(source);
     this.feedUrl = feedUrl;
     this.parser = new Parser({
       customFields: {
@@ -29,4 +29,4 @@ export abstract class BaseRssScraper extends NewsScraper {
   }
 
   protected abstract mapToNewsItem(item: Parser.Item): NewsItem;
-} 
+}

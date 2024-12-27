@@ -4,7 +4,8 @@ import type Parser from 'rss-parser';
 
 export class TechCrunchScraper extends BaseRssScraper {
   constructor() {
-    super('https://techcrunch.com/feed/');
+    // Update to include source name
+    super('TechCrunch', 'https://techcrunch.com/feed/');
   }
 
   protected mapToNewsItem(item: Parser.Item): NewsItem {
@@ -47,4 +48,4 @@ export class TechCrunchScraper extends BaseRssScraper {
 
     return categories;
   }
-} 
+}

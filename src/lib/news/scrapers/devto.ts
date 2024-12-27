@@ -1,91 +1,118 @@
 import axios from 'axios';
-import type { NewsItem } from '@/types';
+import type { NewsItem, ContentPriority } from '@/types';
 import { NewsScraper, type ScraperOptions } from '../base-scraper';
 
-interface DevToArticle {
-  id: number;
-  title: string;
-  description: string;
-  url: string;
-  published_at: string;
-  positive_reactions_count: number;
-  comments_count: number;
-  user: {
-    name: string;
+interface GitHubRepo {
+  name: string;
+  owner: {
+    login: string;
   };
-  tags: string[];
+  html_url: string;
+  description: string;
+  stargazers_count: number;
+  created_at: string;
+  topics: string[];
 }
 
-export class DevToScraper extends NewsScraper {
-  private baseUrl = 'https://dev.to/api/articles';
+export class GitHubScraper extends NewsScraper {
+  private baseUrl = 'https://api.github.com';
+  private aiKeywords = ['ai', 'artificial-intelligence', 'machine-learning', 'deep-learning', 'llm', 'gpt'];
   
   constructor(options?: ScraperOptions) {
-    super({ limit: 10, ...options });
+    super('GitHub', { limit: 10, ...options }); // Add source name
   }
 
-  async fetchNews(): Promise<NewsItem[]> {
+  // Change from fetchNews to fetchNewsInternal
+  protected async fetchNewsInternal(): Promise<NewsItem[]> {
     try {
-      const response = await axios.get(this.baseUrl, {
-        params: {
-          tag: 'ai',
-          top: 1,
-          per_page: this.options.limit
+      // Search for AI-related repositories created in the last week
+      const query = this.aiKeywords.map(k => `topic:${k}`).join(' OR ');
+      const response = await axios.get(
+        `${this.baseUrl}/search/repositories`, {
+          params: {
+            q: `${query} created:>=${this.getLastWeekDate()}`,
+            sort: 'stars',
+            order: 'desc',
+            per_page: this.options.limit
+          },
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            ...(process.env.GITHUB_TOKEN && {
+              'Authorization': `token ${process.env.GITHUB_TOKEN}`
+            })
+          }
         }
-      });
+      );
 
-      return this.parseContent(response.data);
+      return this.parseContent(response.data.items);
     } catch (error) {
-      console.error('Error fetching from Dev.to:', error);
-      return [];
+      // Let base class handle errors
+      throw this.handleError(error);
     }
   }
 
-  protected parseContent(items: DevToArticle[]): NewsItem[] {
-    return items.map(article => {
-      const text = `${article.title} ${article.description} ${article.tags.join(' ')}`;
-      
+  protected parseContent(items: GitHubRepo[]): NewsItem[] {
+    return items.map(repo => {
+      const text = `${repo.name} ${repo.description || ''} ${repo.topics.join(' ')}`;
       return {
-        id: `devto-${article.id}`,
-        title: article.title,
-        url: article.url,
-        source: 'Dev.to',
-        publishedAt: article.published_at,
-        score: article.positive_reactions_count,
-        comments: article.comments_count,
-        by: article.user.name,
-        summary: article.description,
+        id: `gh-${repo.owner.login}-${repo.name}`,
+        title: `${repo.name} - ${repo.description || 'New AI Repository'}`,
+        url: repo.html_url,
+        source: 'GitHub',
+        publishedAt: repo.created_at,
+        score: repo.stargazers_count,
+        by: repo.owner.login,
+        summary: this.generateSummary(repo),
         priority: this.determinePriority(text),
         contentCategory: this.categorizeContent(text)
       };
     });
   }
 
-  private determinePriority(article: DevToArticle): ContentPriority {
-    const text = `${article.title} ${article.description} ${article.tags.join(' ')}`.toLowerCase();
+  private generateSummary(repo: GitHubRepo): string {
+    return `${repo.description || ''} | ${repo.stargazers_count} stars | Topics: ${repo.topics.join(', ')}`;
+  }
+
+  // Change from private to protected to match base class
+  protected determinePriority(text: string): ContentPriority {
+    const lowerText = text.toLowerCase();
     
-    if (text.includes('business') || text.includes('enterprise')) return 'business';
-    if (article.positive_reactions_count > 50) return 'industry';
-    if (text.includes('tutorial') || text.includes('guide')) return 'implementation';
+    if (lowerText.includes('business') || lowerText.includes('enterprise')) {
+      return 'business';
+    }
+    if (lowerText.includes('framework') || lowerText.includes('platform')) {
+      return 'industry';
+    }
+    if (lowerText.includes('tutorial') || lowerText.includes('example')) {
+      return 'implementation';
+    }
     return 'general';
   }
 
-  private categorizeContent(article: DevToArticle): string[] {
-    const text = `${article.title} ${article.description} ${article.tags.join(' ')}`.toLowerCase();
+  // Change from private to protected to match base class
+  protected categorizeContent(text: string): string[] {
     const categories: string[] = [];
+    const lowerText = text.toLowerCase();
 
     const categoryMap = {
-      'ai-tools': ['ai', 'tool', 'library', 'framework'],
-      'business-ops': ['business', 'production', 'enterprise'],
-      'implementation': ['tutorial', 'guide', 'how-to', 'example'],
-      'industry-news': ['news', 'release', 'announcement', 'update']
+      'ai-tools': ['model', 'framework', 'library', 'sdk'],
+      'business-ops': ['business', 'enterprise', 'production'],
+      'implementation': ['example', 'tutorial', 'demo', 'template'],
+      'industry-news': ['release', 'launch', 'new']
     };
 
     Object.entries(categoryMap).forEach(([category, keywords]) => {
-      if (keywords.some(keyword => text.includes(keyword))) {
+      if (keywords.some(keyword => lowerText.includes(keyword))) {
         categories.push(category);
       }
     });
 
     return categories;
   }
-} 
+
+  private getLastWeekDate(): string {
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date.toISOString().split('T')[0];
+  }
+}

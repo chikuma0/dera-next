@@ -1,19 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
+
+const TYPING_PHRASES = [
+  'Transforming Impossible to Inevitable',
+  'Bridging Business and AI', 
+  'Creating Future-Ready Solutions'
+];
 
 const HeroSection = () => {
   const [text, setText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
   
-  const phrases = [
-    'Transforming Impossible to Inevitable',
-    'Bridging Business and AI',
-    'Creating Future-Ready Solutions'
-  ];
+  const phrases = useMemo(() => TYPING_PHRASES, []);
   
   useEffect(() => {
     let currentPhraseIndex = 0;
@@ -57,7 +59,7 @@ const HeroSection = () => {
       clearTimeout(timeoutId);
       clearInterval(cursorInterval);
     };
-  }, [phrases]); // Added phrases to the dependency array
+  }, []); // Removed phrases from dependency array since it's now stable
 
   return (
     <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { NewsItem } from '@/types';
+import type { NewsItem, ContentPriority } from '@/types';
 import { NewsScraper, type ScraperOptions } from '../base-scraper';
 
 interface GitHubRepo {
@@ -19,10 +19,11 @@ export class GitHubScraper extends NewsScraper {
   private aiKeywords = ['ai', 'artificial-intelligence', 'machine-learning', 'deep-learning', 'llm', 'gpt'];
   
   constructor(options?: ScraperOptions) {
-    super({ limit: 10, ...options });
+    super('GitHub', { limit: 10, ...options }); // Add source name
   }
 
-  async fetchNews(): Promise<NewsItem[]> {
+  // Change from fetchNews to fetchNewsInternal
+  protected async fetchNewsInternal(): Promise<NewsItem[]> {
     try {
       // Search for AI-related repositories created in the last week
       const query = this.aiKeywords.map(k => `topic:${k}`).join(' OR ');
@@ -45,8 +46,8 @@ export class GitHubScraper extends NewsScraper {
 
       return this.parseContent(response.data.items);
     } catch (error) {
-      console.error('Error fetching from GitHub:', error);
-      return [];
+      // Let base class handle errors
+      throw this.handleError(error);
     }
   }
 
@@ -72,24 +73,26 @@ export class GitHubScraper extends NewsScraper {
     return `${repo.description || ''} | ${repo.stargazers_count} stars | Topics: ${repo.topics.join(', ')}`;
   }
 
-  private determinePriority(repo: GitHubRepo): ContentPriority {
-    const text = `${repo.name} ${repo.description || ''} ${repo.topics.join(' ')}`.toLowerCase();
+  // Change from private to protected to match base class
+  protected determinePriority(text: string): ContentPriority {
+    const lowerText = text.toLowerCase();
     
-    if (text.includes('business') || text.includes('enterprise')) {
+    if (lowerText.includes('business') || lowerText.includes('enterprise')) {
       return 'business';
     }
-    if (repo.topics.some(t => t.includes('framework') || t.includes('platform'))) {
+    if (lowerText.includes('framework') || lowerText.includes('platform')) {
       return 'industry';
     }
-    if (text.includes('tutorial') || text.includes('example')) {
+    if (lowerText.includes('tutorial') || lowerText.includes('example')) {
       return 'implementation';
     }
     return 'general';
   }
 
-  private categorizeContent(repo: GitHubRepo): string[] {
+  // Change from private to protected to match base class
+  protected categorizeContent(text: string): string[] {
     const categories: string[] = [];
-    const text = `${repo.name} ${repo.description || ''} ${repo.topics.join(' ')}`.toLowerCase();
+    const lowerText = text.toLowerCase();
 
     const categoryMap = {
       'ai-tools': ['model', 'framework', 'library', 'sdk'],
@@ -99,8 +102,7 @@ export class GitHubScraper extends NewsScraper {
     };
 
     Object.entries(categoryMap).forEach(([category, keywords]) => {
-      if (keywords.some(keyword => text.includes(keyword) || 
-          repo.topics.some(t => t.includes(keyword)))) {
+      if (keywords.some(keyword => lowerText.includes(keyword))) {
         categories.push(category);
       }
     });
@@ -113,4 +115,4 @@ export class GitHubScraper extends NewsScraper {
     date.setDate(date.getDate() - 7);
     return date.toISOString().split('T')[0];
   }
-} 
+}

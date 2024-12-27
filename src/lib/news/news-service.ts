@@ -1,4 +1,5 @@
-import type { NewsResponse } from '@/types';
+import { NewsScraper } from './base-scraper';
+import type { NewsItem, NewsResponse } from '@/types';
 import { HackerNewsScraper } from './scrapers/hackernews';
 import { TechCrunchScraper } from './scrapers/techcrunch';
 import { TechmemeScraper } from './scrapers/techmeme';

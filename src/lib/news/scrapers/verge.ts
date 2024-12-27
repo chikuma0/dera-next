@@ -3,7 +3,8 @@ import { BaseRssScraper } from './base-rss-scraper';
 
 export class VergeScraper extends BaseRssScraper {
   constructor() {
-    super('https://www.theverge.com/rss/ai-artificial-intelligence/index.xml');
+    // Update to include source name
+    super('The Verge', 'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml');
   }
 
   protected mapToNewsItem(item: any): NewsItem {
@@ -64,4 +65,4 @@ export class VergeScraper extends BaseRssScraper {
 
     return categories;
   }
-} 
+}
