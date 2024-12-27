@@ -16,10 +16,10 @@ export class HackerNewsScraper extends NewsScraper {
   private baseUrl = 'https://hacker-news.firebaseio.com/v0';
   
   constructor(options?: ScraperOptions) {
-    super(options);
+    super('Hacker News', options);
   }
 
-  async fetchNews(): Promise<NewsItem[]> {
+  protected async fetchNewsInternal(): Promise<NewsItem[]> {
     try {
       const response = await axios.get(`${this.baseUrl}/topstories.json`);
       const storyIds = response.data.slice(0, this.options.limit || 30);
@@ -33,8 +33,7 @@ export class HackerNewsScraper extends NewsScraper {
 
       return this.parseContent(items);
     } catch (error) {
-      console.error('Error fetching from HackerNews:', error);
-      return [];
+      throw this.handleError(error);
     }
   }
 
