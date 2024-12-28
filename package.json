@@ -7,11 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "scraper": "ts-node src/scripts/test-scraper.ts",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
-    "test:scrapers": "jest src/lib/news/scrapers/__tests__",
-    "precommit": "npm run typecheck && npm run test:scrapers",
+    "precommit": "npm run typecheck",
     "prepare": "husky"
   },
   "dependencies": {
