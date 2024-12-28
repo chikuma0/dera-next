@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
-import { validateEnv } from '../config/env'
-import type { Database } from './types'
+import { validateEnv } from './config/env'
+import type { Database } from './supabase/types'
 
 // Run validation first
 const env = validateEnv();

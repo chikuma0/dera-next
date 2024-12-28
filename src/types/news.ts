@@ -4,9 +4,11 @@ export interface NewsItem {
   title: string;
   url: string;
   source: string;
-  publishedDate: Date;
-  summary?: string;
+  published_date: Date;
   language: 'en' | 'ja';
+  summary?: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface RSSSource {
@@ -15,12 +17,20 @@ export interface RSSSource {
   language: 'en' | 'ja';
 }
 
-// src/config/sources.ts
-export const RSS_SOURCES: RSSSource[] = [
+export const NEWS_SOURCES: RSSSource[] = [
+  {
+    name: 'Google News - AI',
+    url: 'https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en',
+    language: 'en'
+  },
+  {
+    name: 'Google News - AI (Japanese)',
+    url: 'https://news.google.com/rss/search?q=人工知能&hl=ja&gl=JP&ceid=JP:ja',
+    language: 'ja'
+  },
   {
     name: 'TechCrunch AI',
     url: 'https://techcrunch.com/category/artificial-intelligence/feed/',
     language: 'en'
-  },
-  // Add more sources as needed
+  }
 ];
