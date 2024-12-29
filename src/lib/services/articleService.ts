@@ -6,27 +6,71 @@ import { validateEnv } from '@/lib/config/env';
 export class ArticleService {
   private supabase: SupabaseClient;
   private keywordWeights: Record<string, number> = {
-    'openai': 10,
-    'anthropic': 10,
-    'claude': 10,
-    'gpt-4': 10,
-    'gemini': 10,
-    'artificial intelligence': 8,
-    'machine learning': 7,
-    'deep learning': 7,
+    // Innovation & Development Focus
+    'api': 10,
+    'sdk': 10,
+    'framework': 10,
+    'library': 9,
+    'tool': 9,
+    'open source': 10,
+    'developer': 9,
+    'breakthrough': 10,
+    'innovation': 10,
+    'novel': 9,
+    'new technique': 9,
+    'implementation': 8,
+    'solution': 8,
+    'automation': 8,
+    'no-code': 9,
+    'low-code': 9,
+
+    // Technical Impact
+    'practical application': 8,
+    'use case': 8,
+    'real-world': 8,
+    'deployment': 7,
+    'production': 7,
+    'scale': 7,
+    'enterprise': 7,
+    'integration': 7,
+
+    // Core Technology (Lower weights as they're more generic)
+    'artificial intelligence': 6,
+    'machine learning': 6,
+    'deep learning': 6,
     'neural network': 6,
-    'ai model': 6,
-    'large language model': 8,
-    'llm': 8,
-    'transformer': 6,
+    'large language model': 6,
+    'llm': 6,
     'computer vision': 6,
     'robotics': 6,
-    'autonomous': 5,
-    'breakthrough': 7,
-    'research': 5,
-    'ethics': 6,
-    'regulation': 6,
+    
+    // Japanese Keywords
+    '革新': 10,           // innovation
+    '開発ツール': 10,     // development tool
+    'オープンソース': 10, // open source
+    '実装': 8,           // implementation
+    '活用事例': 8,        // use case
+    '自動化': 8,         // automation
+    '効率化': 8,         // efficiency
+    '実用化': 9,         // practical application
+    '新技術': 9,         // new technology
+    'ツール': 9,         // tool
   };
+
+  // Define innovation patterns for better matching
+  private readonly innovationPatterns = [
+    // Development tools and platforms
+    'api', 'sdk', 'framework', 'library', 'tool', 'toolkit',
+    'platform', 'developer', 'development',
+    // Innovation indicators
+    'breakthrough', 'innovation', 'novel', 'new', 'advancement',
+    // Technical implementation
+    'implementation', 'architecture', 'infrastructure',
+    // Modern development approaches
+    'no-code', 'low-code', 'automation', 'open source',
+    // Japanese innovation terms
+    '革新', '開発ツール', 'オープンソース', '新技術', '開発者'
+  ];
 
   constructor() {
     const env = validateEnv();
@@ -41,7 +85,7 @@ export class ArticleService {
       const { data, error } = await this.supabase
         .from('news_items')
         .update({
-          importance_score: score,
+          importance_score: typeof score === 'number' ? score : score.total,
           categories,
           updated_at: new Date()
         })
@@ -62,50 +106,151 @@ export class ArticleService {
   }
 
   async processArticleBatch(articles: NewsItem[]): Promise<NewsItem[]> {
-    const processedArticles: NewsItem[] = [];
+    try {
+      const processedData = articles.map(article => ({
+        id: article.id,
+        importance_score: this.calculateImportanceScore(article),
+        categories: this.categorizeArticle(article),
+        updated_at: new Date()
+      }));
 
-    for (const article of articles) {
-      const processed = await this.processArticle(article);
-      if (processed) {
-        processedArticles.push(processed);
+      const batchSize = 50;
+      const processedArticles: NewsItem[] = [];
+
+      for (let i = 0; i < processedData.length; i += batchSize) {
+        const batch = processedData.slice(i, i + batchSize);
+        
+        const { data, error } = await this.supabase
+          .from('news_items')
+          .upsert(batch.map(item => ({
+            ...item,
+            importance_score: typeof item.importance_score === 'number' 
+              ? item.importance_score 
+              : item.importance_score.total
+          })))
+          .select();
+
+        if (error) {
+          console.error(`Error processing batch ${i / batchSize}:`, error);
+          continue;
+        }
+
+        if (data) {
+          processedArticles.push(...data);
+        }
       }
-    }
 
-    return processedArticles;
+      return processedArticles;
+    } catch (error) {
+      console.error('Error in batch processing:', error);
+      return [];
+    }
   }
 
-  private calculateImportanceScore(article: NewsItem): number {
+  private calculateImportanceScore(article: NewsItem, includeBreakdown: boolean = false): number | { 
+    total: number; 
+    timeScore: number; 
+    innovationScore: number; 
+    impactScore: number; 
+    contentScore: number; 
+  } {
     let score = 0;
+    let innovationScore = 0;
+    let impactScore = 0;
+    let innovationMatches = 0;
+    let impactMatches = 0;
 
-    // 1. Time factor (max 40 points)
+    // 1. Time Factor (30 points max) - Flat for 24h then decay
     const hoursSincePublished = (Date.now() - new Date(article.published_date).getTime()) / (1000 * 60 * 60);
-    score += Math.max(0, 40 - (hoursSincePublished / 24) * 10);
+    const timeScore = hoursSincePublished <= 24 
+      ? 30  // Full points for first 24 hours
+      : 30 * Math.exp(-(hoursSincePublished - 24) / 48);  // Decay after 24 hours
+    
+    score += timeScore;
 
-    // 2. Source credibility (max 20 points)
-    const sourceTier = {
-      'TechCrunch AI': 20,
-      'Google News - AI': 15,
-      'Google News - AI (Japanese)': 15,
-    }[article.source] || 10;
-    score += sourceTier;
-
-    // 3. Keyword relevance (max 30 points)
-    let keywordScore = 0;
+    // 2. Innovation and Impact Score (50 points max)
     const content = `${article.title} ${article.summary || ''}`.toLowerCase();
     
+    // Process each keyword
     Object.entries(this.keywordWeights).forEach(([keyword, weight]) => {
-      if (content.includes(keyword.toLowerCase())) {
-        keywordScore += weight;
+      const keywordLower = keyword.toLowerCase();
+      if (!content.includes(keywordLower)) return; // Skip if keyword not found
+      
+      // Check if this keyword matches any innovation patterns
+      const isInnovationKeyword = this.innovationPatterns.some(pattern => 
+        keywordLower.includes(pattern.toLowerCase()) || 
+        pattern.toLowerCase().includes(keywordLower)
+      );
+
+      if (isInnovationKeyword) {
+        innovationScore += weight;
+        innovationMatches++;
+      } else {
+        impactScore += weight;
+        impactMatches++;
       }
     });
-    score += Math.min(30, keywordScore);
 
-    // 4. Content length factor (max 10 points)
-    const contentLength = (article.summary || '').length;
-    score += Math.min(10, contentLength / 100);
+    // Normalize scores to their max allocations (25 points each)
+    // Modified normalization to better handle multiple matches
+    innovationScore = innovationMatches > 0 
+      ? Math.min(25, (innovationScore / Math.max(innovationMatches, 1)) * Math.min(innovationMatches, 3))
+      : 0;
+    
+    impactScore = impactMatches > 0
+      ? Math.min(25, (impactScore / Math.max(impactMatches, 1)) * Math.min(impactMatches, 3))
+      : 0;
+    
+    score += innovationScore + impactScore;
 
-    // Normalize to 0-100 range
-    return Math.min(100, Math.max(0, score));
+    // 3. Content Quality (20 points max)
+    const contentScore = this.evaluateContentQuality(article);
+    score += contentScore;
+
+    const finalScore = Math.min(100, Math.max(0, Math.round(score)));
+
+    if (includeBreakdown) {
+      return {
+        total: finalScore,
+        timeScore,
+        innovationScore,
+        impactScore,
+        contentScore
+      };
+    }
+
+    return finalScore;
+  }
+
+  private evaluateContentQuality(article: NewsItem): number {
+    let contentScore = 0;
+    const content = article.summary || '';
+    const title = article.title || '';
+
+    // Content length (10 points)
+    contentScore += Math.min(10, content.length / 100);
+    
+    // Title quality (5 points)
+    const titleWords = title.split(/\s+/).length;
+    if (titleWords >= 8 && titleWords <= 15) {
+      contentScore += 5;
+    } else if (titleWords >= 6) {
+      contentScore += 3;
+    }
+
+    // Technical detail indicators (5 points)
+    const technicalIndicators = [
+      'how to', 'guide', 'tutorial', 'example', 'implementation',
+      'code', 'demo', 'sample', 'study', 'analysis',
+      'について', 'チュートリアル', '実装例', 'デモ', '分析'
+    ];
+    
+    if (technicalIndicators.some(indicator => 
+      content.includes(indicator))) {
+      contentScore += 5;
+    }
+
+    return Math.min(20, contentScore);
   }
 
   private categorizeArticle(article: NewsItem): string[] {
@@ -113,26 +258,20 @@ export class ArticleService {
     const content = `${article.title} ${article.summary || ''}`.toLowerCase();
 
     const categoryPatterns: Record<string, RegExp> = {
-      'Research': /(research|study|paper|scientists|discovery|findings)/i,
-      'Industry': /(company|startup|business|market|industry|launch|partnership)/i,
-      'Ethics': /(ethics|privacy|bias|fairness|regulation|safety|responsible)/i,
-      'Applications': /(application|implementation|use case|solution|deploy|product)/i,
-      'Innovation': /(breakthrough|innovation|advancement|development|novel|new)/i,
-      'Policy': /(policy|regulation|law|government|compliance|guidelines)/i,
-      'Investment': /(investment|funding|venture|capital|raise|million|billion)/i,
-      'Education': /(education|learning|training|skills|course|curriculum)/i,
-      'Healthcare': /(health|medical|diagnosis|patient|treatment|clinical)/i,
-      'Technical': /(model|algorithm|framework|architecture|system|technical)/i
+      'Innovation': /(breakthrough|innovation|novel|advancement|development|革新|進歩|開発)/i,
+      'Developer Tools': /(api|sdk|developer|tool|framework|library|開発ツール|ライブラリ)/i,
+      'Applications': /(implementation|use case|solution|practical|実装|活用|ソリューション)/i,
+      'Impact': /(productivity|efficiency|improvement|impact|効率化|改善|効果)/i,
+      'Technical': /(model|algorithm|architecture|system|technical|モデル|アルゴリズム|システム)/i,
+      'Educational': /(guide|tutorial|learning|education|how to|チュートリアル|学習|教育)/i
     };
 
-    // Add relevant categories based on content matching
     for (const [category, pattern] of Object.entries(categoryPatterns)) {
       if (pattern.test(content)) {
         categories.add(category);
       }
     }
 
-    // Add language-specific categories
     if (article.language === 'ja') {
       categories.add('Japanese');
     }
@@ -140,7 +279,29 @@ export class ArticleService {
     return Array.from(categories);
   }
 
-  // Helper method to get recommendations based on a category
+  async getArticlesByScore(language: string = 'en', hours: number = 24): Promise<NewsItem[]> {
+    try {
+      const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000);
+      
+      const { data, error } = await this.supabase
+        .from('news_items')
+        .select('*')
+        .eq('language', language)
+        .gte('published_date', cutoffTime.toISOString())
+        .order('importance_score', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching articles:', error);
+        return [];
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error in getArticlesByScore:', error);
+      return [];
+    }
+  }
+
   async getRelatedArticles(article: NewsItem, limit: number = 5): Promise<NewsItem[]> {
     const { data, error } = await this.supabase
       .from('news_items')

@@ -1,3 +1,4 @@
+// tailwind.config.ts
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,10 +19,10 @@ export default {
       keyframes: {
         "pulse": {
           '0%, 100%': {
-            opacity: 1
+            opacity: '1'  // Changed to string
           },
           '50%': {
-            opacity: .5
+            opacity: '0.5'  // Changed to string
           },
         },
       },

@@ -1,9 +1,9 @@
 // components/news/NewsList.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { NewsItem } from '@/types/news';
-import { RefreshCw } from 'lucide-react'; // Import the refresh icon
+import { RefreshCw } from 'lucide-react';
 
 interface NewsListProps {
   language?: 'en' | 'ja';
@@ -16,9 +16,11 @@ export function NewsList({ language = 'en', autoRefresh = 30 }: NewsListProps) {
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchNews = async (forceRefresh: boolean = false) => {
+  const fetchNews = useCallback(async (forceRefresh: boolean = false) => {
     try {
-      setLoading(true);
+      if (forceRefresh) {
+        setRefreshing(true);
+      }
       const response = await fetch(
         `/api/news?language=${language}${forceRefresh ? '&refresh=true' : ''}`
       );
@@ -32,13 +34,12 @@ export function NewsList({ language = 'en', autoRefresh = 30 }: NewsListProps) {
       console.error('Error fetching news:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
-  };
+  }, [language]); // Add language as dependency
 
   const handleManualRefresh = async () => {
-    setRefreshing(true);
-    await fetchNews(true); // Force refresh from sources
-    setRefreshing(false);
+    await fetchNews(true);
   };
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export function NewsList({ language = 'en', autoRefresh = 30 }: NewsListProps) {
 
       return () => clearInterval(interval);
     }
-  }, [language, autoRefresh]);
+  }, [fetchNews, autoRefresh]); // Added fetchNews and autoRefresh as dependencies
 
   if (loading && !refreshing) {
     return <div>Loading...</div>;
@@ -69,9 +70,9 @@ export function NewsList({ language = 'en', autoRefresh = 30 }: NewsListProps) {
         <button 
           onClick={handleManualRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition disabled:opacity-50"
         >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-pulse' : ''}`} />
           {refreshing ? 'Refreshing...' : 'Refresh Now'}
         </button>
       </div>
