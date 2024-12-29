@@ -1,0 +1,30 @@
+# .github/workflows/fetch-news.yml
+name: Hourly News Fetch
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Run every hour
+  workflow_dispatch:      # Allow manual trigger
+  push:
+    paths:              # Run when news-related files change
+      - 'src/lib/news/**'
+      - 'src/app/api/news/**'
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch English News
+        run: |
+          curl -X GET "${{ secrets.VERCEL_URL }}/api/news?refresh=true&language=en" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+        
+      - name: Fetch Japanese News
+        run: |
+          curl -X GET "${{ secrets.VERCEL_URL }}/api/news?refresh=true&language=ja" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
+      - name: Check Response
+        if: ${{ failure() }}
+        run: |
+          echo "News fetch failed. Please check the logs."
