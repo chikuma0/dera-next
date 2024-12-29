@@ -1,9 +1,11 @@
+// src/lib/news/fetcher.ts
 import Parser from 'rss-parser';
 import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { articleService } from '../services/articleService';
 
-// Define the RSS item interface
+// Interface definitions remain the same
 interface RSSItem {
   guid?: string;
   link?: string;
@@ -102,24 +104,34 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
       const validItems = newsItems.filter(item => item.title && item.url);
       console.log(`Found ${validItems.length} valid items from ${source.name}`);
 
-      // Store in batches to avoid potential payload size limits
+      // Store in batches and process with article service
       const batchSize = 50;
       for (let i = 0; i < validItems.length; i += batchSize) {
         const batch = validItems.slice(i, i + batchSize);
+        
+        // First, store the items
         const { data, error } = await supabase
           .from('news_items')
           .upsert(batch, {
             onConflict: 'id',
             ignoreDuplicates: true
           })
-          .select();  // Add .select() to get back the inserted data
+          .select();
 
         if (error) {
           console.error(`Storage error for ${source.name} batch ${i}:`, error);
-        } else {
-          const insertedCount = Array.isArray(data) ? data.length : 0;
-          console.log(`Stored batch ${i}: ${insertedCount} items from ${source.name}`);
-          allItems.push(...batch);
+          continue;
+        }
+
+        const insertedCount = Array.isArray(data) ? data.length : 0;
+        console.log(`Stored batch ${i}: ${insertedCount} items from ${source.name}`);
+
+        // Then, process them with article service
+        if (data && data.length > 0) {
+          console.log(`Processing ${data.length} articles with article service...`);
+          const processedItems = await articleService.processArticleBatch(data);
+          allItems.push(...processedItems);
+          console.log(`Processed ${processedItems.length} articles successfully`);
         }
       }
     } catch (error) {
@@ -130,17 +142,25 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
   return allItems;
 }
 
-export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
+export async function getLatestNews(language: 'en' | 'ja' = 'en', sortBy: 'date' | 'score' = 'date'): Promise<NewsItem[]> {
   const supabase = getSupabaseClient();
-  console.log('Getting latest news from database:', language);
+  console.log('Getting latest news from database:', language, 'sorted by:', sortBy);
 
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('news_items')
       .select('*')
       .eq('language', language)
-      .order('published_date', { ascending: false })
       .limit(30);
+
+    // Add sorting based on parameter
+    if (sortBy === 'score') {
+      query.order('importance_score', { ascending: false });
+    } else {
+      query.order('published_date', { ascending: false });
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Database error:', error);
@@ -150,6 +170,32 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
     return data || [];
   } catch (error) {
     console.error('Error fetching from database:', error);
+    return [];
+  }
+}
+
+// New function to get trending articles
+export async function getTrendingNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
+  const supabase = getSupabaseClient();
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  try {
+    const { data, error } = await supabase
+      .from('news_items')
+      .select('*')
+      .eq('language', language)
+      .gte('published_date', twentyFourHoursAgo.toISOString())
+      .order('importance_score', { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error('Database error:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching trending news:', error);
     return [];
   }
 }

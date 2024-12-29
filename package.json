@@ -16,10 +16,13 @@
     "@eslint/eslintrc": "^3.2.0",
     "@prisma/client": "^6.1.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.1.2",
     "@supabase/auth-helpers-nextjs": "^0.8.1",
     "@supabase/supabase-js": "^2.47.10",
     "axios": "^1.6.2",
     "cheerio": "^1.0.0-rc.12",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.292.0",
@@ -27,7 +30,8 @@
     "prisma": "^6.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rss-parser": "^3.13.0"
+    "rss-parser": "^3.13.0",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

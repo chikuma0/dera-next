@@ -9,6 +9,8 @@ export interface NewsItem {
   summary?: string;
   created_at?: Date;
   updated_at?: Date;
+  importance_score?: number;
+  categories?: string[];
 }
 
 export interface RSSSource {
