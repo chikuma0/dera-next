@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
+import MatrixNewsTicker from './MatrixNewsTicker';
 
 const TYPING_PHRASES = [
   'Transforming Impossible to Inevitable',
@@ -59,7 +60,7 @@ const HeroSection = () => {
       clearTimeout(timeoutId);
       clearInterval(cursorInterval);
     };
-  }, []); // Removed phrases from dependency array since it's now stable
+  }, [phrases]); 
 
   return (
     <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">
@@ -109,27 +110,14 @@ const HeroSection = () => {
         </div>
       </motion.div>
       
-      {/* Stats or social proof */}
+      {/* News Ticker */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.8 }}
-        className="absolute bottom-8 left-0 right-0"
+        className="absolute bottom-8 left-0 right-0 z-20"
       >
-        <div className="flex justify-center gap-12 text-green-300">
-          <div className="text-center">
-            <div className="text-2xl font-bold">100x</div>
-            <div className="text-sm">Business Growth</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold">3</div>
-            <div className="text-sm">Industries Transformed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold">∞</div>
-            <div className="text-sm">Possibilities</div>
-          </div>
-        </div>
+        <MatrixNewsTicker />
       </motion.div>
     </div>
   );

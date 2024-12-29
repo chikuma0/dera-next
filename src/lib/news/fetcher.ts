@@ -24,17 +24,37 @@ function getSupabaseClient() {
 
 async function fetchRSSWithProxy(url: string) {
   console.log('Fetching RSS with proxy:', url);
-  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
-  const response = await fetch(proxyUrl);
-  const data = await response.json();
+  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${process.env.RSS2JSON_API_KEY || ''}`;
   
-  if (data.status !== 'ok') {
-    console.error('RSS proxy error:', data);
-    throw new Error(`Failed to fetch RSS feed: ${data.message || 'Unknown error'}`);
+  try {
+    const response = await fetch(proxyUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('RSS proxy response:', {
+      status: data.status,
+      feed: data.feed?.title,
+      itemCount: data.items?.length,
+    });
+    
+    if (data.status !== 'ok') {
+      throw new Error(`RSS proxy error: ${data.message || 'Unknown error'}`);
+    }
+    
+    if (!Array.isArray(data.items)) {
+      throw new Error('Invalid response format: items is not an array');
+    }
+    
+    return data.items;
+  } catch (error) {
+    console.error('RSS fetch error:', {
+      url,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    throw error;
   }
-  
-  console.log(`RSS proxy success: found ${data.items?.length || 0} items`);
-  return data.items;
 }
 
 export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
@@ -49,35 +69,61 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
       console.log(`Fetching from ${source.name}...`);
       const items = await fetchRSSWithProxy(source.url);
       
-      const newsItems: NewsItem[] = items.map(item => ({
-        id: item.guid || item.link || `${source.name}-${item.title}`,
-        title: item.title || '',
-        url: item.link || '',
-        source: source.name,
-        published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
-        language,
-        summary: item.description || '',
-        created_at: new Date(),
-        updated_at: new Date()
-      }));
+      const newsItems: NewsItem[] = items.map(item => {
+        const newsItem = {
+          id: item.guid || item.link || `${source.name}-${item.title}`,
+          title: item.title?.trim() || '',
+          url: item.link?.trim() || '',
+          source: source.name,
+          published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
+          language,
+          summary: item.description?.trim() || item.content?.trim() || '',
+          created_at: new Date(),
+          updated_at: new Date()
+        };
+        
+        console.log('Processed item:', {
+          id: newsItem.id,
+          title: newsItem.title.substring(0, 50) + '...',
+          source: newsItem.source,
+          hasUrl: !!newsItem.url,
+          pubDate: newsItem.published_date,
+        });
+        
+        return newsItem;
+      });
 
-      // Filter out items without titles or URLs
-      const validItems = newsItems.filter(item => item.title && item.url);
+      const validItems = newsItems.filter(item => {
+        const isValid = item.title && item.url;
+        if (!isValid) {
+          console.log('Filtered out invalid item:', {
+            id: item.id,
+            hasTitle: !!item.title,
+            hasUrl: !!item.url,
+          });
+        }
+        return isValid;
+      });
+
       console.log(`Found ${validItems.length} valid items from ${source.name}`);
 
-      // Store in database
-      const { data, error } = await supabase
-        .from('news_items')
-        .upsert(validItems, {
-          onConflict: 'id',
-          ignoreDuplicates: true
-        });
+      // Store in batches to avoid potential payload size limits
+      const batchSize = 50;
+      for (let i = 0; i < validItems.length; i += batchSize) {
+        const batch = validItems.slice(i, i + batchSize);
+        const { data, error } = await supabase
+          .from('news_items')
+          .upsert(batch, {
+            onConflict: 'id',
+            ignoreDuplicates: true
+          });
 
-      if (error) {
-        console.error(`Storage error for ${source.name}:`, error);
-      } else {
-        console.log(`Stored ${data?.length || 0} items from ${source.name}`);
-        allItems.push(...validItems);
+        if (error) {
+          console.error(`Storage error for ${source.name} batch ${i}:`, error);
+        } else {
+          console.log(`Stored batch ${i}: ${data?.length || 0} items from ${source.name}`);
+          allItems.push(...batch);
+        }
       }
     } catch (error) {
       console.error(`Error processing ${source.name}:`, error);
@@ -92,6 +138,17 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
   console.log('Getting latest news from database:', language);
 
   try {
+    // First verify the table exists and has the expected structure
+    const { data: tableInfo, error: tableError } = await supabase
+      .from('news_items')
+      .select('id')
+      .limit(1);
+
+    if (tableError) {
+      console.error('Table verification error:', tableError);
+      throw tableError;
+    }
+
     const { data, error } = await supabase
       .from('news_items')
       .select('*')
@@ -100,7 +157,7 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
       .limit(30);
 
     if (error) {
-      console.error('Database error:', error);
+      console.error('Database query error:', error);
       return [];
     }
 
