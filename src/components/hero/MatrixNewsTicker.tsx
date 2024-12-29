@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal } from 'lucide-react';
+import { NewsItem } from '@/types/news'; // Make sure to import the NewsItem type
 
 const MatrixNewsTicker = () => {
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -12,9 +13,11 @@ const MatrixNewsTicker = () => {
       try {
         const response = await fetch('/api/news?language=en');
         const data = await response.json();
-        if (data.success && data.data) { // Changed from data.items to data.data
+        if (data.success && data.data) {
           const sortedNews = data.data
-            .sort((a, b) => new Date(b.published_date) - new Date(a.published_date))
+            .sort((a: NewsItem, b: NewsItem) => 
+              new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
+            )
             .slice(0, 10);
           setNews(sortedNews);
         }
