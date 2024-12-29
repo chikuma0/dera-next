@@ -5,6 +5,29 @@ interface NewsItemCardProps {
 }
 
 export function NewsItemCard({ item }: NewsItemCardProps) {
+  // Format date based on language
+  const formatDate = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return date.toLocaleString(item.language === 'ja' ? 'ja-JP' : 'en-US', options);
+  };
+
+  // Ensure we have a valid date string for the datetime attribute
+  const getISOString = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? '' : date.toISOString();
+  };
+
   return (
     <div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-black/20">
       <h3 className="text-lg font-semibold mb-2">
@@ -25,7 +48,9 @@ export function NewsItemCard({ item }: NewsItemCardProps) {
       <div className="text-sm text-gray-500">
         <span>{item.source}</span>
         <span className="mx-2">•</span>
-        <span>{new Date(item.publishedDate).toLocaleDateString()}</span>
+        <time dateTime={getISOString(item.published_date)}>
+          {formatDate(item.published_date)}
+        </time>
       </div>
     </div>
   );

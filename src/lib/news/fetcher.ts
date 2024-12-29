@@ -7,74 +7,107 @@ const parser = new Parser({
   customFields: {
     item: [
       ['media:content', 'mediaContent'],
-      ['source', 'source']
-    ]
+      ['source', 'source'],
+      ['description', 'summary']
+    ],
+    headers: {
+      'Accept': 'application/rss+xml, application/xml, text/xml; q=0.1',
+      'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)'
+    }
   }
 });
 
-// Initialize Supabase with validated env
-const env = validateEnv();
-const supabase = createClient(env.supabase.url, env.supabase.serviceRoleKey);
+function getSupabaseClient() {
+  const env = validateEnv();
+  return createClient(env.supabase.url, env.supabase.serviceRoleKey);
+}
+
+async function fetchRSSWithProxy(url: string) {
+  console.log('Fetching RSS with proxy:', url);
+  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+  const response = await fetch(proxyUrl);
+  const data = await response.json();
+  
+  if (data.status !== 'ok') {
+    console.error('RSS proxy error:', data);
+    throw new Error(`Failed to fetch RSS feed: ${data.message || 'Unknown error'}`);
+  }
+  
+  console.log(`RSS proxy success: found ${data.items?.length || 0} items`);
+  return data.items;
+}
 
 export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
+  const supabase = getSupabaseClient();
   const sources = NEWS_SOURCES.filter(source => source.language === language);
-  const items: NewsItem[] = [];
+  const allItems: NewsItem[] = [];
+
+  console.log(`Starting fetch for ${sources.length} ${language} sources`);
 
   for (const source of sources) {
     try {
-      const feed = await parser.parseURL(source.url);
+      console.log(`Fetching from ${source.name}...`);
+      const items = await fetchRSSWithProxy(source.url);
       
-      const newsItems: NewsItem[] = feed.items.map(item => ({
-        id: item.guid || item.link || '',
+      const newsItems: NewsItem[] = items.map(item => ({
+        id: item.guid || item.link || `${source.name}-${item.title}`,
         title: item.title || '',
         url: item.link || '',
         source: source.name,
-        published_date: new Date(item.pubDate || ''),
-        language: source.language,
-        summary: item.contentSnippet
+        published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
+        language,
+        summary: item.description || '',
+        created_at: new Date(),
+        updated_at: new Date()
       }));
 
-      // Store in Supabase
-      const { error } = await supabase
+      // Filter out items without titles or URLs
+      const validItems = newsItems.filter(item => item.title && item.url);
+      console.log(`Found ${validItems.length} valid items from ${source.name}`);
+
+      // Store in database
+      const { data, error } = await supabase
         .from('news_items')
-        .upsert(
-          newsItems,
-          { onConflict: 'id' }
-        );
+        .upsert(validItems, {
+          onConflict: 'id',
+          ignoreDuplicates: true
+        });
 
       if (error) {
-        console.error(`Error storing news from ${source.name}:`, error);
+        console.error(`Storage error for ${source.name}:`, error);
       } else {
-        items.push(...newsItems);
+        console.log(`Stored ${data?.length || 0} items from ${source.name}`);
+        allItems.push(...validItems);
       }
     } catch (error) {
-      console.error(`Error fetching from ${source.name}:`, error);
+      console.error(`Error processing ${source.name}:`, error);
     }
   }
 
-  return items;
+  return allItems;
 }
 
 export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
-  console.log('Fetching news for language:', language);
-  
+  const supabase = getSupabaseClient();
+  console.log('Getting latest news from database:', language);
+
   try {
     const { data, error } = await supabase
       .from('news_items')
       .select('*')
       .eq('language', language)
-      .order('publishedDate', { ascending: false })
-      .limit(20);
+      .order('published_date', { ascending: false })
+      .limit(30);
 
     if (error) {
-      console.error('Error fetching news:', error);
+      console.error('Database error:', error);
       return [];
     }
 
-    console.log(`Found ${data?.length || 0} news items`);
-    return data as NewsItem[];
-  } catch (err) {
-    console.error('Unexpected error fetching news:', err);
+    console.log(`Found ${data?.length || 0} items in database`);
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching from database:', error);
     return [];
   }
 }
