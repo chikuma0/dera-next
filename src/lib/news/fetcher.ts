@@ -3,13 +3,22 @@ import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
 import { createClient } from '@supabase/supabase-js';
 
-const parser = new Parser({
+// Create a custom parser type
+type CustomRSSParser = Parser<{[key: string]: any}, {
+  mediaContent: string;
+  source: string;
+  summary: string;
+}>;
+
+const parser: CustomRSSParser = new Parser({
   customFields: {
     item: [
       ['media:content', 'mediaContent'],
       ['source', 'source'],
       ['description', 'summary']
-    ],
+    ]
+  },
+  requestOptions: {
     headers: {
       'Accept': 'application/rss+xml, application/xml, text/xml; q=0.1',
       'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)'
@@ -69,42 +78,19 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
       console.log(`Fetching from ${source.name}...`);
       const items = await fetchRSSWithProxy(source.url);
       
-      const newsItems: NewsItem[] = items.map(item => {
-        const newsItem = {
-          id: item.guid || item.link || `${source.name}-${item.title}`,
-          title: item.title?.trim() || '',
-          url: item.link?.trim() || '',
-          source: source.name,
-          published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
-          language,
-          summary: item.description?.trim() || item.content?.trim() || '',
-          created_at: new Date(),
-          updated_at: new Date()
-        };
-        
-        console.log('Processed item:', {
-          id: newsItem.id,
-          title: newsItem.title.substring(0, 50) + '...',
-          source: newsItem.source,
-          hasUrl: !!newsItem.url,
-          pubDate: newsItem.published_date,
-        });
-        
-        return newsItem;
-      });
+      const newsItems: NewsItem[] = items.map(item => ({
+        id: item.guid || item.link || `${source.name}-${item.title}`,
+        title: item.title?.trim() || '',
+        url: item.link?.trim() || '',
+        source: source.name,
+        published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
+        language,
+        summary: item.description?.trim() || '',
+        created_at: new Date(),
+        updated_at: new Date()
+      }));
 
-      const validItems = newsItems.filter(item => {
-        const isValid = item.title && item.url;
-        if (!isValid) {
-          console.log('Filtered out invalid item:', {
-            id: item.id,
-            hasTitle: !!item.title,
-            hasUrl: !!item.url,
-          });
-        }
-        return isValid;
-      });
-
+      const validItems = newsItems.filter(item => item.title && item.url);
       console.log(`Found ${validItems.length} valid items from ${source.name}`);
 
       // Store in batches to avoid potential payload size limits
@@ -138,17 +124,6 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
   console.log('Getting latest news from database:', language);
 
   try {
-    // First verify the table exists and has the expected structure
-    const { data: tableInfo, error: tableError } = await supabase
-      .from('news_items')
-      .select('id')
-      .limit(1);
-
-    if (tableError) {
-      console.error('Table verification error:', tableError);
-      throw tableError;
-    }
-
     const { data, error } = await supabase
       .from('news_items')
       .select('*')
@@ -157,7 +132,7 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
       .limit(30);
 
     if (error) {
-      console.error('Database query error:', error);
+      console.error('Database error:', error);
       return [];
     }
 
