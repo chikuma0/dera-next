@@ -3,6 +3,16 @@ import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
 import { createClient } from '@supabase/supabase-js';
 
+// Define the RSS item interface
+interface RSSItem {
+  guid?: string;
+  link?: string;
+  title?: string;
+  pubDate?: string;
+  description?: string;
+  content?: string;
+}
+
 // Create a custom parser type
 type CustomRSSParser = Parser<{[key: string]: any}, {
   mediaContent: string;
@@ -56,7 +66,7 @@ async function fetchRSSWithProxy(url: string) {
       throw new Error('Invalid response format: items is not an array');
     }
     
-    return data.items;
+    return data.items as RSSItem[];
   } catch (error) {
     console.error('RSS fetch error:', {
       url,
@@ -78,14 +88,14 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
       console.log(`Fetching from ${source.name}...`);
       const items = await fetchRSSWithProxy(source.url);
       
-      const newsItems: NewsItem[] = items.map(item => ({
+      const newsItems: NewsItem[] = items.map((item: RSSItem) => ({
         id: item.guid || item.link || `${source.name}-${item.title}`,
         title: item.title?.trim() || '',
         url: item.link?.trim() || '',
         source: source.name,
         published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
         language,
-        summary: item.description?.trim() || '',
+        summary: item.description?.trim() || item.content?.trim() || '',
         created_at: new Date(),
         updated_at: new Date()
       }));
