@@ -1,7 +1,7 @@
 import Parser from 'rss-parser';
 import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Define the RSS item interface
 interface RSSItem {
@@ -13,7 +13,6 @@ interface RSSItem {
   content?: string;
 }
 
-// Create a custom parser type
 type CustomRSSParser = Parser<{[key: string]: any}, {
   mediaContent: string;
   source: string;
@@ -36,12 +35,12 @@ const parser: CustomRSSParser = new Parser({
   }
 });
 
-function getSupabaseClient() {
+function getSupabaseClient(): SupabaseClient {
   const env = validateEnv();
   return createClient(env.supabase.url, env.supabase.serviceRoleKey);
 }
 
-async function fetchRSSWithProxy(url: string) {
+async function fetchRSSWithProxy(url: string): Promise<RSSItem[]> {
   console.log('Fetching RSS with proxy:', url);
   const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${process.env.RSS2JSON_API_KEY || ''}`;
   
@@ -112,12 +111,14 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
           .upsert(batch, {
             onConflict: 'id',
             ignoreDuplicates: true
-          });
+          })
+          .select();  // Add .select() to get back the inserted data
 
         if (error) {
           console.error(`Storage error for ${source.name} batch ${i}:`, error);
         } else {
-          console.log(`Stored batch ${i}: ${data?.length || 0} items from ${source.name}`);
+          const insertedCount = Array.isArray(data) ? data.length : 0;
+          console.log(`Stored batch ${i}: ${insertedCount} items from ${source.name}`);
           allItems.push(...batch);
         }
       }
@@ -146,7 +147,6 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
       return [];
     }
 
-    console.log(`Found ${data?.length || 0} items in database`);
     return data || [];
   } catch (error) {
     console.error('Error fetching from database:', error);
