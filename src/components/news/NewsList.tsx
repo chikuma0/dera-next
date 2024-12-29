@@ -3,16 +3,18 @@
 
 import { useEffect, useState } from 'react';
 import { NewsItem } from '@/types/news';
+import { RefreshCw } from 'lucide-react'; // Import the refresh icon
 
 interface NewsListProps {
   language?: 'en' | 'ja';
-  autoRefresh?: number; // minutes
+  autoRefresh?: number;
 }
 
 export function NewsList({ language = 'en', autoRefresh = 30 }: NewsListProps) {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date>();
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchNews = async (forceRefresh: boolean = false) => {
     try {
@@ -33,30 +35,46 @@ export function NewsList({ language = 'en', autoRefresh = 30 }: NewsListProps) {
     }
   };
 
+  const handleManualRefresh = async () => {
+    setRefreshing(true);
+    await fetchNews(true); // Force refresh from sources
+    setRefreshing(false);
+  };
+
   useEffect(() => {
     fetchNews();
 
-    // Set up auto-refresh
     if (autoRefresh > 0) {
       const interval = setInterval(() => {
-        fetchNews(true); // Force refresh from sources
+        fetchNews(true);
       }, autoRefresh * 60 * 1000);
 
       return () => clearInterval(interval);
     }
   }, [language, autoRefresh]);
 
-  if (loading) {
+  if (loading && !refreshing) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="space-y-4">
-      {lastUpdated && (
-        <div className="text-sm text-gray-400">
-          Last updated: {lastUpdated.toLocaleString()}
-        </div>
-      )}
+      <div className="flex justify-between items-center">
+        {lastUpdated && (
+          <div className="text-sm text-gray-400">
+            Last updated: {lastUpdated.toLocaleString()}
+          </div>
+        )}
+        
+        <button 
+          onClick={handleManualRefresh}
+          disabled={refreshing}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg transition"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          {refreshing ? 'Refreshing...' : 'Refresh Now'}
+        </button>
+      </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {news.map((item) => (
