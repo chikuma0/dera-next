@@ -5,11 +5,13 @@ import { Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
 import MatrixNewsTicker from './MatrixNewsTicker';
+import Link from 'next/link';
 
 const TYPING_PHRASES = [
+  'AI Horsepower for Distributed Era',
   'Transforming Impossible to Inevitable',
-  'Bridging Business and AI', 
-  'Creating Future-Ready Solutions'
+  'Bridging Business and AI',
+  'Build Future-Ready Solutions'
 ];
 
 const HeroSection = () => {
@@ -93,13 +95,15 @@ const HeroSection = () => {
         </motion.p>
         
         <div className="flex justify-center gap-6">
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
-          >
-            Explore Solutions
-          </motion.button>
+          <Link href="/solutions">
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
+            >
+              Explore Solutions
+            </motion.button>
+          </Link>
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
