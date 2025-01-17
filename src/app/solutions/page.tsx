@@ -29,7 +29,7 @@ const solutions = [
   },
   {
     icon: Cpu,
-    title: 'Custom AI Solutions',
+    title: 'Industry-Specific AI',
     description: 'Goal-driven AI solutions designed for your specific business objectives.',
     features: [
       'Tailored AI Models',
@@ -119,8 +119,8 @@ export default function SolutionsPage() {
               AI Horsepower for Distributed Era
             </h1>
             <p className="text-xl text-green-300 max-w-3xl mx-auto">
-              Empower your business with distributed AI solutions that work 
-              around the clock to drive growth and efficiency.
+              Boutique AI studio for global business needs. We design purpose-built 
+              AI solutions to keep your business moving forward.
             </p>
           </motion.div>
 
