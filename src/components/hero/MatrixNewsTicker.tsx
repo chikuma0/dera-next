@@ -63,41 +63,40 @@ const MatrixNewsTicker = () => {
       className="w-full text-green-400 py-3"
     >
       <div className="container mx-auto max-w-4xl">
-        <div className="flex items-center space-x-2 px-4">
-          <div className="flex-shrink-0">
-            <Terminal className="w-4 h-4" />
-          </div>
-          <div className="flex-shrink-0">
-            <span className="px-2 py-1 text-xs font-medium border border-green-400 rounded">
-              LATEST AI INTEL
-            </span>
-          </div>
-          <div className="flex-1 relative h-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0 flex items-center"
-              >
-                <Link
-                  href="/news"
-                  className="hover:text-green-300 transition-colors truncate text-sm group flex items-center gap-2"
+        <Link href="/news" className="block group">
+          <div className="flex items-center space-x-2 px-4">
+            <div className="flex-shrink-0">
+              <Terminal className="w-4 h-4" />
+            </div>
+            <div className="flex-shrink-0">
+              <span className="px-2 py-1 text-xs font-medium border border-green-400 rounded group-hover:bg-green-400/10 transition-colors">
+                LATEST AI INTEL
+              </span>
+            </div>
+            <div className="flex-1 relative h-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0 flex items-center"
                 >
-                  <span className="truncate">{news[currentIndex].title}</span>
-                  <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">
-                    View All News →
-                  </span>
-                </Link>
-              </motion.div>
-            </AnimatePresence>
+                  <div className="hover:text-green-300 transition-colors truncate text-sm flex items-center gap-2">
+                    <span className="truncate">{news[currentIndex].title}</span>
+                    <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">
+                      View All News →
+                    </span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            <div className="flex-shrink-0 text-sm font-mono">
+              [{currentIndex + 1}/{news.length}]
+            </div>
           </div>
-          <div className="flex-shrink-0 text-sm font-mono">
-            [{currentIndex + 1}/{news.length}]
-          </div>
-        </div>
+        </Link>
       </div>
     </motion.div>
   );
