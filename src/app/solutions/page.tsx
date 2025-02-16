@@ -74,7 +74,7 @@ const solutions = [
 ];
 
 const CTASection = {
-  title: "Let's Enhance What Makes You Unique",
+  title: "Let&apos;s Enhance What Makes You Unique",
   description: "Take the first step towards amplifying your business capabilities with AI. Our team is ready to understand your needs and craft solutions that work for you.",
   primaryAction: "Start Discussion",
   layout: (
@@ -85,7 +85,7 @@ const CTASection = {
       className="mt-16 text-center bg-green-400/5 rounded-lg p-8 border border-green-400/20"
     >
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold mb-4">Let's Enhance What Makes You Unique</h2>
+        <h2 className="text-2xl font-bold mb-4">Let&apos;s Enhance What Makes You Unique</h2>
         <p className="text-green-300 mb-8">
           Take the first step towards amplifying your business capabilities with AI. 
           Our team is ready to understand your needs and craft solutions that work for you.
