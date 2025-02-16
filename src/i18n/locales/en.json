@@ -1,0 +1,39 @@
+{
+  "common": {
+    "solutions": "Solutions",
+    "portfolio": "Portfolio",
+    "news": "News",
+    "contact": "Contact",
+    "exploreSolutions": "Explore Solutions",
+    "viewPortfolio": "View Portfolio",
+    "latestAiNews": "LATEST AI NEWS",
+    "viewAllNews": "View All News",
+    "refreshing": "Refreshing...",
+    "refreshNow": "Refresh Now",
+    "lastUpdated": "Last updated"
+  },
+  "news": {
+    "subtitle": "Curated updates from the world of Artificial Intelligence",
+    "topStories": "Top Stories",
+    "latest": "Latest",
+    "popular": "Popular",
+    "trending": "Trending"
+  },
+  "hero": {
+    "subtitle": "Leveraging AI to transform your business vision into reality",
+    "phrases": [
+      "AI Horsepower for Distributed Era",
+      "Build Future-Ready Solutions",
+      "Transforming Impossible",
+      "Bridging Business and AI"
+    ]
+  },
+  "solutions": {
+    "title": "Our Solutions",
+    "description": "Discover how we can help your business grow"
+  },
+  "portfolio": {
+    "title": "Our Portfolio",
+    "description": "Check out our latest projects"
+  }
+}

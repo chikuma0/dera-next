@@ -1,0 +1,39 @@
+{
+  "common": {
+    "solutions": "ソリューション",
+    "portfolio": "ポートフォリオ",
+    "news": "ニュース",
+    "contact": "お問い合わせ",
+    "exploreSolutions": "ソリューションを探る",
+    "viewPortfolio": "ポートフォリオを見る",
+    "latestAiNews": "最新のAIニュース",
+    "viewAllNews": "すべてのニュースを見る",
+    "refreshing": "更新中...",
+    "refreshNow": "今すぐ更新",
+    "lastUpdated": "最終更新"
+  },
+  "news": {
+    "subtitle": "人工知能の世界からの厳選された最新情報",
+    "topStories": "トップニュース",
+    "latest": "最新",
+    "popular": "人気",
+    "trending": "トレンド"
+  },
+  "hero": {
+    "subtitle": "AIを活用してビジネスビジョンを現実に変える",
+    "phrases": [
+      "AI Horsepower for Distributed Era",
+      "Build Future-Ready Solutions",
+      "Transforming Impossible",
+      "Bridging Business and AI"
+    ]
+  },
+  "solutions": {
+    "title": "ソリューション",
+    "description": "ビジネスの成長をサポートする方法をご紹介します"
+  },
+  "portfolio": {
+    "title": "ポートフォリオ",
+    "description": "最新のプロジェクトをご覧ください"
+  }
+}
