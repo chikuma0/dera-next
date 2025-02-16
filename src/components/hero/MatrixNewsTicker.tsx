@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal } from 'lucide-react';
-import { NewsItem } from '@/types/news'; // Make sure to import the NewsItem type
+import { NewsItem } from '@/types/news';
+import Link from 'next/link';
 
 const MatrixNewsTicker = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -81,14 +82,15 @@ const MatrixNewsTicker = () => {
                 transition={{ duration: 0.5 }}
                 className="absolute inset-0 flex items-center"
               >
-                <a 
-                  href={news[currentIndex].url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-green-300 transition-colors truncate text-sm"
+                <Link
+                  href="/news"
+                  className="hover:text-green-300 transition-colors truncate text-sm group flex items-center gap-2"
                 >
                   <span className="truncate">{news[currentIndex].title}</span>
-                </a>
+                  <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">
+                    View All News →
+                  </span>
+                </Link>
               </motion.div>
             </AnimatePresence>
           </div>
