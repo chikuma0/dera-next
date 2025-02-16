@@ -70,7 +70,7 @@ const MatrixNewsTicker = () => {
             </div>
             <div className="flex-shrink-0">
               <span className="px-2 py-1 text-xs font-medium border border-green-400 rounded group-hover:bg-green-400/10 transition-colors">
-                LATEST AI INTEL
+                LATEST AI NEWS
               </span>
             </div>
             <div className="flex-1 relative h-6">
