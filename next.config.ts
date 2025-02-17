@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
   },
   // Transpile modules
   transpilePackages: [],
+  // Enable strict mode
+  reactStrictMode: true,
+  // Enable server components
+  serverComponents: true,
 };
 
 export default nextConfig;

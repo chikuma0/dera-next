@@ -8,7 +8,7 @@ function getPreferredLocale(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const forcedLocale = searchParams.get('lang');
   if (forcedLocale && locales.includes(forcedLocale as any)) {
-    console.log('Using forced locale:', forcedLocale);
+    console.log('Middleware: Using forced locale:', forcedLocale);
     return forcedLocale;
   }
 
@@ -37,17 +37,21 @@ function getPreferredLocale(request: NextRequest) {
   );
 
   const selectedLocale = matchedLocale ? matchedLocale.locale : defaultLocale;
-  console.log('Selected locale from Accept-Language:', selectedLocale);
+  console.log('Middleware: Selected locale from Accept-Language:', selectedLocale);
   return selectedLocale;
 }
 
 export function middleware(request: NextRequest) {
+  console.log('Middleware: Processing request for URL:', request.url);
+  
   // Get locale from cookie, query param, or Accept-Language header
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  console.log('Middleware: Cookie locale:', cookieLocale);
   
   // If cookie exists and is valid, use it unless there's a lang query param
   const { searchParams } = new URL(request.url);
   const forcedLocale = searchParams.get('lang');
+  console.log('Middleware: Forced locale from query param:', forcedLocale);
   
   let locale;
   if (forcedLocale && locales.includes(forcedLocale as any)) {
@@ -57,6 +61,8 @@ export function middleware(request: NextRequest) {
   } else {
     locale = getPreferredLocale(request);
   }
+  
+  console.log('Middleware: Final selected locale:', locale);
   
   // Create response and set locale
   const response = NextResponse.next();
@@ -69,19 +75,18 @@ export function middleware(request: NextRequest) {
   });
   
   response.headers.set('x-locale', locale);
+  console.log('Middleware: Set x-locale header to:', locale);
 
   return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    // Match all paths except:
+    // - /api routes
+    // - /_next (Next.js internals)
+    // - /static (static files)
+    // - /favicon.ico, /robots.txt, etc.
+    '/((?!api|_next/static|_next/image|static|favicon.ico|robots.txt).*)',
   ],
 };
