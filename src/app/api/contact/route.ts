@@ -3,6 +3,10 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// In test mode, we can only send to verified emails
+const TEST_MODE = !process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
+const RECIPIENT_EMAIL = TEST_MODE ? 'chikuma@dera.ai' : 'hello@dera.ai';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -31,11 +35,12 @@ export async function POST(request: Request) {
 
     console.log('Attempting to send email with Resend...');
     console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+    console.log('Sending to:', RECIPIENT_EMAIL);
 
     // Send email using Resend
     const result = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'hello@dera.ai',
+      to: RECIPIENT_EMAIL,
       subject: `New Contact Form Submission from ${name}`,
       text: `
 Name: ${name}
@@ -44,6 +49,8 @@ Company: ${company || 'Not provided'}
 
 Message:
 ${message}
+
+Note: This email was ${TEST_MODE ? 'sent in test mode' : 'sent in production mode'}
       `,
       replyTo: email,
     });
