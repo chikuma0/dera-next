@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Bot, Workflow, Cpu, BarChart, Network, Brain, Terminal } from 'lucide-react';
+import { Bot, Workflow, Cpu, BarChart, Network, Brain } from 'lucide-react';
 import MatrixBackground from '@/components/hero/MatrixBackground';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 const solutions = [
   {
@@ -73,36 +74,9 @@ const solutions = [
   }
 ];
 
-const CTASection = {
-  title: "Let&apos;s Enhance What Makes You Unique",
-  description: "Take the first step towards amplifying your business capabilities with AI. Our team is ready to understand your needs and craft solutions that work for you.",
-  primaryAction: "Start Discussion",
-  layout: (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.8 }}
-      className="mt-16 text-center bg-green-400/5 rounded-lg p-8 border border-green-400/20"
-    >
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold mb-4">Let&apos;s Enhance What Makes You Unique</h2>
-        <p className="text-green-300 mb-8">
-          Take the first step towards amplifying your business capabilities with AI. 
-          Our team is ready to understand your needs and craft solutions that work for you.
-        </p>
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
-        >
-          Start Discussion
-        </motion.button>
-      </div>
-    </motion.div>
-  )
-};
-
 export default function SolutionsPage() {
+  const { translate } = useTranslation();
+
   return (
     <div className="relative min-h-screen bg-black text-green-400">
       <MatrixBackground />
@@ -116,11 +90,10 @@ export default function SolutionsPage() {
             className="text-center mb-16"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              AI Horsepower for Distributed Era
+              {translate('hero.phrases')[0]}
             </h1>
             <p className="text-xl text-green-300 max-w-3xl mx-auto">
-              Boutique AI studio for global business needs. We design purpose-built 
-              AI solutions to keep your business moving forward.
+              {translate('solutions.description')}
             </p>
           </motion.div>
 
@@ -153,10 +126,29 @@ export default function SolutionsPage() {
             ))}
           </div>
 
-          {/* Enhanced CTA Section */}
-          {CTASection.layout}
+          {/* CTA Section */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-16 text-center bg-green-400/5 rounded-lg p-8 border border-green-400/20"
+          >
+            <div className="max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4">{translate('solutions.cta.title')}</h2>
+              <p className="text-green-300 mb-8">
+                {translate('solutions.cta.description')}
+              </p>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
+              >
+                {translate('solutions.cta.action')}
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
   );
-} 
+}

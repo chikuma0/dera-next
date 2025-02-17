@@ -30,7 +30,12 @@
   },
   "solutions": {
     "title": "Our Solutions",
-    "description": "Discover how we can help your business grow"
+    "description": "Boutique AI studio for global business needs. We design purpose-built AI solutions to keep your business moving forward.",
+    "cta": {
+      "title": "Let's Enhance What Makes You Unique",
+      "description": "Take the first step towards amplifying your business capabilities with AI. Our team is ready to understand your needs and craft solutions that work for you.",
+      "action": "Start Discussion"
+    }
   },
   "portfolio": {
     "title": "Our Portfolio",
