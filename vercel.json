@@ -11,5 +11,16 @@
   "regions": ["hnd1"],
   "env": {
     "NEXT_PUBLIC_VERCEL_ENV": "production"
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-middleware-cache",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
 }
