@@ -29,12 +29,8 @@ const MatrixNewsTicker = ({ language }: MatrixNewsTickerProps) => {
         const response = await fetch(`/api/news?language=${activeLocale}`);
         const data = await response.json();
         if (mounted && data.success && data.data) {
-          const sortedNews = data.data
-            .sort((a: NewsItem, b: NewsItem) => 
-              new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
-            )
-            .slice(0, 10);
-          setNews(sortedNews);
+          // News items are already sorted by importance_score and limited to 10 from the API
+          setNews(data.data);
         }
       } catch (error) {
         console.error('Error fetching news:', error);
