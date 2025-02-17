@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
+  // Enable static JSON imports
+  experimental: {
+    typedRoutes: true,
+  },
+  // Transpile modules
+  transpilePackages: [],
 };
 
 export default nextConfig;
