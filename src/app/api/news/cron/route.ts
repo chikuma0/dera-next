@@ -1,6 +1,7 @@
 // src/app/api/news/cron/route.ts
 import { NextResponse } from 'next/server';
 import { fetchAndStoreNews } from '@/lib/news/fetcher';
+import { ArticleService } from '@/lib/services/articleService';
 
 // Vercel Cron handler
 export const runtime = 'edge';
@@ -22,6 +23,10 @@ export async function GET(request: Request) {
       fetchAndStoreNews('en'),
       fetchAndStoreNews('ja')
     ]);
+
+    // Update scores after fetching
+    const articleService = new ArticleService();
+    await articleService.updateArticleScores();
 
     return NextResponse.json({
       success: true,

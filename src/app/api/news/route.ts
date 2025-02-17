@@ -24,20 +24,29 @@ export async function GET(request: NextRequest) {
     // Ensure we always return an array, even if empty
     const newsArray = Array.isArray(news) ? news : [];
     
-    return Response.json({ 
-      success: true, 
-      data: newsArray 
+    return new Response(JSON.stringify({
+      success: true,
+      data: newsArray
+    }), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
   } catch (error) {
     console.error('API Route Error:', error);
     // Return an empty array with error status
-    return Response.json(
-      { 
-        success: false, 
+    return new Response(
+      JSON.stringify({
+        success: false,
         error: error instanceof Error ? error.message : 'Failed to fetch news',
-        data: [] 
-      },
-      { status: 500 }
+        data: []
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
 }

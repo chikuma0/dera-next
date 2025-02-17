@@ -24,9 +24,9 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      className="bg-black border-2 border-green-400 rounded-lg overflow-hidden max-w-3xl"
+      className="bg-black border-2 border-green-400 rounded-lg overflow-hidden max-w-3xl w-full"
     >
-      <div className="relative h-64">
+      <div className="relative h-48 sm:h-64">
         <Image
           src={project.image}
           alt={project.title}
@@ -38,29 +38,29 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
         />
       </div>
 
-      <div className="p-6">
-        <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
-        <p className="text-green-300 mb-4">{project.description}</p>
+      <div className="p-4 sm:p-6">
+        <h3 className="text-xl sm:text-2xl font-bold mb-2">{project.title}</h3>
+        <p className="text-green-300 text-sm sm:text-base mb-4">{project.description}</p>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4">
           {project.technologies.map((tech) => (
             <span
               key={tech}
-              className="px-3 py-1 text-sm bg-green-400 text-black rounded-full"
+              className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-green-400 text-black rounded-full"
             >
               {tech}
             </span>
           ))}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
           <motion.a
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             href={project.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-green-400 text-black rounded-lg hover:bg-green-300 transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-green-400 text-black rounded-lg hover:bg-green-300 transition-colors text-sm sm:text-base"
           >
             <ExternalLink size={16} />
             {translate('portfolio.visitSite')}
@@ -72,7 +72,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 border-2 border-green-400 rounded-lg hover:bg-green-400 hover:text-black transition-colors"
+              className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-green-400 rounded-lg hover:bg-green-400 hover:text-black transition-colors text-sm sm:text-base"
             >
               <Github size={16} />
               {translate('portfolio.viewCode')}

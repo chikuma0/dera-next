@@ -32,23 +32,23 @@ export function NewsItemCard({ item }: NewsItemCardProps) {
   };
 
   return (
-    <div className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-black/20">
+    <div className="p-4 border border-green-400/20 rounded-lg hover:border-green-400/40 transition-colors bg-black/50">
       <h3 className="text-lg font-semibold mb-2">
-        <a 
-          href={item.url} 
-          target="_blank" 
+        <a
+          href={item.url}
+          target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 hover:text-blue-300"
+          className="text-green-400 hover:text-green-300"
         >
           {item.title}
         </a>
       </h3>
       {item.summary && (
-        <p className="text-sm text-gray-400 mb-2 line-clamp-2">
+        <p className="text-sm text-green-300/80 mb-2 line-clamp-2">
           {item.summary}
         </p>
       )}
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-green-400/60">
         <span>{item.source}</span>
         <span className="mx-2">•</span>
         <time dateTime={getISOString(item.published_date)}>

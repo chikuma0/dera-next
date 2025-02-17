@@ -73,15 +73,15 @@ const HeroSection = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="relative z-10 text-center max-w-4xl"
+        className="relative z-10 text-center max-w-4xl px-4 sm:px-6 lg:px-8"
       >
-        <div className="mb-6">
-          <Terminal className="inline-block w-16 h-16 mb-4" />
+        <div className="mb-4 sm:mb-6">
+          <Terminal className="inline-block w-12 h-12 sm:w-16 sm:h-16 mb-4" />
         </div>
         
-        <h1 className="text-5xl font-bold mb-6 min-h-24">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 min-h-[4rem] sm:min-h-[6rem]">
           {text}
-          <span className={`inline-block w-2 h-8 ml-1 bg-green-400 ${showCursor ? 'opacity-100' : 'opacity-0'}`}>
+          <span className={`inline-block w-2 h-6 sm:h-8 ml-1 bg-green-400 ${showCursor ? 'opacity-100' : 'opacity-0'}`}>
           </span>
         </h1>
         
@@ -89,26 +89,26 @@ const HeroSection = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="text-xl mb-12 text-green-300"
+          className="text-lg sm:text-xl mb-8 sm:mb-12 text-green-300 px-4"
         >
           {translate('hero.subtitle')}
         </motion.p>
         
-        <div className="flex justify-center gap-6">
-          <Link href="/solutions">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+          <Link href="/solutions" className="w-full sm:w-auto">
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
+              className="w-full sm:w-auto bg-green-400 text-black px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
             >
               {translate('common.exploreSolutions')}
             </motion.button>
           </Link>
-          <Link href="/portfolio">
+          <Link href="/portfolio" className="w-full sm:w-auto">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border-2 border-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors"
+              className="w-full sm:w-auto border-2 border-green-400 px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors"
             >
               {translate('common.viewPortfolio')}
             </motion.button>
@@ -121,7 +121,7 @@ const HeroSection = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.8 }}
-        className="absolute bottom-8 left-0 right-0 z-20"
+        className="absolute bottom-4 sm:bottom-8 left-0 right-0 z-20"
       >
         <MatrixNewsTicker />
       </motion.div>

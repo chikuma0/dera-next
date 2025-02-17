@@ -56,8 +56,8 @@ export function NewsList({ language, autoRefresh }: NewsListProps) {
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="animate-pulse">
-            <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-            <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+            <div className="h-4 bg-green-400/20 rounded w-3/4 mb-2"></div>
+            <div className="h-4 bg-green-400/20 rounded w-1/2"></div>
           </div>
         ))}
       </div>
@@ -68,21 +68,21 @@ export function NewsList({ language, autoRefresh }: NewsListProps) {
     <div>
       <div className="flex justify-between items-center mb-4">
         {isRefreshing && (
-          <div className="text-sm text-[#4a9eff] animate-pulse pixel-font">
+          <div className="text-sm text-green-400 animate-pulse pixel-font">
             {translate('common.refreshing')}
           </div>
         )}
         <button
           onClick={() => fetchNews(true)}
           disabled={isRefreshing}
-          className="ml-auto px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          className="ml-auto px-3 py-1 bg-green-400/10 hover:bg-green-400/20 text-green-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm border border-green-400/20 hover:border-green-400/40"
         >
           {isRefreshing ? '...' : '↻ Refresh'}
         </button>
       </div>
       <NewsLeaderboard items={news} />
       {news.length === 0 && (
-        <div className="text-center text-[#4a9eff] pixel-font mt-8">
+        <div className="text-center text-green-400 pixel-font mt-8">
           NO NEWS FOUND
         </div>
       )}

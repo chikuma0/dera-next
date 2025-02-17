@@ -64,8 +64,8 @@ const MatrixNewsTicker = ({ language }: MatrixNewsTickerProps) => {
 
   if (isLoading) {
     return (
-      <div className="w-full text-green-400 py-3">
-        <div className="container mx-auto">
+      <div className="w-full text-green-400 py-2 sm:py-3">
+        <div className="container mx-auto px-4">
           <div className="h-8 animate-pulse bg-green-900/30 rounded"></div>
         </div>
       </div>
@@ -80,12 +80,12 @@ const MatrixNewsTicker = ({ language }: MatrixNewsTickerProps) => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full text-green-400 py-3"
+      className="w-full text-green-400 py-2 sm:py-3"
     >
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-4xl px-4">
         <Link href="/news" className="block group">
-          <div className="flex items-center space-x-2 px-4">
-            <div className="flex-shrink-0">
+          <div className="flex items-center space-x-2">
+            <div className="flex-shrink-0 hidden sm:block">
               <Terminal className="w-4 h-4" />
             </div>
             <div className="flex-shrink-0">
@@ -93,7 +93,7 @@ const MatrixNewsTicker = ({ language }: MatrixNewsTickerProps) => {
                 {translate('common.latestAiNews')}
               </span>
             </div>
-            <div className="flex-1 relative h-6">
+            <div className="flex-1 relative h-6 overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
@@ -103,16 +103,16 @@ const MatrixNewsTicker = ({ language }: MatrixNewsTickerProps) => {
                   transition={{ duration: 0.5 }}
                   className="absolute inset-0 flex items-center"
                 >
-                  <div className="hover:text-green-300 transition-colors truncate text-sm flex items-center gap-2">
+                  <div className="hover:text-green-300 transition-colors truncate text-sm flex items-center gap-2 w-full">
                     <span className="truncate">{news[currentIndex].title}</span>
-                    <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:inline-block">
                       {translate('common.viewAllNews')} →
                     </span>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
-            <div className="flex-shrink-0 text-sm font-mono">
+            <div className="flex-shrink-0 text-sm font-mono hidden sm:block">
               [{currentIndex + 1}/{news.length}]
             </div>
           </div>

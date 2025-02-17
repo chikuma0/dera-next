@@ -4,6 +4,7 @@ import { Header } from '@/components/ui/Header';
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { headers } from 'next/headers';
 import { Locale } from "@/i18n";
+import MatrixBackground from "@/components/hero/MatrixBackground";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LanguageProvider initialLocale={locale as Locale}>
+          <MatrixBackground />
           <Header />
           {children}
         </LanguageProvider>
