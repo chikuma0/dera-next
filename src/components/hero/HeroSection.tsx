@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
-import MatrixBackground from './MatrixBackground';
 import MatrixNewsTicker from './MatrixNewsTicker';
 import Link from 'next/link';
 import { useTranslation } from '@/contexts/LanguageContext';
@@ -65,9 +64,7 @@ const HeroSection = () => {
   }, [phrases]); 
 
   return (
-    <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">
-      <MatrixBackground />
-      
+    <div className="relative min-h-screen text-green-400 flex flex-col items-center justify-center p-4">
       {/* Main content */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
