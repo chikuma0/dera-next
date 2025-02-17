@@ -42,7 +42,7 @@ export function NewsLeaderboard({ items }: NewsLeaderboardProps) {
           <div className="text-center mb-8">
             <div className="inline-block relative">
               <h2 className="text-[#4a9eff] text-3xl font-bold pixel-font relative z-10 animate-pulse">
-                TOP NEWS RANKING
+                TOP STORIES
               </h2>
               <div className="absolute -inset-1 bg-[#4a9eff]/10 blur-sm" />
             </div>
@@ -73,33 +73,14 @@ export function NewsLeaderboard({ items }: NewsLeaderboardProps) {
                   <div className="w-14 h-14 bg-gradient-to-br from-[#4a9eff] to-[#2d5eff] rounded-lg flex items-center justify-center shadow-lg border-2 border-[#4a9eff]/50 animate-glow">
                     <span className="text-black text-2xl font-bold pixel-font">{index + 1}</span>
                   </div>
-                  {index === 0 && (
-                    <>
-                      <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-500 to-yellow-400 px-3 py-1 rounded-full transform rotate-12 animate-glow border-2 border-yellow-300">
-                        <span className="text-black text-xs font-bold pixel-font tracking-wider">TOP</span>
-                      </div>
-                      <div className="absolute -inset-2 border-2 border-[#4a9eff] rounded-lg animate-pulse opacity-50" />
-                    </>
-                  )}
                 </div>
                 
                 {/* Content */}
                 <div className="flex-grow">
                   <div className="flex items-center gap-3 mb-2">
-                    {/* Score Display */}
-                    <div className="flex items-center gap-2">
-                      {item.importance_score && (
-                        <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 px-3 py-1 rounded-full shadow-lg animate-glow relative">
-                          <div className="absolute inset-0 bg-yellow-500/20 rounded-full animate-pulse" />
-                          <span className="text-black font-bold pixel-font text-sm relative z-10">
-                            {Math.round(item.importance_score)} PTS
-                          </span>
-                          <div className="absolute -right-1 -top-1 w-2 h-2 bg-yellow-400 rounded-full animate-blink" />
-                        </div>
-                      )}
-                      <div className="text-[#4a9eff]/70 text-xs pixel-font">
-                        RANK #{index + 1}
-                      </div>
+                    {/* Rank Number */}
+                    <div className="text-[#4a9eff]/70 text-xs pixel-font">
+                      #{index + 1}
                     </div>
                     
                     {/* Time Indicator */}

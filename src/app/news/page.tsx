@@ -31,8 +31,7 @@ export default function NewsPage() {
         <TabsContent value="en" className="space-y-8">
           <Suspense fallback={<LoadingSpinner />}>
             <section>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold">{translate('news.topStories')}</h2>
+              <div className="flex justify-end items-center mb-6">
                 <div className="flex gap-2">
                   <select className="bg-white/5 rounded-lg px-3 py-1 text-sm">
                     <option value="latest">{translate('news.latest')}</option>
@@ -49,8 +48,7 @@ export default function NewsPage() {
         <TabsContent value="ja" className="space-y-8">
           <Suspense fallback={<LoadingSpinner />}>
             <section>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold">トップニュース</h2>
+              <div className="flex justify-end items-center mb-6">
                 <div className="flex gap-2">
                   <select className="bg-white/5 rounded-lg px-3 py-1 text-sm">
                     <option value="latest">最新</option>
