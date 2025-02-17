@@ -21,6 +21,15 @@
           "value": "no-cache"
         }
       ]
+    },
+    {
+      "source": "/i18n/locales/(.*).json",
+      "headers": [
+        {
+          "key": "cache-control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
     }
   ]
 }
