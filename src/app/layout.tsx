@@ -28,7 +28,6 @@ export default async function RootLayout({
 }>) {
   const headersList = await headers();
   const locale = headersList.get('x-locale') || 'en';
-  console.log('RootLayout: x-locale header is', locale);
 
   return (
     <html lang={locale}>
