@@ -7,6 +7,53 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const TEST_MODE = !process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
 const RECIPIENT_EMAIL = TEST_MODE ? 'chikuma@dera.ai' : 'hello@dera.ai';
 
+// Discord webhook for instant notifications
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+
+async function sendDiscordNotification(data: { name: string; email: string; company?: string; message: string }) {
+  if (!DISCORD_WEBHOOK_URL) return;
+
+  try {
+    await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        embeds: [{
+          title: `New Contact Form Submission from ${data.name}`,
+          color: 0x00ff00, // Green color
+          fields: [
+            {
+              name: 'Name',
+              value: data.name,
+              inline: true,
+            },
+            {
+              name: 'Email',
+              value: data.email,
+              inline: true,
+            },
+            {
+              name: 'Company',
+              value: data.company || 'Not provided',
+              inline: true,
+            },
+            {
+              name: 'Message',
+              value: data.message,
+            },
+          ],
+          timestamp: new Date().toISOString(),
+        }],
+      }),
+    });
+    console.log('Discord notification sent successfully');
+  } catch (error) {
+    console.error('Error sending Discord notification:', error);
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -33,11 +80,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Send Discord notification first (instant)
+    await sendDiscordNotification({ name, email, company, message });
+
     console.log('Attempting to send email with Resend...');
     console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
     console.log('Sending to:', RECIPIENT_EMAIL);
 
-    // Send email using Resend
+    // Send email using Resend (as backup)
     const result = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: RECIPIENT_EMAIL,
