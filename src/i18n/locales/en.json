@@ -43,5 +43,19 @@
     "description": "Check out our latest projects",
     "visitSite": "Visit Site",
     "viewCode": "View Code"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have a project in mind? We'd love to hear about it. Send us a message and we'll get back to you as soon as possible.",
+    "thankYou": "Thank You!",
+    "responseMessage": "We've received your message and will get back to you shortly.",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "company": "Company (Optional)",
+      "message": "Your Message",
+      "submit": "Send Message",
+      "submitting": "Sending..."
+    }
   }
 }
