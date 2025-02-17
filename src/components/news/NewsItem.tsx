@@ -1,15 +1,18 @@
 import { NewsItem } from '@/types/news';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 interface NewsItemCardProps {
   item: NewsItem;
 }
 
 export function NewsItemCard({ item }: NewsItemCardProps) {
+  const { translate } = useTranslation();
+
   // Format date based on language
   const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      return 'Invalid Date';
+      return translate('common.invalidDate');
     }
 
     const options: Intl.DateTimeFormatOptions = {

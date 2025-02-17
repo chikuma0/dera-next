@@ -10,7 +10,8 @@
     "viewAllNews": "View All News",
     "refreshing": "Refreshing...",
     "refreshNow": "Refresh Now",
-    "lastUpdated": "Last updated"
+    "lastUpdated": "Last updated",
+    "invalidDate": "Invalid Date"
   },
   "news": {
     "subtitle": "Curated updates from the world of Artificial Intelligence",
