@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Locale, TranslationKey } from '@/i18n';
 import { defaultLocale, t } from '@/i18n';
 
@@ -23,14 +23,25 @@ export function LanguageProvider({ children, initialLocale }: LanguageProviderPr
   const [locale, setLocale] = useState<Locale>(initialLocale);
 
   // Update locale when initialLocale changes
-  React.useEffect(() => {
+  useEffect(() => {
+    console.log('LanguageProvider: initialLocale changed to', initialLocale);
     setLocale(initialLocale);
   }, [initialLocale]);
 
-  const translate = (key: TranslationKey) => t(key, locale);
+  const translate = (key: TranslationKey) => {
+    console.log('LanguageProvider: translating key', key, 'for locale', locale);
+    return t(key, locale);
+  };
+
+  const contextValue = {
+    locale,
+    translate,
+  };
+
+  console.log('LanguageProvider: rendering with locale', locale);
 
   return (
-    <LanguageContext.Provider value={{ locale, translate }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
