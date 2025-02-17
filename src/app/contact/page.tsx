@@ -49,7 +49,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-green-400 pt-24 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 relative z-10">
+    <div className="min-h-screen text-green-400 pt-24 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 relative z-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ export default function ContactPage() {
                 id="name"
                 name="name"
                 required
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black/50 border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"
               />
             </div>
 
@@ -96,7 +96,7 @@ export default function ContactPage() {
                 id="email"
                 name="email"
                 required
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black/50 border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"
               />
             </div>
 
@@ -108,7 +108,7 @@ export default function ContactPage() {
                 type="text"
                 id="company"
                 name="company"
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black/50 border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"
               />
             </div>
 
@@ -121,7 +121,7 @@ export default function ContactPage() {
                 name="message"
                 required
                 rows={6}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 resize-none text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-black/50 border border-green-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 resize-none text-sm sm:text-base"
               />
             </div>
 

@@ -19,7 +19,7 @@ export default function PortfolioPage() {
   const { translate } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-black text-green-400">
+    <div className="min-h-screen text-green-400">
       <div className="max-w-7xl mx-auto pt-24 sm:pt-32 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

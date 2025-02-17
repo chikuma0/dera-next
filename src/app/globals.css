@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  background: #0a0a0a;
+  min-height: 100%;
+}
+
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
@@ -16,7 +21,7 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: transparent;
   font-family: var(--font-geist-sans), var(--font-geist-mono), monospace;
 }
 

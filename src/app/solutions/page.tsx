@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Bot, Workflow, Cpu, BarChart, Network, Brain } from 'lucide-react';
-import MatrixBackground from '@/components/hero/MatrixBackground';
 import { useTranslation } from '@/contexts/LanguageContext';
 
 const solutions = [
@@ -80,9 +79,7 @@ export default function SolutionsPage() {
   const router = useRouter();
 
   return (
-    <div className="relative min-h-screen bg-black text-green-400">
-      <MatrixBackground />
-      
+    <div className="relative min-h-screen text-green-400">
       <div className="relative z-10 pt-24 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
