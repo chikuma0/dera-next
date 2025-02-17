@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Github, ExternalLink } from 'lucide-react'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface Project {
   title: string
@@ -18,6 +19,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project }: ProjectCardProps) => {
+  const { translate } = useTranslation();
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -60,7 +63,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
             className="flex items-center gap-2 px-4 py-2 bg-green-400 text-black rounded-lg hover:bg-green-300 transition-colors"
           >
             <ExternalLink size={16} />
-            Visit Site
+            {translate('portfolio.visitSite')}
           </motion.a>
           {project.githubUrl && (
             <motion.a
@@ -72,7 +75,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
               className="flex items-center gap-2 px-4 py-2 border-2 border-green-400 rounded-lg hover:bg-green-400 hover:text-black transition-colors"
             >
               <Github size={16} />
-              Code
+              {translate('portfolio.viewCode')}
             </motion.a>
           )}
         </div>

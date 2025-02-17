@@ -39,6 +39,8 @@
   },
   "portfolio": {
     "title": "Our Portfolio",
-    "description": "Check out our latest projects"
+    "description": "Check out our latest projects",
+    "visitSite": "Visit Site",
+    "viewCode": "View Code"
   }
 }

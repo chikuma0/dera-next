@@ -39,6 +39,8 @@
   },
   "portfolio": {
     "title": "ポートフォリオ",
-    "description": "最新のプロジェクトをご覧ください"
+    "description": "最新のプロジェクトをご覧ください",
+    "visitSite": "サイトを見る",
+    "viewCode": "コードを見る"
   }
 }
