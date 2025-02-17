@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { Bot, Workflow, Cpu, BarChart, Network, Brain } from 'lucide-react';
 import MatrixBackground from '@/components/hero/MatrixBackground';
 import { useTranslation } from '@/contexts/LanguageContext';
@@ -76,6 +77,7 @@ const solutions = [
 
 export default function SolutionsPage() {
   const { translate } = useTranslation();
+  const router = useRouter();
 
   return (
     <div className="relative min-h-screen bg-black text-green-400">
@@ -138,9 +140,10 @@ export default function SolutionsPage() {
               <p className="text-sm sm:text-base text-green-300 mb-6 sm:mb-8">
                 {translate('solutions.cta.description')}
               </p>
-              <motion.button 
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => router.push('/contact')}
                 className="bg-green-400 text-black px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors text-sm sm:text-base"
               >
                 {translate('solutions.cta.action')}

@@ -22,6 +22,7 @@ export default function ContactPage() {
     };
 
     try {
+      console.log('Submitting form data:', data);
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -30,8 +31,11 @@ export default function ContactPage() {
         body: JSON.stringify(data),
       });
 
+      const responseData = await response.json();
+      console.log('API Response:', { status: response.status, data: responseData });
+      
       if (!response.ok) {
-        throw new Error('Failed to submit form');
+        throw new Error(`Failed to submit form: ${responseData.error || 'Unknown error'}`);
       }
 
       setSubmitted(true);
@@ -45,7 +49,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-green-400 pt-24 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6">
+    <div className="min-h-screen bg-black text-green-400 pt-24 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 relative z-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -55,9 +55,10 @@ const MatrixBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed top-0 left-0 w-full h-full opacity-20"
-      style={{ 
-        zIndex: 0,
-        mixBlendMode: 'screen'
+      style={{
+        zIndex: -1,
+        mixBlendMode: 'screen',
+        pointerEvents: 'none'
       }}
     />
   );

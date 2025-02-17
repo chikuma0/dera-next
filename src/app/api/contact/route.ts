@@ -84,12 +84,16 @@ export async function POST(request: Request) {
     await sendDiscordNotification({ name, email, company, message });
 
     console.log('Attempting to send email with Resend...');
-    console.log('RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
-    console.log('Sending to:', RECIPIENT_EMAIL);
+    console.log('Environment variables:', {
+      RESEND_API_KEY_EXISTS: !!process.env.RESEND_API_KEY,
+      DISCORD_WEBHOOK_EXISTS: !!process.env.DISCORD_WEBHOOK_URL,
+      TEST_MODE,
+      RECIPIENT_EMAIL,
+    });
 
     // Send email using Resend (as backup)
     const result = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: TEST_MODE ? 'onboarding@resend.dev' : 'hello@dera.ai',
       to: RECIPIENT_EMAIL,
       subject: `New Contact Form Submission from ${name}`,
       text: `
@@ -105,7 +109,10 @@ Note: This email was ${TEST_MODE ? 'sent in test mode' : 'sent in production mod
       replyTo: email,
     });
 
-    console.log('Resend API response:', result);
+    console.log('Resend API response:', JSON.stringify(result, null, 2));
+    
+    // Log the full response for debugging
+    console.log('Full Resend API response:', JSON.stringify(result, null, 2));
 
     return NextResponse.json(
       { message: 'Form submitted successfully' },

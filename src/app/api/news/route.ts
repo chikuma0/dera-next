@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { fetchAndStoreNews, getLatestNews } from '@/lib/news/fetcher';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const language = (searchParams.get('language') as 'en' | 'ja') || 'en';

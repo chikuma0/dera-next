@@ -11,19 +11,18 @@ interface NewsListProps {
   autoRefresh?: number; // Refresh interval in seconds
 }
 
-export function NewsList({ language, autoRefresh }: NewsListProps) {
-  const { locale: contextLocale, translate } = useTranslation();
+export function NewsList({ language = 'en', autoRefresh }: NewsListProps) {
+  const { translate } = useTranslation();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Use provided language prop or fall back to context locale
-  const activeLocale = language || contextLocale;
-
-  const fetchNews = async (refresh: boolean = false) => {
+  const fetchNews = React.useCallback(async (refresh: boolean = false) => {
+    if (!language) return;
+    
     try {
       setIsRefreshing(refresh);
-      const response = await fetch(`/api/news?language=${activeLocale}${refresh ? '&refresh=true' : ''}`);
+      const response = await fetch(`/api/news?language=${language}${refresh ? '&refresh=true' : ''}`);
       const data = await response.json();
       if (data.success && data.data) {
         setNews(data.data);
@@ -34,22 +33,26 @@ export function NewsList({ language, autoRefresh }: NewsListProps) {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, [language]);
 
+  // Handle language changes and initial fetch
   useEffect(() => {
+    console.log('NewsList useEffect - language changed:', language);
+    setIsLoading(true);
+    setNews([]); // Clear current news before fetching new ones
     fetchNews();
-  }, [activeLocale]);
+  }, [language, fetchNews]); // Include fetchNews since it's properly memoized
 
-  // Set up auto-refresh if interval is provided
+  // Auto-refresh setup
   useEffect(() => {
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        fetchNews(true);
-      }, autoRefresh * 1000);
+    if (!autoRefresh) return;
 
-      return () => clearInterval(interval);
-    }
-  }, [autoRefresh, activeLocale]);
+    const interval = setInterval(() => {
+      fetchNews(true);
+    }, autoRefresh * 1000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, fetchNews]);
 
   if (isLoading) {
     return (
@@ -66,20 +69,6 @@ export function NewsList({ language, autoRefresh }: NewsListProps) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        {isRefreshing && (
-          <div className="text-sm text-green-400 animate-pulse pixel-font">
-            {translate('common.refreshing')}
-          </div>
-        )}
-        <button
-          onClick={() => fetchNews(true)}
-          disabled={isRefreshing}
-          className="ml-auto px-3 py-1 bg-green-400/10 hover:bg-green-400/20 text-green-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm border border-green-400/20 hover:border-green-400/40"
-        >
-          {isRefreshing ? '...' : '↻ Refresh'}
-        </button>
-      </div>
       <NewsLeaderboard items={news} />
       {news.length === 0 && (
         <div className="text-center text-green-400 pixel-font mt-8">
