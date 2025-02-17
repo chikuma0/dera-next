@@ -1,46 +1,46 @@
 {
   "common": {
-    "solutions": "ソリューション",
-    "portfolio": "ポートフォリオ",
+    "solutions": "サービス",
+    "portfolio": "活用事例",
     "news": "ニュース",
     "contact": "お問い合わせ",
-    "exploreSolutions": "ソリューションを探る",
-    "viewPortfolio": "ポートフォリオを見る",
-    "latestAiNews": "最新のAIニュース",
+    "exploreSolutions": "サービス一覧",
+    "viewPortfolio": "活用事例を見る",
+    "latestAiNews": "最新AIニュース",
     "viewAllNews": "すべてのニュースを見る",
     "refreshing": "更新中...",
-    "refreshNow": "今すぐ更新",
-    "lastUpdated": "最終更新",
+    "refreshNow": "更新する",
+    "lastUpdated": "最終更新日",
     "invalidDate": "無効な日付"
   },
   "news": {
-    "subtitle": "人工知能の世界からの厳選された最新情報",
+    "subtitle": "厳選された最新AIニュース",
     "topStories": "トップニュース",
     "latest": "最新",
     "popular": "人気",
     "trending": "トレンド"
   },
   "hero": {
-    "subtitle": "AIを活用してビジネスビジョンを現実に変える",
+    "subtitle": "AIがあなたのビジネスを加速させる",
     "phrases": [
-      "分散時代のためのAIパワー",
-      "未来に備えたソリューションの構築",
-      "不可能を可能に",
-      "ビジネスとAIの架け橋"
+      "AI Horsepower for Distributed Era",
+      "Build Future-Ready Solutions",
+      "Transforming Impossible",
+      "Bridging Business and AI"
     ]
   },
   "solutions": {
-    "title": "ソリューション",
-    "description": "グローバルビジネスのためのブティックAIスタジオ。ビジネスの前進を支える目的に特化したAIソリューションを設計します。",
+    "title": "サービス",
+    "description": "ビジネスニーズに応えるAIスタジオ。あなたのビジネスのためのAIソリューションを設計します。",
     "cta": {
-      "title": "あなたのユニークな強みを高めましょう",
-      "description": "AIであなたのビジネス能力を高める第一歩を踏み出しましょう。私たちのチームがあなたのニーズを理解し、最適なソリューションを提案します。",
-      "action": "相談を始める"
+      "title": "AIを日常に取り込む",
+      "description": "AIであなたのビジネスの可能性を最大化。エキスパートがあなたのニーズを理解し現実的な解決策を提案します。",
+      "action": "無料で相談する"
     }
   },
   "portfolio": {
-    "title": "ポートフォリオ",
-    "description": "最新のプロジェクトをご覧ください",
+    "title": "活用事例",
+    "description": "最新プロジェクトをご覧ください",
     "visitSite": "サイトを見る",
     "viewCode": "コードを見る"
   }
