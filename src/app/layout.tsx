@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from '@/components/ui/Header';
-import { LanguageProvider } from "@/i18n/LanguageContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { headers } from 'next/headers';
 import { Locale } from "@/i18n";
 import "./globals.css";

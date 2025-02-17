@@ -1,20 +1,34 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal } from 'lucide-react';
 import { NewsItem } from '@/types/news';
 import Link from 'next/link';
+import { useTranslation } from '@/contexts/LanguageContext';
+import { Locale } from '@/i18n';
 
-const MatrixNewsTicker = () => {
+interface MatrixNewsTickerProps {
+  language?: Locale;
+}
+
+const MatrixNewsTicker = ({ language }: MatrixNewsTickerProps) => {
+  const { locale: contextLocale, translate } = useTranslation();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Use provided language prop or fall back to context locale
+  const activeLocale = language || contextLocale;
+
   useEffect(() => {
+    let mounted = true;
+
     const fetchNews = async () => {
       try {
-        const response = await fetch('/api/news?language=en');
+        const response = await fetch(`/api/news?language=${activeLocale}`);
         const data = await response.json();
-        if (data.success && data.data) {
+        if (mounted && data.success && data.data) {
           const sortedNews = data.data
             .sort((a: NewsItem, b: NewsItem) => 
               new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
@@ -25,12 +39,18 @@ const MatrixNewsTicker = () => {
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchNews();
-  }, []);
+
+    return () => {
+      mounted = false;
+    };
+  }, [activeLocale]);
 
   useEffect(() => {
     if (news.length > 0) {
@@ -70,7 +90,7 @@ const MatrixNewsTicker = () => {
             </div>
             <div className="flex-shrink-0">
               <span className="px-2 py-1 text-xs font-medium border border-green-400 rounded group-hover:bg-green-400/10 transition-colors">
-                LATEST AI NEWS
+                {translate('common.latestAiNews')}
               </span>
             </div>
             <div className="flex-1 relative h-6">
@@ -86,7 +106,7 @@ const MatrixNewsTicker = () => {
                   <div className="hover:text-green-300 transition-colors truncate text-sm flex items-center gap-2">
                     <span className="truncate">{news[currentIndex].title}</span>
                     <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">
-                      View All News →
+                      {translate('common.viewAllNews')} →
                     </span>
                   </div>
                 </motion.div>

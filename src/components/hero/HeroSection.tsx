@@ -6,19 +6,17 @@ import { motion } from 'framer-motion';
 import MatrixBackground from './MatrixBackground';
 import MatrixNewsTicker from './MatrixNewsTicker';
 import Link from 'next/link';
-
-const TYPING_PHRASES = [
-  'AI Horsepower for Distributed Era',
-  'Transforming Impossible to Inevitable',
-  'Bridging Business and AI',
-  'Build Future-Ready Solutions'
-];
+import { useTranslation } from '@/contexts/LanguageContext';
 
 const HeroSection = () => {
+  const { translate } = useTranslation();
   const [text, setText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
   
-  const phrases = useMemo(() => TYPING_PHRASES, []);
+  const phrases = useMemo(() => {
+    const translatedPhrases = translate('hero.phrases');
+    return Array.isArray(translatedPhrases) ? translatedPhrases : [];
+  }, [translate]);
   
   useEffect(() => {
     let currentPhraseIndex = 0;
@@ -51,7 +49,9 @@ const HeroSection = () => {
       timeoutId = setTimeout(type, typeSpeed);
     };
 
-    type();
+    if (phrases.length > 0) {
+      type();
+    }
     
     // Cursor blink effect
     const cursorInterval = setInterval(() => {
@@ -91,7 +91,7 @@ const HeroSection = () => {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="text-xl mb-12 text-green-300"
         >
-          Leveraging AI to transform your business vision into reality
+          {translate('hero.subtitle')}
         </motion.p>
         
         <div className="flex justify-center gap-6">
@@ -101,7 +101,7 @@ const HeroSection = () => {
               whileTap={{ scale: 0.95 }}
               className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
             >
-              Explore Solutions
+              {translate('common.exploreSolutions')}
             </motion.button>
           </Link>
           <Link href="/portfolio">
@@ -110,7 +110,7 @@ const HeroSection = () => {
               whileTap={{ scale: 0.95 }}
               className="border-2 border-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors"
             >
-              View Portfolio
+              {translate('common.viewPortfolio')}
             </motion.button>
           </Link>
         </div>
