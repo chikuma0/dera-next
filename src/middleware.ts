@@ -48,14 +48,32 @@ export function middleware(request: NextRequest) {
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
   console.log('Middleware: Cookie locale:', cookieLocale);
   
-  // If cookie exists and is valid, use it unless there's a lang query param
-  const { searchParams } = new URL(request.url);
-  const forcedLocale = searchParams.get('lang');
+  // Parse URL and search params
+  const url = new URL(request.url);
+  const forcedLocale = url.searchParams.get('lang');
   console.log('Middleware: Forced locale from query param:', forcedLocale);
   
   let locale;
   if (forcedLocale && locales.includes(forcedLocale as any)) {
     locale = forcedLocale;
+    
+    // If locale is being changed via query param, force a reload
+    if (cookieLocale && cookieLocale !== locale) {
+      console.log('Middleware: Locale changed, forcing reload');
+      
+      // Create response that redirects to the same URL
+      const response = NextResponse.redirect(url);
+      
+      // Set the new locale cookie
+      response.cookies.set('NEXT_LOCALE', locale, {
+        path: '/',
+        maxAge: 31536000, // 1 year in seconds
+        sameSite: 'lax'
+      });
+      
+      response.headers.set('x-locale', locale);
+      return response;
+    }
   } else if (cookieLocale && locales.includes(cookieLocale as any)) {
     locale = cookieLocale;
   } else {
