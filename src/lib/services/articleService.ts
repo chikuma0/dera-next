@@ -5,11 +5,18 @@ import { validateEnv } from '../config/env';
 
 export class ArticleService {
   private keywordWeights: Record<string, number> = {
-    // Core AI & Technical Capabilities (70-100 points)
-    'new ai': 100,
-    'ai feature': 100,
-    'ai breakthrough': 100,
-    'language model': 95,
+    // Innovative & Exciting Core Capabilities (70-100 points)
+    'breakthrough': 100,    // Generic breakthrough
+    'revolutionary': 100,   // Revolutionary development
+    'world first': 100,    // World's first achievement
+    'innovation': 95,      // Innovation mention
+    'groundbreaking': 95,  // Groundbreaking development
+    'pioneering': 95,      // Pioneering work
+    'milestone': 90,       // Important milestone
+    'new ai': 100,         // New AI development
+    'ai feature': 100,     // New AI feature
+    'ai breakthrough': 100, // AI breakthrough
+    'language model': 95,   // Language model
     'artificial intelligence': 95,
     'ai advancement': 95,
     'foundation model': 90,
@@ -19,9 +26,9 @@ export class ArticleService {
     'chatbot': 85,
     'grok': 85,
     'revolutionary ai': 90,
-    'ai': 80,           // Basic AI mention
-    'robot': 75,        // Related tech
-    'automation': 75,   // Related concept
+    'ai': 80,              // Basic AI mention
+    'robot': 80,           // Increased robot relevance
+    'automation': 80,      // Increased automation relevance
     'algorithm': 85,    // Technical term
     'machine learning': 90,
     'ml': 90,
@@ -80,7 +87,15 @@ export class ArticleService {
     'performance': 75,
     'optimization': 75,
 
-    // Japanese Core AI & Technical (70-100 points)
+    // Japanese Innovative & Technical (70-100 points)
+    '世界初': 100,        // world's first
+    '画期的': 100,        // groundbreaking
+    '革新的': 100,        // innovative
+    '革命的': 100,        // revolutionary
+    'ブレークスルー': 100, // breakthrough
+    '先駆的': 95,         // pioneering
+    '最先端': 95,         // cutting-edge
+    '次世代': 95,         // next-generation
     '生成AI': 100,        // generative AI
     'AI機能': 100,        // AI feature
     'AI革新': 100,        // AI breakthrough
@@ -164,14 +179,15 @@ export class ArticleService {
     const now = new Date();
     const diffDays = (now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60 * 24);
     
-    if (diffDays < 1) return 1.0;     // Breaking news
-    if (diffDays < 2) return 0.95;    // Very recent (last 48 hours)
-    if (diffDays < 4) return 0.85;    // Recent (2-4 days)
-    if (diffDays < 7) return 0.75;    // This week
-    if (diffDays < 10) return 0.65;   // Last week
-    if (diffDays < 14) return 0.5;    // Two weeks
-    if (diffDays < 21) return 0.35;   // Three weeks
-    return 0.2;                       // Older
+    if (diffDays < 0.5) return 1.2;   // Breaking news (last 12 hours)
+    if (diffDays < 1) return 1.1;     // Very fresh (last 24 hours)
+    if (diffDays < 2) return 1.0;     // Recent (last 48 hours)
+    if (diffDays < 4) return 0.9;     // This week
+    if (diffDays < 7) return 0.8;     // Last week
+    if (diffDays < 10) return 0.6;    // More than a week
+    if (diffDays < 14) return 0.4;    // Two weeks
+    if (diffDays < 21) return 0.2;    // Three weeks
+    return 0.1;                       // Older
   }
 
   private calculateKeywordScore(text: string): number {
@@ -224,11 +240,27 @@ export class ArticleService {
     if (matchedWeights.length === 0) {
       return 0;
     } else if (matchedWeights.length === 1) {
-      return Math.max(matchedWeights[0] * 0.95, 65);
+      return Math.max(matchedWeights[0], 65);
     } else {
+      // Sort weights in descending order
+      matchedWeights.sort((a, b) => b - a);
+      
+      // Calculate weighted average with diminishing returns
       const topScore = matchedWeights[0];
-      const secondScore = matchedWeights[1] || matchedWeights[0];
-      return Math.max((topScore * 0.85 + secondScore * 0.15), 75);
+      const secondScore = matchedWeights[1];
+      const remainingScores = matchedWeights.slice(2);
+      
+      let totalScore = topScore * 0.7 + secondScore * 0.2;
+      
+      // Add bonus for additional matches with diminishing returns
+      if (remainingScores.length > 0) {
+        const bonusScore = remainingScores.reduce((acc, score, index) => {
+          return acc + (score * (0.1 / Math.pow(2, index)));
+        }, 0);
+        totalScore += bonusScore;
+      }
+      
+      return Math.min(Math.max(totalScore, 75), 120); // Cap at 120 for exceptional articles
     }
   }
 
