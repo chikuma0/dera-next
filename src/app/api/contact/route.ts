@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     await resend.emails.send({
-      from: 'Dera Contact Form <contact@dera.ai>',
+      from: 'onboarding@resend.dev',
       to: 'hello@dera.ai',
       subject: `New Contact Form Submission from ${name}`,
       text: `
