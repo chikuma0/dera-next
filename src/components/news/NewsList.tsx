@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { NewsItem } from '@/types/news';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { Locale } from '@/i18n';
+import { NewsLeaderboard } from './NewsLeaderboard';
 
 interface NewsListProps {
   language?: Locale;
@@ -64,51 +65,25 @@ export function NewsList({ language, autoRefresh }: NewsListProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {isRefreshing && (
-        <div className="text-sm text-green-400 animate-pulse">
-          {translate('common.refreshing')}
-        </div>
-      )}
-      {news.map((item) => (
-        <article key={item.id} className="group">
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block"
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex-1">
-                <h3 className="text-lg font-medium text-green-400 group-hover:text-green-300 transition-colors">
-                  {item.title}
-                </h3>
-                <p className="mt-1 text-sm text-gray-400 line-clamp-2">
-                  {item.summary}
-                </p>
-                <div className="mt-2 flex items-center gap-4">
-                  <span className="text-xs text-gray-500">
-                    {new Date(item.published_date).toLocaleDateString(
-                      activeLocale === 'ja' ? 'ja-JP' : 'en-US',
-                      {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      }
-                    )}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {item.source}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </article>
-      ))}
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        {isRefreshing && (
+          <div className="text-sm text-[#4a9eff] animate-pulse pixel-font">
+            {translate('common.refreshing')}
+          </div>
+        )}
+        <button
+          onClick={() => fetchNews(true)}
+          disabled={isRefreshing}
+          className="ml-auto px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+        >
+          {isRefreshing ? '...' : '↻ Refresh'}
+        </button>
+      </div>
+      <NewsLeaderboard items={news} />
       {news.length === 0 && (
-        <div className="text-center text-gray-500">
-          No news articles found.
+        <div className="text-center text-[#4a9eff] pixel-font mt-8">
+          NO NEWS FOUND
         </div>
       )}
     </div>
