@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { NewsItem } from '@/types/news';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { Locale } from '@/i18n';
-import { NewsLeaderboard } from '@/components/news/NewsLeaderboard';
+import { NewsLeaderboard } from './NewsLeaderboard';
 
 interface NewsListProps {
   language?: Locale;
