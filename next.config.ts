@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
       test: /\.(woff|woff2|eot|ttf|otf)$/i,
       type: 'asset/resource',
     });
+    // Ensure JSON files are processed
+    config.module.rules.push({
+      test: /\.json$/,
+      type: 'json',
+    });
     return config;
   },
   // Enable static JSON imports
@@ -18,6 +23,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Enable server components
   serverComponents: true,
-};
+}
 
 export default nextConfig;
