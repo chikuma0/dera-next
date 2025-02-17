@@ -5,30 +5,15 @@ import { Logo } from './Logo'
 import { useTranslation } from '@/contexts/LanguageContext'
 import { Globe } from 'lucide-react';
 import { TranslationKey } from '@/i18n';
-import { useRouter } from 'next/navigation';
 
 export function Header() {
   const { locale, translate } = useTranslation();
-  const router = useRouter();
 
   const handleLanguageChange = () => {
     // Toggle between en and ja
     const newLocale = locale === 'en' ? 'ja' : 'en';
-    console.log('Header: Changing language to', newLocale);
-    
-    // Get current path and search params
-    const currentPath = window.location.pathname;
-    const searchParams = new URLSearchParams(window.location.search);
-    
-    // Update lang parameter
-    searchParams.set('lang', newLocale);
-    
-    // Construct new URL
-    const newUrl = `${currentPath}?${searchParams.toString()}`;
-    console.log('Header: Navigating to', newUrl);
-    
-    // Use router.push to trigger a client-side navigation
-    router.push(newUrl);
+    // Simply reload the page with the new locale
+    window.location.href = `${window.location.pathname}?lang=${newLocale}`;
   };
 
   const navItems: Array<{ href: string; label: TranslationKey }> = [

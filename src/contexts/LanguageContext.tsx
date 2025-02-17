@@ -24,24 +24,14 @@ export function LanguageProvider({ children, initialLocale }: LanguageProviderPr
 
   // Update locale when initialLocale changes
   useEffect(() => {
-    console.log('LanguageProvider: initialLocale changed to', initialLocale);
     setLocale(initialLocale);
   }, [initialLocale]);
 
-  const translate = (key: TranslationKey) => {
-    console.log('LanguageProvider: translating key', key, 'for locale', locale);
-    return t(key, locale);
-  };
-
-  const contextValue = {
-    locale,
-    translate,
-  };
-
-  console.log('LanguageProvider: rendering with locale', locale);
+  // Simple translation function
+  const translate = (key: TranslationKey) => t(key, locale);
 
   return (
-    <LanguageContext.Provider value={contextValue}>
+    <LanguageContext.Provider value={{ locale, translate }}>
       {children}
     </LanguageContext.Provider>
   );
