@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clear Digest Cache</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #0f0f1a;
+      color: #e0e0ff;
+    }
+    .container {
+      background-color: #1a1a2e;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    h1 {
+      color: #a78bfa;
+      text-align: center;
+    }
+    .success {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .button {
+      display: inline-block;
+      background-color: #7c3aed;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      margin: 10px 0;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #6d28d9;
+    }
+    .center {
+      text-align: center;
+    }
+    .info {
+      background-color: #1e293b;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+    }
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #1e293b;
+      border-radius: 4px 4px 0 0;
+      margin-right: 5px;
+    }
+    .tab.active {
+      background-color: #7c3aed;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .status-box {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 4px;
+      background-color: #1e293b;
+    }
+    .status-item {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+    .status-icon {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+    .status-icon.success {
+      color: #10b981;
+    }
+    .status-icon.pending {
+      color: #f59e0b;
+    }
+    .status-icon.error {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Clear Digest Cache</h1>
+    <p>If you're seeing outdated content or experiencing issues with the news digests, use this tool to clear the cache and reload the pages with the latest content from the server.</p>
+    
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('all')">All Digests</div>
+      <div class="tab" onclick="showTab('sonar')">Sonar Digest</div>
+      <div class="tab" onclick="showTab('grok')">Grok Digest</div>
+      <div class="tab" onclick="showTab('status')">Cache Status</div>
+    </div>
+    
+    <div id="all-tab" class="tab-content active">
+      <div class="info">
+        <p>This will clear the cache for all digests and update the timestamp file to ensure you see the latest content.</p>
+      </div>
+      
+      <div class="center">
+        <button id="clearAllButton" class="button">Clear All Caches</button>
+      </div>
+      
+      <div class="center" style="margin-top: 20px;">
+        <a href="/news/sonar-digest?nocache=true" class="button">View Sonar Digest</a>
+        <a href="/news/sonar-digest?source=twitter-enhanced&nocache=true" class="button">View Twitter-Enhanced Sonar Digest</a>
+        <a href="/news/grok-digest?nocache=true" class="button">View Grok Digest</a>
+      </div>
+    </div>
+    
+    <div id="sonar-tab" class="tab-content">
+      <div class="info">
+        <p>This will clear the Sonar Digest cache and reload the page with a cache-busting parameter to ensure you see the latest content.</p>
+      </div>
+      
+      <div class="center">
+        <button id="clearSonarButton" class="button">Clear Sonar Cache</button>
+      </div>
+      
+      <div class="center" style="margin-top: 20px;">
+        <a href="/news/sonar-digest?nocache=true" class="button">View Sonar Digest</a>
+        <a href="/news/sonar-digest?source=twitter-enhanced&nocache=true" class="button">View Twitter-Enhanced Sonar Digest</a>
+      </div>
+    </div>
+    
+    <div id="grok-tab" class="tab-content">
+      <div class="info">
+        <p>This will clear the Grok Digest cache and reload the page with a cache-busting parameter to ensure you see the latest content.</p>
+      </div>
+      
+      <div class="center">
+        <button id="clearGrokButton" class="button">Clear Grok Cache</button>
+      </div>
+      
+      <div class="center" style="margin-top: 20px;">
+        <a href="/news/grok-digest?nocache=true" class="button">View Grok Digest</a>
+      </div>
+    </div>
+    
+    <div id="status-tab" class="tab-content">
+      <div class="info">
+        <p>This shows the current status of the digest caches in your browser.</p>
+      </div>
+      
+      <div class="status-box">
+        <div class="status-item" id="sonarStatus">
+          <span class="status-icon pending">⟳</span>
+          <span>Sonar Digest: Checking...</span>
+        </div>
+        <div class="status-item" id="sonarTwitterStatus">
+          <span class="status-icon pending">⟳</span>
+          <span>Twitter-Enhanced Sonar Digest: Checking...</span>
+        </div>
+        <div class="status-item" id="grokStatus">
+          <span class="status-icon pending">⟳</span>
+          <span>Grok Digest: Checking...</span>
+        </div>
+        <div class="status-item" id="timestampStatus">
+          <span class="status-icon pending">⟳</span>
+          <span>Timestamp File: Checking...</span>
+        </div>
+      </div>
+      
+      <div class="center" style="margin-top: 20px;">
+        <button id="refreshStatusButton" class="button">Refresh Status</button>
+      </div>
+    </div>
+    
+    <div id="status" class="center" style="margin-top: 20px;"></div>
+  </div>
+  
+  <script>
+    // Show the selected tab
+    function showTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active class from all tab buttons
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show the selected tab
+      document.getElementById(tabName + '-tab').classList.add('active');
+      
+      // Add active class to the selected tab button
+      document.querySelectorAll('.tab').forEach(tab => {
+        if (tab.textContent.toLowerCase().includes(tabName)) {
+          tab.classList.add('active');
+        }
+      });
+      
+      // If showing the status tab, refresh the status
+      if (tabName === 'status') {
+        checkCacheStatus();
+      }
+    }
+    
+    // Clear the Sonar digest cache
+    document.getElementById('clearSonarButton').addEventListener('click', function() {
+      // Clear the Sonar digest from localStorage
+      localStorage.removeItem('sonarDigest');
+      localStorage.removeItem('sonarDigest_timestamp');
+      localStorage.removeItem('sonarDigest_twitter-enhanced');
+      localStorage.removeItem('sonarDigest_twitter-enhanced_timestamp');
+      
+      document.getElementById('status').innerHTML = '<span class="success">Sonar Digest cache cleared successfully!</span>';
+      
+      // Update the status if the status tab is active
+      if (document.getElementById('status-tab').classList.contains('active')) {
+        checkCacheStatus();
+      }
+    });
+    
+    // Clear the Grok digest cache
+    document.getElementById('clearGrokButton').addEventListener('click', function() {
+      // Clear the Grok digest from localStorage
+      localStorage.removeItem('grokDigest');
+      localStorage.removeItem('grokDigestTimestamp');
+      
+      document.getElementById('status').innerHTML = '<span class="success">Grok Digest cache cleared successfully!</span>';
+      
+      // Update the status if the status tab is active
+      if (document.getElementById('status-tab').classList.contains('active')) {
+        checkCacheStatus();
+      }
+    });
+    
+    // Clear all caches
+    document.getElementById('clearAllButton').addEventListener('click', function() {
+      // Clear all digests from localStorage
+      localStorage.removeItem('sonarDigest');
+      localStorage.removeItem('sonarDigest_timestamp');
+      localStorage.removeItem('sonarDigest_twitter-enhanced');
+      localStorage.removeItem('sonarDigest_twitter-enhanced_timestamp');
+      localStorage.removeItem('grokDigest');
+      localStorage.removeItem('grokDigestTimestamp');
+      
+      document.getElementById('status').innerHTML = '<span class="success">All digest caches cleared successfully!</span>';
+      
+      // Update the status if the status tab is active
+      if (document.getElementById('status-tab').classList.contains('active')) {
+        checkCacheStatus();
+      }
+    });
+    
+    // Refresh the status
+    document.getElementById('refreshStatusButton').addEventListener('click', function() {
+      checkCacheStatus();
+    });
+    
+    // Check the cache status
+    function checkCacheStatus() {
+      // Check Sonar Digest
+      const sonarDigest = localStorage.getItem('sonarDigest');
+      const sonarTimestamp = localStorage.getItem('sonarDigest_timestamp');
+      
+      if (sonarDigest && sonarTimestamp) {
+        const timestamp = new Date(parseInt(sonarTimestamp, 10));
+        document.getElementById('sonarStatus').innerHTML = `
+          <span class="status-icon success">✓</span>
+          <span>Sonar Digest: Cached on ${timestamp.toLocaleString()}</span>
+        `;
+      } else {
+        document.getElementById('sonarStatus').innerHTML = `
+          <span class="status-icon error">✗</span>
+          <span>Sonar Digest: Not cached</span>
+        `;
+      }
+      
+      // Check Twitter-Enhanced Sonar Digest
+      const sonarTwitterDigest = localStorage.getItem('sonarDigest_twitter-enhanced');
+      const sonarTwitterTimestamp = localStorage.getItem('sonarDigest_twitter-enhanced_timestamp');
+      
+      if (sonarTwitterDigest && sonarTwitterTimestamp) {
+        const timestamp = new Date(parseInt(sonarTwitterTimestamp, 10));
+        document.getElementById('sonarTwitterStatus').innerHTML = `
+          <span class="status-icon success">✓</span>
+          <span>Twitter-Enhanced Sonar Digest: Cached on ${timestamp.toLocaleString()}</span>
+        `;
+      } else {
+        document.getElementById('sonarTwitterStatus').innerHTML = `
+          <span class="status-icon error">✗</span>
+          <span>Twitter-Enhanced Sonar Digest: Not cached</span>
+        `;
+      }
+      
+      // Check Grok Digest
+      const grokDigest = localStorage.getItem('grokDigest');
+      const grokTimestamp = localStorage.getItem('grokDigestTimestamp');
+      
+      if (grokDigest && grokTimestamp) {
+        const timestamp = new Date(parseInt(grokTimestamp, 10));
+        document.getElementById('grokStatus').innerHTML = `
+          <span class="status-icon success">✓</span>
+          <span>Grok Digest: Cached on ${timestamp.toLocaleString()}</span>
+        `;
+      } else {
+        document.getElementById('grokStatus').innerHTML = `
+          <span class="status-icon error">✗</span>
+          <span>Grok Digest: Not cached</span>
+        `;
+      }
+      
+      // Check Timestamp File
+      fetch('/data/sonar-digest-last-update.json')
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Failed to fetch timestamp file');
+        })
+        .then(data => {
+          const timestamp = new Date(data.lastUpdated);
+          document.getElementById('timestampStatus').innerHTML = `
+            <span class="status-icon success">✓</span>
+            <span>Timestamp File: Last updated on ${timestamp.toLocaleString()}</span>
+          `;
+        })
+        .catch(error => {
+          document.getElementById('timestampStatus').innerHTML = `
+            <span class="status-icon error">✗</span>
+            <span>Timestamp File: Error - ${error.message}</span>
+          `;
+        });
+    }
+    
+    // Check the cache status on page load
+    if (document.getElementById('status-tab').classList.contains('active')) {
+      checkCacheStatus();
+    }
+  </script>
+</body>
+</html>

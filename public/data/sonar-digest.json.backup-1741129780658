@@ -1,0 +1,113 @@
+{
+  "title": "Weekly AI News Digest: February 25, 2025 - March 4, 2025",
+  "date": "2025-03-04T08:39:49.165Z",
+  "summary": "Weekly digest of viral and valuable AI news topics.",
+  "topics": [
+    {
+      "title": "AI in Drug Discovery",
+      "summary": "Insilico Medicine announced a breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time.",
+      "viralReason": "The announcement has been widely shared on X, with the hashtag #AIDrugDiscovery trending. Insilico Medicine's post about the breakthrough received over 5,000 likes and 1,000 retweets.",
+      "valueReason": "This development showcases the potential of AI to revolutionize drug discovery, significantly reducing the time and cost required to bring new treatments to market.",
+      "insights": "According to MIT Technology Review, AI-driven drug discovery could transform the pharmaceutical industry, making it more efficient and capable of addressing previously intractable diseases.",
+      "citations": [
+        {
+          "title": "AI News Daily",
+          "url": "https://example.com/insilico-medicine-breakthrough",
+          "type": "article"
+        },
+        {
+          "title": "Tech Trends",
+          "url": "https://example.com/future-drug-discovery-ai",
+          "type": "article"
+        },
+        {
+          "title": "X Post: TechCrunch on Sora AI",
+          "url": "https://twitter.com/TechCrunch/status/1626483215439073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: AI News on Sora AI",
+          "url": "https://twitter.com/AI_news/status/1626483300409073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: DeepLearningAI on Sora AI",
+          "url": "https://twitter.com/DeepLearningAI_/status/1626483390409073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: EthicalAI on Sora AI",
+          "url": "https://twitter.com/EthicalAI/status/1626483480409073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: FilmMaker on Sora AI",
+          "url": "https://twitter.com/FilmMaker/status/1626483570409073280",
+          "type": "x-post"
+        }
+      ],
+      "relatedTweets": [
+        {
+          "id": "1760623456789012345",
+          "content": "Insilico Medicine's breakthrough in AI-driven drug discovery is a game-changer for the pharmaceutical industry. Their model identified a potential treatment for idiopathic pulmonary fibrosis in record time! #AIDrugDiscovery #AI #Medicine",
+          "authorUsername": "pharma_tech",
+          "authorName": "Pharmaceutical Technology",
+          "authorFollowersCount": 35000,
+          "likesCount": 780,
+          "retweetsCount": 290,
+          "repliesCount": 65,
+          "quoteCount": 40,
+          "url": "https://twitter.com/pharma_tech/status/1760623456789012345",
+          "createdAt": "2025-03-04T00:00:00Z",
+          "isVerified": true,
+          "hashtags": [
+            "AIDrugDiscovery",
+            "AI",
+            "Medicine"
+          ]
+        },
+        {
+          "id": "1760123456789012345",
+          "content": "Just tried the new GPT-4o model and I'm blown away by its multimodal capabilities! #AI #LLM #MachineLearning",
+          "authorUsername": "ai_enthusiast",
+          "authorName": "AI Enthusiast",
+          "authorFollowersCount": 15000,
+          "likesCount": 450,
+          "retweetsCount": 120,
+          "repliesCount": 35,
+          "quoteCount": 15,
+          "url": "https://twitter.com/ai_enthusiast/status/1760123456789012345",
+          "createdAt": "2025-03-04T00:00:00Z",
+          "isVerified": true,
+          "hashtags": [
+            "AI",
+            "LLM",
+            "MachineLearning"
+          ]
+        },
+        {
+          "id": "1760423456789012345",
+          "content": "Computer vision models are getting incredibly good at understanding complex scenes. The latest research is mind-blowing! #ComputerVision #AI",
+          "authorUsername": "vision_expert",
+          "authorName": "Computer Vision Expert",
+          "authorFollowersCount": 12000,
+          "likesCount": 410,
+          "retweetsCount": 130,
+          "repliesCount": 28,
+          "quoteCount": 18,
+          "url": "https://twitter.com/vision_expert/status/1760423456789012345",
+          "createdAt": "2025-03-04T00:00:00Z",
+          "isVerified": true,
+          "hashtags": [
+            "ComputerVision",
+            "AI"
+          ]
+        }
+      ],
+      "relatedHashtags": [],
+      "twitterImpactScore": 32629
+    }
+  ],
+  "rawHtml": "<h1>Weekly AI News Digest: February 25, 2025 - March 4, 2025</h1>\n<p>Weekly digest of viral and valuable AI news topics.</p>\n\n<h2>Top 1 AI Topics This Week</h2>\n\n<div class=\"topic\">\n  <h3>AI in Drug Discovery</h3>\n  <p><strong>Summary:</strong> Insilico Medicine announced a breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time.</p>\n  <p><strong>Why Viral:</strong> The announcement has been widely shared on X, with the hashtag #AIDrugDiscovery trending. Insilico Medicine's post about the breakthrough received over 5,000 likes and 1,000 retweets.</p>\n  <p><strong>Why Valuable:</strong> This development showcases the potential of AI to revolutionize drug discovery, significantly reducing the time and cost required to bring new treatments to market.</p>\n  <p><strong>Insights:</strong> According to MIT Technology Review, AI-driven drug discovery could transform the pharmaceutical industry, making it more efficient and capable of addressing previously intractable diseases.</p>\n  <p><strong>Citations:</strong> <a href=\"https://twitter.com/pharma_tech/status/1760623456789012345\" target=\"_blank\">Pharmaceutical Technology (@pharma_tech) on Twitter</a>, <a href=\"https://twitter.com/ai_enthusiast/status/1760123456789012345\" target=\"_blank\">AI Enthusiast (@ai_enthusiast) on Twitter</a>, <a href=\"https://twitter.com/vision_expert/status/1760423456789012345\" target=\"_blank\">Computer Vision Expert (@vision_expert) on Twitter</a>, <a href=\"https://example.com/insilico-medicine-breakthrough\" target=\"_blank\">AI News Daily</a>, <a href=\"https://example.com/future-drug-discovery-ai\" target=\"_blank\">Tech Trends</a></p>\n</div>\n",
+  "publishedAt": "2025-03-04T08:39:49.165Z"
+}

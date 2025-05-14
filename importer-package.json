@@ -1,0 +1,13 @@
+{
+  "name": "news-data-importer",
+  "version": "1.0.0",
+  "description": "Script to import mock news data into Supabase",
+  "main": "import_mock_to_real.js",
+  "scripts": {
+    "import": "node import_mock_to_real.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.31.0",
+    "dotenv": "^16.3.1"
+  }
+}

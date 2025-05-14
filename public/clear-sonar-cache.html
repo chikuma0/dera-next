@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clear Sonar Cache</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #0f0f1a;
+      color: #e0e0ff;
+    }
+    .container {
+      background-color: #1a1a2e;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    h1 {
+      color: #a78bfa;
+      text-align: center;
+    }
+    .success {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .button {
+      display: inline-block;
+      background-color: #7c3aed;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      margin: 10px 0;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #6d28d9;
+    }
+    .center {
+      text-align: center;
+    }
+    .info {
+      background-color: #1e293b;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Clear Sonar Digest Cache</h1>
+    <p>If you're seeing outdated content in the Sonar Digest, use this tool to clear your browser's cache and fetch the latest content from the server.</p>
+    
+    <div class="info">
+      <p>This will clear the cached digest data stored in your browser's localStorage and reload the Sonar Digest page.</p>
+    </div>
+    
+    <div class="center">
+      <button id="clearButton" class="button">Clear Cache & Reload</button>
+    </div>
+    
+    <p id="status"></p>
+  </div>
+  
+  <script>
+    document.getElementById('clearButton').addEventListener('click', function() {
+      // Clear the Sonar digest from localStorage
+      localStorage.removeItem('sonarDigest_twitter-enhanced');
+      localStorage.removeItem('sonarDigest_twitter-enhanced_timestamp');
+      
+      // Also clear any other versions
+      localStorage.removeItem('sonarDigest_');
+      localStorage.removeItem('sonarDigest__timestamp');
+      
+      // Show success message
+      document.getElementById('status').innerHTML = '<div class="center"><p class="success">Cache cleared successfully!</p><p>Redirecting to Sonar Digest...</p></div>';
+      
+      // Redirect to the Sonar digest page with a cache-busting parameter
+      setTimeout(function() {
+        window.location.href = '/news/sonar-digest?nocache=' + new Date().getTime();
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

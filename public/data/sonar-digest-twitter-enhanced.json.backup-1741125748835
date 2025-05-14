@@ -1,0 +1,153 @@
+{
+  "title": "Weekly AI News Digest: February 25, 2025 - March 4, 2025 (Twitter Enhanced)",
+  "date": "2025-03-04T08:39:49.165Z",
+  "summary": "Weekly digest of viral and valuable AI news topics.",
+  "topics": [
+    {
+      "title": "AI in Drug Discovery",
+      "summary": "Insilico Medicine announced a breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time.",
+      "viralReason": "The announcement has been widely shared on X, with the hashtag #AIDrugDiscovery trending. Insilico Medicine's post about the breakthrough received over 5,000 likes and 1,000 retweets.",
+      "valueReason": "This development showcases the potential of AI to revolutionize drug discovery, significantly reducing the time and cost required to bring new treatments to market.",
+      "insights": "According to MIT Technology Review, AI-driven drug discovery could transform the pharmaceutical industry, making it more efficient and capable of addressing previously intractable diseases.",
+      "citations": [
+        {
+          "title": "Pharmaceutical Technology (@pharma_tech) on Twitter",
+          "url": "https://twitter.com/pharma_tech/status/1760623456789012345",
+          "type": "x-post"
+        },
+        {
+          "title": "AI Enthusiast (@ai_enthusiast) on Twitter",
+          "url": "https://twitter.com/ai_enthusiast/status/1760123456789012345",
+          "type": "x-post"
+        },
+        {
+          "title": "Computer Vision Expert (@vision_expert) on Twitter",
+          "url": "https://twitter.com/vision_expert/status/1760423456789012345",
+          "type": "x-post"
+        },
+        {
+          "title": "AI News Daily",
+          "url": "https://example.com/insilico-medicine-breakthrough",
+          "type": "article"
+        },
+        {
+          "title": "Tech Trends",
+          "url": "https://example.com/future-drug-discovery-ai",
+          "type": "article"
+        }
+      ],
+      "relatedTweets": [
+        {
+          "id": "grok-91iaf3vlsu9",
+          "content": "xAI's Announcement Post on X",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 534,
+          "likesCount": 605,
+          "retweetsCount": 239,
+          "repliesCount": 111,
+          "quoteCount": 49,
+          "url": "https://twitter.com/xAI/status/1234567890",
+          "createdAt": "2025-03-04T21:54:05.701Z",
+          "impactScore": 1950.61,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-m7baztpb3qq",
+          "content": "Elon Musk's Comment on Grok on X",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 1508,
+          "likesCount": 1034,
+          "retweetsCount": 245,
+          "repliesCount": 141,
+          "quoteCount": 70,
+          "url": "https://twitter.com/elonmusk/status/1234567891",
+          "createdAt": "2025-03-04T21:54:05.702Z",
+          "impactScore": 2868.25,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-y1v4n2dqxkp",
+          "content": "AI News' Post on Grok on X",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 321003,
+          "likesCount": 524,
+          "retweetsCount": 218,
+          "repliesCount": 70,
+          "quoteCount": 11,
+          "url": "https://twitter.com/AINews/status/1234567892",
+          "createdAt": "2025-03-04T21:54:05.702Z",
+          "impactScore": 2038.57,
+          "isVerified": true,
+          "hashtags": []
+        },
+        {
+          "id": "grok-n82wvs05kip",
+          "content": "Tech Enthusiast's Post on Grok Beta on X",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 32914,
+          "likesCount": 1311,
+          "retweetsCount": 626,
+          "repliesCount": 221,
+          "quoteCount": 96,
+          "url": "https://twitter.com/TechEnthusiast/status/1234567893",
+          "createdAt": "2025-03-04T21:54:05.702Z",
+          "impactScore": 5384.9,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-canwis066zw",
+          "content": "Science Lover's Post on Grok's Impact on X",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 580,
+          "likesCount": 1128,
+          "retweetsCount": 400,
+          "repliesCount": 200,
+          "quoteCount": 83,
+          "url": "https://twitter.com/ScienceLover/status/1234567894",
+          "createdAt": "2025-03-04T21:54:05.702Z",
+          "impactScore": 3471.78,
+          "isVerified": false,
+          "hashtags": []
+        }
+      ],
+      "relatedHashtags": [
+        {
+          "hashtag": "Grok",
+          "tweetCount": 1,
+          "totalLikes": 0,
+          "totalRetweets": 0,
+          "totalReplies": 0,
+          "totalQuotes": 0,
+          "totalEngagement": 0,
+          "avgEngagementPerTweet": 0,
+          "growthRate": "+7%",
+          "impactScore": 0
+        },
+        {
+          "hashtag": "AIGeneratedArt",
+          "tweetCount": 1,
+          "totalLikes": 0,
+          "totalRetweets": 0,
+          "totalReplies": 0,
+          "totalQuotes": 0,
+          "totalEngagement": 0,
+          "avgEngagementPerTweet": 0,
+          "growthRate": "+26%",
+          "impactScore": 0
+        }
+      ],
+      "twitterImpactScore": 10999.88
+    }
+  ],
+  "rawHtml": "<h1>Weekly AI News Digest: February 25, 2025 - March 4, 2025</h1>\n<p>Weekly digest of viral and valuable AI news topics.</p>\n\n<h2>Top 1 AI Topics This Week</h2>\n\n<div class=\"topic\">\n  <h3>AI in Drug Discovery</h3>\n  <p><strong>Summary:</strong> Insilico Medicine announced a breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time.</p>\n  <p><strong>Why Viral:</strong> The announcement has been widely shared on X, with the hashtag #AIDrugDiscovery trending. Insilico Medicine's post about the breakthrough received over 5,000 likes and 1,000 retweets.</p>\n  <p><strong>Why Valuable:</strong> This development showcases the potential of AI to revolutionize drug discovery, significantly reducing the time and cost required to bring new treatments to market.</p>\n  <p><strong>Insights:</strong> According to MIT Technology Review, AI-driven drug discovery could transform the pharmaceutical industry, making it more efficient and capable of addressing previously intractable diseases.</p>\n  <p><strong>Citations:</strong> <a href=\"https://twitter.com/pharma_tech/status/1760623456789012345\" target=\"_blank\">Pharmaceutical Technology (@pharma_tech) on Twitter</a>, <a href=\"https://twitter.com/ai_enthusiast/status/1760123456789012345\" target=\"_blank\">AI Enthusiast (@ai_enthusiast) on Twitter</a>, <a href=\"https://twitter.com/vision_expert/status/1760423456789012345\" target=\"_blank\">Computer Vision Expert (@vision_expert) on Twitter</a>, <a href=\"https://example.com/insilico-medicine-breakthrough\" target=\"_blank\">AI News Daily</a>, <a href=\"https://example.com/future-drug-discovery-ai\" target=\"_blank\">Tech Trends</a></p>\n</div>\n",
+  "publishedAt": "2025-03-04T08:39:49.165Z",
+  "isTwitterEnhanced": true
+}

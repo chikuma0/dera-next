@@ -1,0 +1,163 @@
+{
+  "title": "Weekly AI News Digest: February 25, 2025 - March 4, 2025 (Twitter Enhanced)",
+  "date": "2025-03-04T08:39:49.165Z",
+  "summary": "Weekly digest of viral and valuable AI news topics.",
+  "topics": [
+    {
+      "title": "AI in Drug Discovery",
+      "summary": "Insilico Medicine announced a breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time.",
+      "viralReason": "The announcement has been widely shared on X, with the hashtag #AIDrugDiscovery trending. Insilico Medicine's post about the breakthrough received over 5,000 likes and 1,000 retweets.",
+      "valueReason": "This development showcases the potential of AI to revolutionize drug discovery, significantly reducing the time and cost required to bring new treatments to market.",
+      "insights": "According to MIT Technology Review, AI-driven drug discovery could transform the pharmaceutical industry, making it more efficient and capable of addressing previously intractable diseases.",
+      "citations": [
+        {
+          "title": "AI News Daily",
+          "url": "https://example.com/insilico-medicine-breakthrough",
+          "type": "article"
+        },
+        {
+          "title": "Tech Trends",
+          "url": "https://example.com/future-drug-discovery-ai",
+          "type": "article"
+        },
+        {
+          "title": "X Post: TechCrunch on Sora AI",
+          "url": "https://twitter.com/TechCrunch/status/1626483215439073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: AI News on Sora AI",
+          "url": "https://twitter.com/AI_news/status/1626483300409073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: DeepLearningAI on Sora AI",
+          "url": "https://twitter.com/DeepLearningAI_/status/1626483390409073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: EthicalAI on Sora AI",
+          "url": "https://twitter.com/EthicalAI/status/1626483480409073280",
+          "type": "x-post"
+        },
+        {
+          "title": "X Post: FilmMaker on Sora AI",
+          "url": "https://twitter.com/FilmMaker/status/1626483570409073280",
+          "type": "x-post"
+        }
+      ],
+      "relatedTweets": [
+        {
+          "id": "grok-bxa0a6irir8",
+          "content": "X Post: TechCrunch on Sora AI",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 2752,
+          "likesCount": 1235,
+          "retweetsCount": 317,
+          "repliesCount": 137,
+          "quoteCount": 80,
+          "url": "https://twitter.com/TechCrunch/status/1626483215439073280",
+          "createdAt": "2025-03-04T22:04:09.862Z",
+          "impactScore": 3533.58,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-3shatndhwfs",
+          "content": "X Post: AI News on Sora AI",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 20636,
+          "likesCount": 754,
+          "retweetsCount": 293,
+          "repliesCount": 127,
+          "quoteCount": 65,
+          "url": "https://twitter.com/AI_news/status/1626483300409073280",
+          "createdAt": "2025-03-04T22:04:09.862Z",
+          "impactScore": 2857.15,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-qy69if5t78",
+          "content": "X Post: DeepLearningAI on Sora AI",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 1489,
+          "likesCount": 391,
+          "retweetsCount": 157,
+          "repliesCount": 46,
+          "quoteCount": 18,
+          "url": "https://twitter.com/DeepLearningAI_/status/1626483390409073280",
+          "createdAt": "2025-03-04T22:04:09.862Z",
+          "impactScore": 1230.7,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-ratzr7bem9l",
+          "content": "X Post: EthicalAI on Sora AI",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 20823,
+          "likesCount": 1342,
+          "retweetsCount": 654,
+          "repliesCount": 96,
+          "quoteCount": 50,
+          "url": "https://twitter.com/EthicalAI/status/1626483480409073280",
+          "createdAt": "2025-03-04T22:04:09.862Z",
+          "impactScore": 4980.42,
+          "isVerified": false,
+          "hashtags": []
+        },
+        {
+          "id": "grok-uq8zrx589ve",
+          "content": "X Post: FilmMaker on Sora AI",
+          "authorUsername": "status",
+          "authorName": "Status",
+          "authorFollowersCount": 13817,
+          "likesCount": 1433,
+          "retweetsCount": 411,
+          "repliesCount": 101,
+          "quoteCount": 105,
+          "url": "https://twitter.com/FilmMaker/status/1626483570409073280",
+          "createdAt": "2025-03-04T22:04:09.862Z",
+          "impactScore": 4514.17,
+          "isVerified": true,
+          "hashtags": []
+        }
+      ],
+      "relatedHashtags": [
+        {
+          "hashtag": "SoraAI",
+          "tweetCount": 1,
+          "totalLikes": 0,
+          "totalRetweets": 0,
+          "totalReplies": 0,
+          "totalQuotes": 0,
+          "totalEngagement": 0,
+          "avgEngagementPerTweet": 0,
+          "growthRate": "+30%",
+          "impactScore": 0
+        },
+        {
+          "hashtag": "GrokAI",
+          "tweetCount": 1,
+          "totalLikes": 0,
+          "totalRetweets": 0,
+          "totalReplies": 0,
+          "totalQuotes": 0,
+          "totalEngagement": 0,
+          "avgEngagementPerTweet": 0,
+          "growthRate": "+8%",
+          "impactScore": 0
+        }
+      ],
+      "twitterImpactScore": 11981.21
+    }
+  ],
+  "rawHtml": "<h1>Weekly AI News Digest: February 25, 2025 - March 4, 2025</h1>\n<p>Weekly digest of viral and valuable AI news topics.</p>\n\n<h2>Top 1 AI Topics This Week</h2>\n\n<div class=\"topic\">\n  <h3>AI in Drug Discovery</h3>\n  <p><strong>Summary:</strong> Insilico Medicine announced a breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time.</p>\n  <p><strong>Why Viral:</strong> The announcement has been widely shared on X, with the hashtag #AIDrugDiscovery trending. Insilico Medicine's post about the breakthrough received over 5,000 likes and 1,000 retweets.</p>\n  <p><strong>Why Valuable:</strong> This development showcases the potential of AI to revolutionize drug discovery, significantly reducing the time and cost required to bring new treatments to market.</p>\n  <p><strong>Insights:</strong> According to MIT Technology Review, AI-driven drug discovery could transform the pharmaceutical industry, making it more efficient and capable of addressing previously intractable diseases.</p>\n  <p><strong>Citations:</strong> <a href=\"https://twitter.com/pharma_tech/status/1760623456789012345\" target=\"_blank\">Pharmaceutical Technology (@pharma_tech) on Twitter</a>, <a href=\"https://twitter.com/ai_enthusiast/status/1760123456789012345\" target=\"_blank\">AI Enthusiast (@ai_enthusiast) on Twitter</a>, <a href=\"https://twitter.com/vision_expert/status/1760423456789012345\" target=\"_blank\">Computer Vision Expert (@vision_expert) on Twitter</a>, <a href=\"https://example.com/insilico-medicine-breakthrough\" target=\"_blank\">AI News Daily</a>, <a href=\"https://example.com/future-drug-discovery-ai\" target=\"_blank\">Tech Trends</a></p>\n</div>\n",
+  "publishedAt": "2025-03-04T08:39:49.165Z",
+  "isTwitterEnhanced": true
+}

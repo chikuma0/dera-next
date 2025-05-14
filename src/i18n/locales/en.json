@@ -1,0 +1,67 @@
+{
+  "common": {
+    "solutions": "Solutions",
+    "portfolio": "Portfolio",
+    "news": "News",
+    "contact": "Contact",
+    "exploreSolutions": "Explore Solutions",
+    "viewPortfolio": "View Portfolio",
+    "latestAiNews": "LATEST AI NEWS",
+    "viewAllNews": "View All News",
+    "refreshing": "Refreshing...",
+    "refreshNow": "Refresh Now",
+    "lastUpdated": "Last updated",
+    "invalidDate": "Invalid Date"
+  },
+  "news": {
+    "subtitle": "Curated updates from the world of Artificial Intelligence",
+    "topStories": "Top Stories",
+    "latest": "Latest",
+    "popular": "Popular",
+    "trending": "Trending"
+  },
+  "hero": {
+    "subtitle": "Leveraging AI to transform your business vision into reality",
+    "phrases": [
+      "AI Horsepower for Distributed Era",
+      "Build Future-Ready Solutions",
+      "Transforming Impossible",
+      "Bridging Business and AI"
+    ]
+  },
+  "solutions": {
+    "title": "Our Solutions",
+    "description": "Boutique AI studio for global business needs. We design purpose-built AI solutions to keep your business moving forward.",
+    "cta": {
+      "title": "Let's Enhance What Makes You Unique",
+      "description": "Take the first step towards amplifying your business capabilities with AI. Our team is ready to understand your needs and craft solutions that work for you.",
+      "action": "Start Discussion"
+    }
+  },
+  "portfolio": {
+    "title": "Our Portfolio",
+    "description": "Check out our latest projects",
+    "visitSite": "Visit Site",
+    "viewCode": "View Code"
+  },
+  "navigation": {
+    "home": "Home",
+    "portfolio": "Portfolio",
+    "news": "News",
+    "contact": "Contact"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have a project in mind? We'd love to hear about it. Send us a message and we'll get back to you as soon as possible.",
+    "thankYou": "Thank You!",
+    "responseMessage": "We've received your message and will get back to you shortly.",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "company": "Company (Optional)",
+      "message": "Your Message",
+      "submit": "Send Message",
+      "submitting": "Sending..."
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "common": {
+    "solutions": "サービス",
+    "portfolio": "活用事例",
+    "news": "ニュース",
+    "contact": "お問い合わせ",
+    "exploreSolutions": "サービス一覧",
+    "viewPortfolio": "活用事例を見る",
+    "latestAiNews": "最新AIニュース",
+    "viewAllNews": "すべてのニュースを見る",
+    "refreshing": "更新中...",
+    "refreshNow": "更新する",
+    "lastUpdated": "最終更新日",
+    "invalidDate": "無効な日付"
+  },
+  "news": {
+    "subtitle": "厳選された最新AIニュース",
+    "topStories": "トップニュース",
+    "latest": "最新",
+    "popular": "人気",
+    "trending": "トレンド"
+  },
+  "hero": {
+    "subtitle": "AIがあなたのビジネスを加速させる",
+    "phrases": [
+      "AI Horsepower for Distributed Era",
+      "Build Future-Ready Solutions",
+      "Transforming Impossible",
+      "Bridging Business and AI"
+    ]
+  },
+  "solutions": {
+    "title": "サービス",
+    "description": "ビジネスニーズに応えるAIスタジオ。あなたのビジネスのためのAIソリューションを設計します。",
+    "cta": {
+      "title": "AIを日常に取り込む",
+      "description": "AIであなたのビジネスの可能性を最大化。エキスパートがあなたのニーズを理解し現実的な解決策を提案します。",
+      "action": "無料で相談する"
+    }
+  },
+  "portfolio": {
+    "title": "活用事例",
+    "description": "最新プロジェクトをご覧ください",
+    "visitSite": "サイトを見る",
+    "viewCode": "コードを見る"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "portfolio": "活用事例",
+    "news": "ニュース",
+    "contact": "お問い合わせ"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "subtitle": "プロジェクトについてご相談ください。メッセージをお送りいただければ、できるだけ早くご返信させていただきます。",
+    "thankYou": "ありがとうございます",
+    "responseMessage": "メッセージを受け付けました。近日中にご連絡させていただきます。",
+    "form": {
+      "name": "お名前",
+      "email": "メールアドレス",
+      "company": "会社名（任意）",
+      "message": "メッセージ",
+      "submit": "送信する",
+      "submitting": "送信中..."
+    }
+  }
+}

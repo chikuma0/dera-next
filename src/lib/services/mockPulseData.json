@@ -1,0 +1,84 @@
+{
+  "articles": [
+    {
+      "id": "1",
+      "title": "Insilico Medicine Announces Breakthrough in AI-Driven Drug Discovery",
+      "summary": "Insilico Medicine has announced a major breakthrough in AI-driven drug discovery, with their AI model identifying a potential new treatment for idiopathic pulmonary fibrosis (IPF) in record time. The company claims this could significantly reduce the time and cost required to bring new treatments to market.",
+      "url": "https://example.com/insilico-medicine-breakthrough",
+      "source": "AI News Daily",
+      "published_date": "2025-03-03T12:00:00Z",
+      "language": "en",
+      "importance_score": 120
+    },
+    {
+      "id": "2",
+      "title": "AI Model Identifies New Treatment for Pulmonary Fibrosis",
+      "summary": "Researchers at Insilico Medicine have used artificial intelligence to identify a potential new treatment for idiopathic pulmonary fibrosis, a chronic lung disease. The AI model was able to analyze vast amounts of data and suggest drug candidates in a fraction of the time it would take traditional methods.",
+      "url": "https://example.com/ai-pulmonary-fibrosis-treatment",
+      "source": "Medical AI Journal",
+      "published_date": "2025-03-02T14:30:00Z",
+      "language": "en",
+      "importance_score": 110
+    },
+    {
+      "id": "3",
+      "title": "The Future of Drug Discovery: How AI is Transforming Pharmaceutical Research",
+      "summary": "Artificial intelligence is revolutionizing the pharmaceutical industry, with companies like Insilico Medicine leading the way. Recent breakthroughs in AI-driven drug discovery are enabling researchers to identify potential treatments for diseases like idiopathic pulmonary fibrosis much faster than traditional methods.",
+      "url": "https://example.com/future-drug-discovery-ai",
+      "source": "Tech Trends",
+      "published_date": "2025-03-01T09:15:00Z",
+      "language": "en",
+      "importance_score": 105
+    },
+    {
+      "id": "4",
+      "title": "GPT-4o Demonstrates Impressive Multimodal Capabilities",
+      "summary": "OpenAI's latest model, GPT-4o, is showing impressive capabilities in understanding and generating content across multiple modalities including text, images, and audio. Early users report significant improvements in reasoning and real-time interaction compared to previous models.",
+      "url": "https://example.com/gpt4o-multimodal-capabilities",
+      "source": "AI Research Weekly",
+      "published_date": "2025-03-04T08:00:00Z",
+      "language": "en",
+      "importance_score": 130
+    },
+    {
+      "id": "5",
+      "title": "Computer Vision Models Reach New Heights in Scene Understanding",
+      "summary": "Recent advances in computer vision technology have enabled AI models to understand complex scenes with unprecedented accuracy. These improvements are driving applications in autonomous vehicles, robotics, and augmented reality.",
+      "url": "https://example.com/computer-vision-advances",
+      "source": "Vision AI Today",
+      "published_date": "2025-03-03T16:45:00Z",
+      "language": "en",
+      "importance_score": 115
+    },
+    {
+      "id": "6",
+      "title": "Ethical Considerations in AI Development Gain Prominence",
+      "summary": "As AI systems become more powerful and widespread, ethical considerations in their development and deployment are gaining increased attention. Industry leaders are calling for responsible AI practices and transparent governance frameworks.",
+      "url": "https://example.com/ai-ethics-considerations",
+      "source": "Ethics in Technology",
+      "published_date": "2025-03-02T11:30:00Z",
+      "language": "en",
+      "importance_score": 100
+    },
+    {
+      "id": "7",
+      "title": "Multimodal AI: The Next Frontier in Human-Computer Interaction",
+      "summary": "Multimodal AI systems that can process and generate text, images, and audio simultaneously are poised to transform how humans interact with technology. These systems offer more natural and intuitive interfaces for a wide range of applications.",
+      "url": "https://example.com/multimodal-ai-frontier",
+      "source": "Future Tech Magazine",
+      "published_date": "2025-03-04T10:15:00Z",
+      "language": "en",
+      "importance_score": 125
+    },
+    {
+      "id": "8",
+      "title": "Transformer Efficiency Improved by 40% in New Research",
+      "summary": "A research team has published a new paper demonstrating methods to improve transformer efficiency by 40% with minimal accuracy loss. This breakthrough could significantly reduce the computational resources required for large language models and other AI systems.",
+      "url": "https://example.com/transformer-efficiency-research",
+      "source": "AI Research Lab",
+      "published_date": "2025-03-03T14:00:00Z",
+      "language": "en",
+      "importance_score": 120
+    }
+  ]
+}
