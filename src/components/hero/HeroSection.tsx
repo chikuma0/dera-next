@@ -3,9 +3,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
-import MatrixBackground from './MatrixBackground';
-import MatrixNewsTicker from './MatrixNewsTicker';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+
+// Dynamically import components that use browser APIs
+const MatrixBackground = dynamic(
+  () => import('./MatrixBackground'),
+  { ssr: false }
+);
+
+const MatrixNewsTicker = dynamic(
+  () => import('./MatrixNewsTicker'),
+  { ssr: false }
+);
 
 const TYPING_PHRASES = [
   'AI Horsepower for Distributed Era',
@@ -17,10 +27,17 @@ const TYPING_PHRASES = [
 const HeroSection = () => {
   const [text, setText] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  const [isClient, setIsClient] = useState(false);
   
   const phrases = useMemo(() => TYPING_PHRASES, []);
   
   useEffect(() => {
+    // Set isClient to true when component mounts on the client
+    setIsClient(true);
+    
+    // Don't run typing effect on server
+    if (!isClient) return;
+    
     let currentPhraseIndex = 0;
     let currentCharIndex = 0;
     let isDeleting = false;
@@ -62,7 +79,17 @@ const HeroSection = () => {
       clearTimeout(timeoutId);
       clearInterval(cursorInterval);
     };
-  }, [phrases]); 
+  }, [phrases, isClient]);
+  
+  // Don't render anything on the server
+  if (!isClient) {
+    return (
+      <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">
+        {/* Just a placeholder with the same dimensions */}
+        <div className="w-full h-full absolute top-0 left-0" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-black text-green-400 flex flex-col items-center justify-center p-4">
@@ -81,8 +108,11 @@ const HeroSection = () => {
         
         <h1 className="text-5xl font-bold mb-6 min-h-24">
           {text}
-          <span className={`inline-block w-2 h-8 ml-1 bg-green-400 ${showCursor ? 'opacity-100' : 'opacity-0'}`}>
-          </span>
+          <span 
+            className={`inline-block w-2 h-8 ml-1 bg-green-400 transition-opacity duration-300 ${
+              showCursor ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
         </h1>
         
         <motion.p 
@@ -94,37 +124,32 @@ const HeroSection = () => {
           Leveraging AI to transform your business vision into reality
         </motion.p>
         
-        <div className="flex justify-center gap-6">
-          <Link href="/solutions">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+          <Link href="/solutions" className="block">
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-green-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-green-300 transition-colors"
+              className="w-full sm:w-auto px-8 py-3 bg-green-400 text-black font-medium rounded-md hover:bg-green-300 transition-colors"
             >
-              Explore Solutions
+              Our Solutions
             </motion.button>
           </Link>
-          <Link href="/portfolio">
-            <motion.button
+          
+          <Link href="/contact" className="block">
+            <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border-2 border-green-400 px-8 py-3 rounded-lg font-semibold hover:bg-green-400 hover:text-black transition-colors"
+              className="w-full sm:w-auto px-8 py-3 border-2 border-green-400 text-green-400 font-medium rounded-md hover:bg-green-400/10 transition-colors"
             >
-              View Portfolio
+              Contact Us
             </motion.button>
           </Link>
         </div>
       </motion.div>
       
-      {/* News Ticker */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.8 }}
-        className="absolute bottom-8 left-0 right-0 z-20"
-      >
+      <div className="absolute bottom-8 left-0 right-0">
         <MatrixNewsTicker />
-      </motion.div>
+      </div>
     </div>
   );
 };

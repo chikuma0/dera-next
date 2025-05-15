@@ -4,13 +4,22 @@ export interface NewsItem {
   title: string;
   url: string;
   source: string;
-  published_date: Date;
+  source_id?: string;
+  source_name?: string;
+  source_logo?: string;
+  image_url?: string;
+  published_date: Date | string;
   language: 'en' | 'ja';
   summary?: string;
-  created_at?: Date;
-  updated_at?: Date;
+  content?: string;
+  created_at?: Date | string;
+  updated_at?: Date | string;
   importance_score?: number;
+  relevance_score?: number;
   categories?: string[];
+  translated_title?: string;
+  translated_summary?: string;
+  translation_status?: string;
 }
 
 export interface RSSSource {

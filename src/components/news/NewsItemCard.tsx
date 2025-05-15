@@ -1,31 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from '@/contexts/LanguageContext';
 import { formatDate } from '../../lib/utils/dateUtils';
 import { TechnicalInsight } from './TechnicalInsight';
 import { TranslationService } from '../../lib/services/translationService';
+import { NewsItem } from '@/types/news';
 
 interface NewsItemCardProps {
-  item: {
-    id: string;
-    title: string;
-    summary?: string;
-    source_id: string;
-    published_date: string | Date;
-    url: string;
-    translated_title?: string;
-    translated_summary?: string;
-    translation_status?: string;
-  };
+  item: NewsItem;
   showInsights?: boolean;
 }
 
 export function NewsItemCard({ item, showInsights = false }: NewsItemCardProps) {
-  const { t, i18n } = useTranslation();
+  const { locale } = useTranslation();
   const [showOriginal, setShowOriginal] = useState(false);
   const [technologies, setTechnologies] = useState<string[]>([]);
 
   const translateItem = useCallback(async () => {
-    if (i18n.language === 'ja' && (!item.translated_title || item.translation_status !== 'completed')) {
+    if (locale === 'ja' && (!item.translated_title || item.translation_status !== 'completed')) {
       try {
         const translationService = new TranslationService();
         await translationService.translateNewsItem(item.id);
@@ -33,7 +24,7 @@ export function NewsItemCard({ item, showInsights = false }: NewsItemCardProps) 
         console.error('Error translating news item:', error);
       }
     }
-  }, [i18n.language, item.id, item.translated_title, item.translation_status]);
+  }, [locale, item.id, item.translated_title, item.translation_status]);
 
   useEffect(() => {
     translateItem();
@@ -43,11 +34,11 @@ export function NewsItemCard({ item, showInsights = false }: NewsItemCardProps) 
     // ... existing loadTechnologies code ...
   };
 
-  const displayTitle = i18n.language === 'ja' && !showOriginal && item.translated_title
+  const displayTitle = locale === 'ja' && !showOriginal && item.translated_title
     ? item.translated_title
     : item.title;
 
-  const displaySummary = i18n.language === 'ja' && !showOriginal && item.translated_summary
+  const displaySummary = locale === 'ja' && !showOriginal && item.translated_summary
     ? item.translated_summary
     : item.summary;
 
@@ -64,7 +55,7 @@ export function NewsItemCard({ item, showInsights = false }: NewsItemCardProps) 
             {displayTitle}
           </a>
         </h3>
-        {i18n.language === 'ja' && item.translated_title && (
+        {locale === 'ja' && item.translated_title && (
           <button
             onClick={() => setShowOriginal(!showOriginal)}
             className="text-xs text-green-400/60 hover:text-green-300/80"

@@ -95,7 +95,7 @@ export function NewsDetail({ newsItem }: NewsDetailProps) {
           ))}
         </div>
 
-        <a
+        <Link
           href={newsItem.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -103,7 +103,7 @@ export function NewsDetail({ newsItem }: NewsDetailProps) {
         >
           <span>Read original article</span>
           <ExternalLink className="w-4 h-4 ml-1" />
-        </a>
+        </Link>
       </div>
 
       <div className="mt-12">

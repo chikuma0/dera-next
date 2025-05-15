@@ -1,11 +1,5 @@
-import HeroSection from '@/components/hero/HeroSection'
-import { EnvTest } from '@/components/EnvTest'
+import HomeContent from '@/components/home/HomeContent';
 
 export default function Home() {
-  return (
-    <main>
-      <HeroSection />
-      <EnvTest />
-    </main>
-  )
+  return <HomeContent />;
 }

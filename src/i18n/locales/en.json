@@ -1,4 +1,28 @@
 {
+  "home": {
+    "title": "AI Solutions for the Future",
+    "welcome": "Welcome to DERA - Where AI meets business innovation",
+    "features": {
+      "title": "Our Services",
+      "1": {
+        "title": "AI Consulting",
+        "description": "Expert guidance to integrate AI into your business strategy"
+      },
+      "2": {
+        "title": "Custom Solutions",
+        "description": "Tailored AI applications designed for your specific needs"
+      },
+      "3": {
+        "title": "Research & Development",
+        "description": "Cutting-edge AI research to keep you ahead of the curve"
+      }
+    },
+    "cta": {
+      "title": "Ready to Transform Your Business?",
+      "description": "Get in touch with our team to discuss how we can help you leverage AI",
+      "button": "Contact Us"
+    }
+  },
   "common": {
     "solutions": "Solutions",
     "portfolio": "Portfolio",

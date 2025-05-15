@@ -2,6 +2,9 @@
 import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid';
+import { redisCache } from '@/lib/cache/redis';
+import { SummaryService } from '@/lib/services/summaryService';
 
 function getSupabaseClient(): SupabaseClient {
   const env = validateEnv();
@@ -48,14 +51,35 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
 
   for (const source of sources) {
     try {
+      // First, get or create the news source
+      const { data: sourceData, error: sourceError } = await supabase
+        .from('news_sources')
+        .upsert({
+          name: source.name,
+          url: source.url,
+          feed_url: source.url,
+          source_type: 'rss',
+          is_active: true
+        }, {
+          onConflict: 'name'
+        })
+        .select()
+        .single();
+
+      if (sourceError) {
+        console.error(`Error with source ${source.name}:`, sourceError);
+        continue;
+      }
+
       console.log(`Fetching from ${source.name}...`);
       const items = await fetchRSSWithProxy(source.url);
       
       const newsItems: NewsItem[] = items.map((item: any) => ({
-        id: item.guid || item.link || `${source.name}-${item.title}`,
+        id: uuidv4(),
         title: item.title?.trim() || '',
         url: item.link?.trim() || '',
         source: source.name,
+        source_id: sourceData.id,
         published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
         language,
         summary: item.description?.trim() || item.content?.trim() || '',
@@ -73,7 +97,7 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
         const { data, error } = await supabase
           .from('news_items')
           .upsert(batch, {
-            onConflict: 'id',
+            onConflict: 'url',
             ignoreDuplicates: true
           })
           .select();
@@ -95,25 +119,57 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
 }
 
 export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
-  const supabase = getSupabaseClient();
-  console.log('Getting latest news from database:', language);
+  const cacheKey = `news:latest:${language}`;
+  // Use Redis cache with 60s TTL
+  return await redisCache.withCache(cacheKey, async () => {
+    const supabase = getSupabaseClient();
+    console.log('Getting latest news from database:', language);
+    const summaryService = new SummaryService();
 
-  try {
-    const { data, error } = await supabase
-      .from('news_items')
-      .select('*')
-      .eq('language', language)
-      .order('published_date', { ascending: false })
-      .limit(30);
+    try {
+      const { data, error } = await supabase
+        .from('news_items')
+        .select('*')
+        .eq('language', 'en') // Always fetch English base articles
+        .order('published_date', { ascending: false })
+        .limit(30);
 
-    if (error) {
-      console.error('Database error:', error);
+      if (error) {
+        console.error('Database error:', error);
+        return [];
+      }
+
+      if (!data) return [];
+
+      // For Japanese, ensure each article has a translated summary
+      if (language === 'ja') {
+        for (const item of data) {
+          if (!item.translated_summary) {
+            try {
+              // Generate summary with Perplexity
+              const jaSummary = await summaryService.summarizeArticle(item.url, item.title);
+              // Save to DB
+              await supabase
+                .from('news_items')
+                .update({ translated_summary: jaSummary })
+                .eq('id', item.id);
+              item.translated_summary = jaSummary;
+            } catch (err) {
+              console.error('Failed to generate Japanese summary:', err);
+              item.translated_summary = '';
+            }
+          }
+        }
+      }
+
+      // Return news with the correct summary for the language
+      return data.map(item => ({
+        ...item,
+        summary: language === 'ja' ? item.translated_summary || '' : item.summary || ''
+      }));
+    } catch (error) {
+      console.error('Error fetching from database:', error);
       return [];
     }
-
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching from database:', error);
-    return [];
-  }
+  }, 60); // 60 seconds TTL
 }

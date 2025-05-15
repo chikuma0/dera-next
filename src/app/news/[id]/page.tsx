@@ -1,41 +1,20 @@
-import { Metadata, ResolvingMetadata } from 'next';
-import { NewsDetail } from '@/components/news/NewsDetail';
 import { NewsService } from '@/lib/services/newsService';
+import { notFound } from 'next/navigation';
+import { NewsDetail } from '@/components/news/NewsDetail';
 
-type PageProps = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+export const dynamic = 'force-dynamic';
 
-export async function generateMetadata(
-  { params }: PageProps,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const resolvedParams = await params;
-  const newsService = new NewsService();
-  const newsItem = await newsService.getNewsItemById(resolvedParams.id);
-
-  return {
-    title: newsItem?.title || 'News Detail',
-    description: newsItem?.summary || 'Read the latest AI news and updates',
-  };
-}
-
-export default async function NewsDetailPage({ params }: PageProps) {
-  const resolvedParams = await params;
-  const newsService = new NewsService();
-  const newsItem = await newsService.getNewsItemById(resolvedParams.id);
-
-  if (!newsItem) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh]">
-        <h1 className="text-2xl font-bold mb-4">記事が見つかりません</h1>
-        <p className="text-gray-600">
-          お探しのニュース記事は存在しないか、削除された可能性があります。
-        </p>
-      </div>
-    );
+export default async function NewsDetailPage({ params }: { params: { id: string } }) {
+  try {
+    const newsService = new NewsService();
+    const newsItem = await newsService.getNewsItem(params.id);
+    if (!newsItem) {
+      console.error('No news item found for id:', params.id);
+      notFound();
+    }
+    return <NewsDetail newsItem={newsItem} />;
+  } catch (err) {
+    console.error('Detail page error:', err);
+    notFound();
   }
-
-  return <NewsDetail newsItem={newsItem} />;
 } 

@@ -7,6 +7,7 @@ import { SonarWeeklyDigest, SonarDigestTopic } from '@/lib/services/sonarDigestS
 import { GrokWeeklyDigest, GrokDigestTopic } from '@/lib/services/grokDigestService';
 import { NewsItem } from '@/types/news';
 import { Tweet } from '@/types/twitter';
+import Link from 'next/link';
 
 interface MergedNewsDigestProps {
   // Props can be added if needed
@@ -302,13 +303,13 @@ export function MergedNewsDigest({}: MergedNewsDigestProps) {
                   )}
                   
                   <div className="text-center mt-2">
-                    <a
+                    <Link
                       href="/trends"
                       className="text-purple-400 hover:text-purple-300 text-sm inline-flex items-center"
                     >
                       View full social media analysis
                       <span className="ml-1">→</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ) : (

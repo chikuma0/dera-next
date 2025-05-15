@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import ProjectCard from '@/components/portfolio/ProjectCard'
 import { ExternalLink } from 'lucide-react'
+import Link from 'next/link'
 
 const projects = [
   {
@@ -49,7 +50,7 @@ export default function PortfolioPage() {
             Our Work
           </h1>
           <p className="text-xl text-green-300 max-w-3xl mx-auto">
-            Explore our portfolio of successful projects and see how we've helped businesses transform their digital presence.
+            Explore our portfolio of successful projects and see how we&apos;ve helped businesses transform their digital presence.
           </p>
         </motion.div>
 
@@ -76,13 +77,13 @@ export default function PortfolioPage() {
           className="mt-20 text-center"
         >
           <h2 className="text-2xl font-semibold mb-6">Have a project in mind?</h2>
-          <a 
+          <Link 
             href="/contact" 
             className="inline-flex items-center px-8 py-3 border-2 border-green-400 text-green-400 font-medium rounded-lg hover:bg-green-400 hover:text-black transition-all duration-300"
           >
             Get in Touch
             <ExternalLink className="ml-2 w-4 h-4" />
-          </a>
+          </Link>
         </motion.div>
       </div>
     </div>

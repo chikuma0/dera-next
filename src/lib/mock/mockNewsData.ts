@@ -1,4 +1,11 @@
-import { NewsItem, NewsCategory } from '@/lib/services/newsService';
+import { NewsItem } from '@/types/news';
+
+// Define a simple category type since it's not in the main types
+type NewsCategory = {
+  id: string;
+  name: string;
+  description: string;
+};
 
 // Mock news categories
 export const mockCategories: NewsCategory[] = [
@@ -15,97 +22,109 @@ export const mockNews: NewsItem[] = [
     id: '1',
     title: 'OpenAI Announces GPT-5 with Enhanced Reasoning Capabilities',
     summary: 'The latest large language model shows significant improvements in mathematical reasoning and long-context understanding.',
-    content: 'OpenAI has unveiled GPT-5, the next iteration of its language model technology with substantial improvements in several key areas. The model demonstrates enhanced capabilities in mathematical reasoning, science problem-solving, and handling contextual information across long documents.',
+    source: 'AI Insider',
     source_id: '1',
     source_name: 'AI Insider',
+    source_logo: 'https://example.com/ai-insider-logo.png',
     url: 'https://example.com/gpt5-announcement',
     published_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    collected_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+    language: 'en',
     image_url: 'https://images.unsplash.com/photo-1677442135196-9466775a2c51?q=80&w=800',
+    importance_score: 95,
     relevance_score: 95,
-    ai_processed: true,
-    status: 'published',
-    categories: ['AI & ML', 'Research']
+    categories: ['AI & ML', 'Research'],
+    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    updated_at: new Date()
   },
   {
     id: '2',
-    title: 'Google DeepMind Achieves Breakthrough in Protein Structure Prediction',
-    summary: 'New algorithm shows unprecedented accuracy in predicting complex protein structures from amino acid sequences.',
-    content: 'Google DeepMind researchers have announced a major breakthrough in protein structure prediction, which could accelerate drug discovery and biotechnology research. The new algorithm demonstrates an accuracy rate of over 98% on benchmark datasets.',
+    title: 'Anthropic Raises $450M in Series C Funding',
+    summary: 'The AI safety startup plans to scale its constitutional AI approach to larger models.',
+    source: 'VentureBeat',
     source_id: '2',
-    source_name: 'Science Daily',
-    url: 'https://example.com/deepmind-protein',
-    published_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-    collected_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-    image_url: 'https://images.unsplash.com/photo-1530973428-5bf2db2e4d71?q=80&w=800',
-    relevance_score: 90,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Research', 'Industry']
+    source_name: 'VentureBeat',
+    source_logo: 'https://example.com/venturebeat-logo.png',
+    url: 'https://example.com/anthropic-funding',
+    published_date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+    language: 'en',
+    image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800',
+    importance_score: 88,
+    relevance_score: 88,
+    categories: ['Startups'],
+    created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+    updated_at: new Date()
   },
   {
     id: '3',
-    title: 'Japanese Startup Raises $50M for AI-Powered Manufacturing Robots',
-    summary: 'Tokyo-based robotics company secures major funding to expand its AI-powered manufacturing automation solutions.',
-    content: 'A Tokyo-based robotics startup has raised $50 million in Series B funding to expand its AI-powered manufacturing automation solutions. The company specializes in robots that can adapt to changing production environments without reprogramming.',
+    title: 'EU Proposes Stricter AI Regulations for High-Risk Applications',
+    summary: 'New legislation would require transparency and risk assessments for AI systems in critical sectors.',
+    source: 'Politico',
     source_id: '3',
-    source_name: 'Tech Crunch Japan',
-    url: 'https://example.com/japanese-ai-startup',
-    published_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    collected_at: new Date(Date.now() - 12 * 60 * 60 * 1000), // 12 hours ago
-    image_url: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800',
-    relevance_score: 85,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Startups', 'Industry']
+    source_name: 'Politico',
+    source_logo: 'https://example.com/politico-logo.png',
+    url: 'https://example.com/eu-ai-regulations',
+    published_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    language: 'en',
+    image_url: 'https://images.unsplash.com/photo-1508784411316-02b8cd57fef9?q=80&w=800',
+    importance_score: 90,
+    relevance_score: 90,
+    categories: ['Policy'],
+    created_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
+    updated_at: new Date()
   },
   {
     id: '4',
-    title: 'EU Unveils Comprehensive AI Regulation Framework',
-    summary: 'New regulations aim to balance innovation with ethical considerations and consumer protection.',
-    content: 'The European Union has unveiled a comprehensive regulatory framework for artificial intelligence that aims to balance technological innovation with ethical considerations and consumer protection. The framework introduces tiered regulations based on the risk level of AI applications.',
+    title: 'Microsoft Integrates AI Copilot Across Office 365',
+    summary: 'New AI features will help users write documents, create presentations, and analyze data.',
+    source: 'The Verge',
     source_id: '4',
-    source_name: 'EU Policy Review',
-    url: 'https://example.com/eu-ai-regulation',
-    published_date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
-    collected_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
-    image_url: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?q=80&w=800',
-    relevance_score: 80,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Policy']
+    source_name: 'The Verge',
+    source_logo: 'https://example.com/theverge-logo.png',
+    url: 'https://example.com/microsoft-office-ai',
+    published_date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // 6 days ago
+    language: 'en',
+    image_url: 'https://images.unsplash.com/photo-1633356122544-f134324b6cee?q=80&w=800',
+    importance_score: 85,
+    relevance_score: 85,
+    categories: ['Industry'],
+    created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    updated_at: new Date()
   },
   {
     id: '5',
-    title: 'New Study Shows AI Can Predict Earthquake Patterns with 75% Accuracy',
-    summary: 'Machine learning model analyzes seismic data to forecast potential earthquake locations and magnitudes.',
-    content: 'Researchers at Stanford University have developed a machine learning model that can predict earthquake patterns with approximately 75% accuracy. The system analyzes historical seismic data and surface deformation measurements to forecast potential earthquake locations and magnitudes.',
+    title: 'Meta Releases Open-Source AI Model for Medical Imaging Analysis',
+    summary: 'New model achieves state-of-the-art results in detecting abnormalities across multiple imaging modalities.',
+    source: 'TechCrunch',
     source_id: '5',
-    source_name: 'Science Journal',
-    url: 'https://example.com/ai-earthquake-prediction',
-    published_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-    collected_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-    image_url: 'https://images.unsplash.com/photo-1536244636800-a3f74db0f3cf?q=80&w=800',
-    relevance_score: 75,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Research', 'AI & ML']
+    source_name: 'TechCrunch',
+    source_logo: 'https://example.com/techcrunch-logo.png',
+    url: 'https://example.com/meta-medical-ai',
+    published_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
+    language: 'en',
+    image_url: 'https://images.unsplash.com/photo-1581595219315-a187dd160949?q=80&w=800',
+    importance_score: 82,
+    relevance_score: 82,
+    categories: ['AI & ML', 'Research'],
+    created_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // 6 days ago
+    updated_at: new Date()
   },
   {
     id: '6',
-    title: 'Meta Releases Open-Source AI Model for Medical Imaging Analysis',
-    summary: 'New model achieves state-of-the-art results in detecting abnormalities across multiple imaging modalities.',
-    content: 'Meta AI has released an open-source artificial intelligence model for medical imaging analysis that achieves state-of-the-art results in detecting abnormalities across X-ray, MRI, and CT scan modalities. The model was trained on anonymized data from multiple international healthcare institutions.',
+    title: 'AI Startup Cohere Valued at $2 Billion in New Funding Round',
+    summary: 'The company plans to expand its natural language processing technology to more enterprise customers.',
+    source: 'Bloomberg',
     source_id: '6',
-    source_name: 'Health Tech Today',
-    url: 'https://example.com/meta-medical-ai',
-    published_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    collected_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    image_url: 'https://images.unsplash.com/photo-1555708982-8645ec9ce3cc?q=80&w=800',
-    relevance_score: 88,
-    ai_processed: true,
-    status: 'published',
-    categories: ['AI & ML', 'Industry']
+    source_name: 'Bloomberg',
+    source_logo: 'https://example.com/bloomberg-logo.png',
+    url: 'https://example.com/cohere-funding',
+    published_date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), // 8 days ago
+    language: 'en',
+    image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800',
+    importance_score: 80,
+    relevance_score: 80,
+    categories: ['Startups'],
+    created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+    updated_at: new Date()
   },
   {
     id: '7',
@@ -137,7 +156,9 @@ export const mockNews: NewsItem[] = [
     relevance_score: 78,
     ai_processed: true,
     status: 'published',
-    categories: ['Policy', 'Research']
+    categories: ['Policy', 'Research'],
+    created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    updated_at: new Date()
   },
   {
     id: '9',
@@ -148,12 +169,14 @@ export const mockNews: NewsItem[] = [
     source_name: 'AI Review',
     url: 'https://example.com/claude-3-release',
     published_date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // 6 days ago
-    collected_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // 6 days ago
+    language: 'en',
     image_url: 'https://images.unsplash.com/photo-1511376868136-742c0de277e5?q=80&w=800',
     relevance_score: 87,
     ai_processed: true,
     status: 'published',
-    categories: ['AI & ML']
+    categories: ['AI & ML'],
+    created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    updated_at: new Date()
   },
   {
     id: '10',

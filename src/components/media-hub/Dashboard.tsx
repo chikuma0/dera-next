@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import Link from 'next/link';
 import { NewsItem } from '@/types/news';
 import { Tweet } from '@/types/twitter';
 
@@ -501,7 +502,7 @@ export function Dashboard({}: DashboardProps) {
                     )}
                     
                     <div className="text-center mt-2">
-                      <a
+                      <Link
                         href="/trends"
                         className="text-green-400 hover:text-green-300 text-sm inline-flex items-center bg-black/30 px-3 py-1.5 rounded-full hover:bg-black/50 transition-colors"
                       >
@@ -509,7 +510,7 @@ export function Dashboard({}: DashboardProps) {
                         <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 ) : trendingTechnologies.length > 0 ? (
@@ -579,7 +580,7 @@ export function Dashboard({}: DashboardProps) {
                     </div>
                     
                     <div className="text-center mt-2">
-                      <a
+                      <Link
                         href="/trends"
                         className="text-green-400 hover:text-green-300 text-sm inline-flex items-center bg-black/30 px-3 py-1.5 rounded-full hover:bg-black/50 transition-colors"
                       >
@@ -587,7 +588,7 @@ export function Dashboard({}: DashboardProps) {
                         <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                         </svg>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 ) : (
@@ -687,13 +688,13 @@ export function Dashboard({}: DashboardProps) {
                   )}
                   
                   <div className="text-center mt-2">
-                    <a
+                    <Link
                       href="/trends"
                       className="text-green-400 hover:text-green-300 text-sm inline-flex items-center"
                     >
                       View full social media analysis
                       <span className="ml-1">→</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ) : (

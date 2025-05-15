@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from 'redis';
 import { mockRedis } from './mockRedis';
 

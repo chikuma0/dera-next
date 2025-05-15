@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useTranslation } from '@/contexts/LanguageContext';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { SonarWeeklyDigest, SonarDigestTopic } from '@/lib/services/sonarDigestService';
+import DOMPurify from 'dompurify';
+import { ArticleSummary } from './ArticleSummary';
 
 interface SonarDigestProps {
   // Props can be added if needed
@@ -16,12 +18,21 @@ export function SonarDigest({}: SonarDigestProps) {
   const [digest, setDigest] = useState<SonarWeeklyDigest | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'html' | 'structured'>('structured');
+  const [isClient, setIsClient] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [translatedDigest, setTranslatedDigest] = useState<SonarWeeklyDigest | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<{ url: string; title: string } | null>(null);
+
+  // Handle initial mount
+  useEffect(() => {
+    setMounted(true);
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const fetchDigest = async () => {
-      // Add a timestamp to bypass cache
-      const bypassCache = new Date().getTime();
-      
       try {
         setIsLoading(true);
         
@@ -43,7 +54,7 @@ export function SonarDigest({}: SonarDigestProps) {
         }
         
         // Check if we have a cached digest in localStorage
-        const cacheKey = `sonarDigest`;
+        const cacheKey = `sonarDigest_${locale}`;
         const cachedDigestStr = localStorage.getItem(cacheKey);
         const cachedTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
         
@@ -82,7 +93,7 @@ export function SonarDigest({}: SonarDigestProps) {
               const cachedDigest = JSON.parse(cachedDigestStr);
               setDigest(cachedDigest);
               setIsLoading(false);
-              console.log(`Using cached Sonar digest`);
+              console.log(`Using cached Sonar digest for ${locale}`);
               return;
             } catch (parseError) {
               console.error('Error parsing cached digest:', parseError);
@@ -112,7 +123,7 @@ export function SonarDigest({}: SonarDigestProps) {
           try {
             localStorage.setItem(cacheKey, JSON.stringify(data.data));
             localStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
-            console.log(`Cached Sonar digest in localStorage`);
+            console.log(`Cached Sonar digest in localStorage for ${locale}`);
           } catch (cacheError) {
             console.error('Error caching digest:', cacheError);
           }
@@ -128,9 +139,62 @@ export function SonarDigest({}: SonarDigestProps) {
     };
 
     fetchDigest();
-  }, [locale]);
+  }, [locale, mounted]);
+
+  // Translate digest when locale changes or digest is updated
+  useEffect(() => {
+    const translateDigest = async () => {
+      if (!digest || locale === 'en') {
+        setTranslatedDigest(digest);
+        return;
+      }
+
+      try {
+        // Translate the digest content
+        const translatedTitle = await translate(digest.title);
+        const translatedSummary = await translate(digest.summary);
+        
+        // Translate each topic
+        const translatedTopics = await Promise.all(
+          digest.topics.map(async (topic) => {
+            const translatedTopic = {
+              ...topic,
+              title: await translate(topic.title),
+              summary: await translate(topic.summary),
+              viralReason: await translate(topic.viralReason),
+              valueReason: await translate(topic.valueReason),
+              insights: await translate(topic.insights),
+              // Keep citations in English but translate their titles
+              citations: await Promise.all(
+                topic.citations.map(async (citation) => ({
+                  ...citation,
+                  title: await translate(citation.title)
+                }))
+              )
+            };
+            return translatedTopic;
+          })
+        );
+
+        setTranslatedDigest({
+          ...digest,
+          title: translatedTitle,
+          summary: translatedSummary,
+          topics: translatedTopics
+        });
+      } catch (error) {
+        console.error('Error translating digest:', error);
+        // Fallback to original digest if translation fails
+        setTranslatedDigest(digest);
+      }
+    };
+
+    translateDigest();
+  }, [digest, locale]);
 
   const formatDate = (dateString: string | Date) => {
+    if (!mounted) return ''; // Return empty string during SSR
+    
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return translate('common.invalidDate');
@@ -143,6 +207,40 @@ export function SonarDigest({}: SonarDigestProps) {
     };
     return date.toLocaleDateString(locale === 'ja' ? 'ja-JP' : 'en-US', options);
   };
+
+  // Sanitize digest.rawHtml to remove nested <a> tags
+  function sanitizeHtml(html: string) {
+    // Log the raw HTML for inspection
+    if (typeof window !== 'undefined') {
+      console.log('SonarDigest rawHtml:', html);
+    }
+    // Remove nested <a> tags using a DOM parser
+    if (typeof window !== 'undefined') {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      // Find all <a> tags inside <a> tags
+      doc.querySelectorAll('a a').forEach(nestedAnchor => {
+        // Replace the nested <a> with its innerHTML
+        const parent = nestedAnchor.parentElement;
+        if (parent) {
+          parent.replaceChild(document.createTextNode(nestedAnchor.textContent || ''), nestedAnchor);
+        }
+      });
+      // Serialize back to string
+      html = doc.body.innerHTML;
+    }
+    // Use DOMPurify to sanitize
+    return typeof window !== 'undefined' ? DOMPurify.sanitize(html) : html;
+  }
+
+  // Return a loading state during SSR
+  if (!mounted) {
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -193,8 +291,21 @@ export function SonarDigest({}: SonarDigestProps) {
     );
   }
 
+  // Use translated digest for Japanese locale
+  const displayDigest = locale === 'ja' ? translatedDigest || digest : digest;
+
   return (
-    <div className="bg-black/40 border-2 border-purple-500/70 rounded-lg p-6 text-purple-400/90 relative overflow-hidden">
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <LoadingSpinner />
+        </div>
+      ) : error ? (
+        <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 text-red-300">
+          {error}
+        </div>
+      ) : displayDigest ? (
+        <div className="space-y-8">
       {/* Enhanced Background with Cosmic Theme */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-black opacity-90"></div>
@@ -215,10 +326,14 @@ export function SonarDigest({}: SonarDigestProps) {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <div className="flex items-center mb-2">
-                <span className="bg-purple-600/80 text-white text-xs font-bold px-2 py-1 rounded-full mr-2 uppercase tracking-wider">Weekly Edition</span>
-                <span className="text-purple-300/70 text-sm">{formatDate(digest.date)}</span>
+                    <span className="bg-purple-600/80 text-white text-xs font-bold px-2 py-1 rounded-full mr-2 uppercase tracking-wider">
+                      {locale === 'ja' ? '週間版' : 'Weekly Edition'}
+                    </span>
+                    <span className="text-purple-300/70 text-sm">{formatDate(displayDigest.date)}</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-200">SONAR AI NEWS DIGEST</h1>
+                  <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-200">
+                    {locale === 'ja' ? 'SONAR AI ニュースダイジェスト' : 'SONAR AI NEWS DIGEST'}
+                  </h1>
             </div>
             <div className="mt-4 md:mt-0 flex space-x-2">
               <button
@@ -229,7 +344,7 @@ export function SonarDigest({}: SonarDigestProps) {
                     : 'text-purple-400/60 hover:text-purple-300/80 hover:bg-purple-500/10'
                 }`}
               >
-                Structured
+                    {locale === 'ja' ? '構造化' : 'Structured'}
               </button>
               <button
                 onClick={() => setActiveTab('html')}
@@ -239,7 +354,7 @@ export function SonarDigest({}: SonarDigestProps) {
                     : 'text-purple-400/60 hover:text-purple-300/80 hover:bg-purple-500/10'
                 }`}
               >
-                Raw HTML
+                    {locale === 'ja' ? '生HTML' : 'Raw HTML'}
               </button>
             </div>
           </div>
@@ -251,143 +366,78 @@ export function SonarDigest({}: SonarDigestProps) {
             <div className="bg-black/70 border-2 border-purple-500/40 rounded-lg p-6 mb-6 backdrop-blur-sm shadow-lg">
               {/* Weekly Summary Section */}
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-4 font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-purple-100">{digest.title}</h2>
+                    <h2 className="text-3xl font-bold mb-4 font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-purple-100">{displayDigest.title}</h2>
                 <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-                  <p className="text-lg text-purple-200/90 leading-relaxed">{digest.summary}</p>
+                      <p className="text-lg text-purple-200/90 leading-relaxed">{displayDigest.summary}</p>
                 </div>
               </div>
               
-              {/* Top 5 Topics Section */}
-              <div className="mb-6">
-                <div className="flex items-center mb-4">
-                  <h3 className="text-2xl font-bold font-serif text-purple-300 mr-3">TOP 5 AI TOPICS THIS WEEK</h3>
-                  <div className="flex-grow h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
-                </div>
-                
-                {digest.topics && digest.topics.length > 0 ? (
-                  <div className="space-y-8">
-                    {digest.topics.map((topic, index) => (
-                      <div key={index} className="bg-black/80 border border-purple-500/40 rounded-lg p-5 mb-4 transition-all duration-300 hover:border-purple-400/60 hover:shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-                        {/* Topic Header with Number */}
-                        <div className="flex items-center mb-3">
-                          <div className="bg-purple-600/80 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-3">
-                            {index + 1}
-                          </div>
-                          <h4 className="text-2xl font-bold text-purple-200">{topic.title}</h4>
+                  {/* Topics */}
+                  <div className="space-y-6">
+                    <h2 className="text-2xl font-bold text-purple-200">
+                      {locale === 'ja' ? '今週のAIトピック TOP 5' : 'TOP 5 AI TOPICS THIS WEEK'}
+                    </h2>
+                    {displayDigest.topics.map((topic, index) => (
+                      <div
+                        key={index}
+                        className="bg-black/40 border border-purple-500/30 rounded-lg p-6"
+                      >
+                        <h3 className="text-xl font-semibold text-purple-200 mb-4">
+                          {topic.title}
+                        </h3>
+                        <div className="prose prose-invert max-w-none">
+                          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(topic.details) }} />
                         </div>
-                        
-                        {/* Summary Section */}
-                        <div className="mb-4 bg-purple-900/10 p-3 rounded-lg border-l-4 border-purple-500/50">
-                          <h5 className="text-purple-300 font-bold text-sm mb-1 uppercase tracking-wider">SUMMARY</h5>
-                          <p className="text-purple-200/90">{topic.summary}</p>
-                        </div>
-                        
-                        {/* Viral & Valuable Section */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                          <div className="bg-purple-900/10 p-3 rounded-lg border-l-4 border-pink-500/50">
-                            <h5 className="text-pink-300 font-bold text-sm mb-1 uppercase tracking-wider flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
-                              </svg>
-                              WHY VIRAL
-                            </h5>
-                            <p className="text-purple-200/90">{topic.viralReason}</p>
-                          </div>
-                          
-                          <div className="bg-purple-900/10 p-3 rounded-lg border-l-4 border-blue-500/50">
-                            <h5 className="text-blue-300 font-bold text-sm mb-1 uppercase tracking-wider flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                              </svg>
-                              WHY VALUABLE
-                            </h5>
-                            <p className="text-purple-200/90">{topic.valueReason}</p>
-                          </div>
-                        </div>
-                        
-                        {/* Insights Section */}
-                        <div className="mb-4 bg-purple-900/10 p-3 rounded-lg border-l-4 border-green-500/50">
-                          <h5 className="text-green-300 font-bold text-sm mb-1 uppercase tracking-wider flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                              <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                            </svg>
-                            INSIGHTS
-                          </h5>
-                          <p className="text-purple-200/90">{topic.insights}</p>
-                        </div>
-                        
-                        {/* Citations Section */}
                         {topic.citations && topic.citations.length > 0 && (
-                          <div className="bg-purple-900/10 p-3 rounded-lg">
-                            <h5 className="text-purple-300 font-bold text-sm mb-2 uppercase tracking-wider flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                              </svg>
-                              CITATIONS
-                            </h5>
+                          <div className="mt-4 space-y-2">
+                            <h4 className="text-sm font-medium text-purple-300">
+                              {locale === 'ja' ? '参考記事' : 'Sources'}
+                            </h4>
                             <ul className="space-y-2">
-                              {topic.citations.map((citation, citIndex) => (
-                                <li key={citIndex} className="text-sm flex items-center bg-black/40 p-2 rounded-md hover:bg-black/60 transition-colors">
-                                  <span className={`inline-block w-6 h-6 rounded-full mr-2 flex items-center justify-center text-xs ${
-                                    citation.type === 'x-post' ? 'bg-purple-700 text-purple-100' : 'bg-green-700 text-green-100'
-                                  }`}>
-                                    {citation.type === 'x-post' ? 'X' : 'A'}
-                                  </span>
-                                  <a
-                                    href={citation.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-purple-300 hover:text-purple-100 hover:underline transition-colors"
+                              {topic.citations.map((citation, citationIndex) => (
+                                <li key={citationIndex}>
+                                  <button
+                                    onClick={() => setSelectedArticle({ url: citation.url, title: citation.title })}
+                                    className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
                                   >
                                     {citation.title}
-                                  </a>
+                                    {locale === 'ja' && ' (元の記事を読む)'}
+                                  </button>
                                 </li>
                               ))}
                             </ul>
                           </div>
                         )}
-                        
-                        {/* Note: Twitter Data Section removed as part of the Twitter-enhanced Sonar Digest removal */}
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="bg-black/40 border border-purple-400/30 rounded-lg p-6 text-center">
-                    <p className="text-purple-300 mb-4">
-                      No structured topics could be extracted from the Sonar response. Please view the raw HTML tab to see the full content.
-                    </p>
-                    <button
-                      onClick={() => setActiveTab('html')}
-                      className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-4 py-2 rounded text-sm transition-colors"
-                    >
-                      View Raw HTML
-                    </button>
-                  </div>
-                )}
               </div>
               
               {/* Technology Insights Section */}
-              {digest.topics && digest.topics.length > 0 && (
+                {displayDigest.topics && displayDigest.topics.length > 0 && (
                 <div className="mt-8">
                   <div className="flex items-center mb-4">
-                    <h3 className="text-2xl font-bold font-serif text-purple-300 mr-3">TECHNOLOGY INSIGHTS</h3>
+                      <h3 className="text-2xl font-bold font-serif text-purple-300 mr-3">
+                        {locale === 'ja' ? '技術的洞察' : 'TECHNOLOGY INSIGHTS'}
+                      </h3>
                     <div className="flex-grow h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
                   </div>
                   
                   <div className="bg-black/70 border-2 border-purple-500/40 rounded-lg p-6 backdrop-blur-sm shadow-lg">
                     <p className="text-purple-200/90 mb-4">
-                      Explore detailed trend analysis and impact assessment for the technologies mentioned in this digest.
+                        {locale === 'ja'
+                          ? 'このダイジェストで言及されている技術の詳細なトレンド分析と影響評価を探索してください。'
+                          : 'Explore detailed trend analysis and impact assessment for the technologies mentioned in this digest.'}
                     </p>
                     <Link
                       href="/news/technology-trends"
                       className="inline-block px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
                     >
-                      View Technology Trends Dashboard
+                        {locale === 'ja' ? '技術トレンドダッシュボードを表示' : 'View Technology Trends Dashboard'}
                     </Link>
                   </div>
                 </div>
               )}
-            </div>
           </div>
         )}
         
@@ -396,7 +446,7 @@ export function SonarDigest({}: SonarDigestProps) {
           <div className="bg-black/60 border-2 border-purple-400/30 rounded-lg p-6 mb-6 backdrop-blur-sm">
             <div 
               className="prose prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: digest.rawHtml }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(displayDigest.rawHtml) }}
             />
           </div>
         )}
@@ -405,14 +455,32 @@ export function SonarDigest({}: SonarDigestProps) {
         <div className="text-center border-t border-purple-500/30 pt-4 mt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-purple-400/70 mb-2 md:mb-0">
-              <p className="font-medium">Weekly Sonar AI News Digest • Generated on {formatDate(digest.publishedAt)}</p>
+                  <p className="font-medium">
+                    {locale === 'ja'
+                      ? `週間Sonar AIニュースダイジェスト • ${formatDate(displayDigest.publishedAt)}に生成`
+                      : `Weekly Sonar AI News Digest • Generated on ${formatDate(displayDigest.publishedAt)}`}
+                  </p>
             </div>
             <div className="flex items-center">
-              <span className="text-xs text-purple-400/60 mr-2">Powered by</span>
+                  <span className="text-xs text-purple-400/60 mr-2">
+                    {locale === 'ja' ? '提供:' : 'Powered by'}
+                  </span>
               <span className="bg-purple-900/40 text-purple-200 text-xs font-bold px-2 py-1 rounded">xAI&apos;s Sonar API</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      ) : null}
+
+      {/* Article Summary Modal */}
+      {selectedArticle && (
+        <ArticleSummary
+          url={selectedArticle.url}
+          title={selectedArticle.title}
+          onClose={() => setSelectedArticle(null)}
+        />
+      )}
 
         {/* CSS for animated stars */}
         <style jsx>{`
@@ -452,7 +520,6 @@ export function SonarDigest({}: SonarDigestProps) {
             animation: twinkle 6s ease-in-out infinite 2s;
           }
         `}</style>
-      </div>
     </div>
   );
 }

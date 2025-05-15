@@ -44,7 +44,7 @@ export function NewsCard({ news, isCompact = false }: NewsCardProps) {
   if (isCompact) {
     return (
       <Link 
-        href={`/news/${news.id}`}
+        href={`news/${news.id}`}
         className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100 dark:border-gray-700"
       >
         <div className="flex items-start gap-3">
@@ -123,7 +123,7 @@ export function NewsCard({ news, isCompact = false }: NewsCardProps) {
           </span>
         </div>
         
-        <Link href={`/news/${news.id}`}>
+        <Link href={`news/${news.id}`}>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             {displayTitle}
           </h3>
@@ -155,7 +155,7 @@ export function NewsCard({ news, isCompact = false }: NewsCardProps) {
         
         <div className="flex justify-between items-center">
           <Link 
-            href={`/news/${news.id}`}
+            href={`news/${news.id}`}
             className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline"
           >
             {detailLabel}
