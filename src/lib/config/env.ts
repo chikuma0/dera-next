@@ -3,13 +3,15 @@ export function validateEnv() {
   console.log('Checking env variables:', {
     url: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
     anon: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    service: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    service: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    rss2json: !!process.env.RSS2JSON_API_KEY
   });
 
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY'
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'RSS2JSON_API_KEY'
   ];
 
   const missing = required.filter(key => 
