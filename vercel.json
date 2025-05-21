@@ -1,5 +1,5 @@
 {
-  "cron": [
+  "crons": [
     {
       "path": "/api/news/cron",
       "schedule": "0 6 * * *"
