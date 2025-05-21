@@ -1,8 +1,10 @@
-async function refreshNews() {
+#!/usr/bin/env node
+
+async function refreshNews(language: 'en' | 'ja' = 'en') {
   try {
-    const response = await fetch('http://localhost:3000/api/news/refresh', {
-      method: 'POST',
-    });
+    const baseUrl = process.env.VERCEL_URL ?? 'http://localhost:3000';
+    const url = `${baseUrl.replace(/\/?$/, '')}/api/news?refresh=true&language=${language}`;
+    const response = await fetch(url, { method: 'GET' });
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -15,4 +17,8 @@ async function refreshNews() {
   }
 }
 
-refreshNews(); 
+const [, , langArg] = process.argv;
+refreshNews((langArg === 'ja' ? 'ja' : 'en')).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
