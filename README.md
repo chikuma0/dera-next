@@ -56,9 +56,12 @@ PERPLEXITY_API_URL
 PERPLEXITY_API_KEY
 TRANSLATION_API_URL
 TRANSLATION_API_KEY
+RSS2JSON_API_KEY
 CRON_SECRET (optional)
 ```
 
 `PERPLEXITY_API_URL` and `PERPLEXITY_API_KEY` configure the Perplexity API used to generate article summaries. `TRANSLATION_API_URL` and `TRANSLATION_API_KEY` configure the translation service for converting summaries into Japanese when necessary.
 
 `CRON_SECRET` secures the `/api/news/cron` endpoint. When set, you must supply this value as a Bearer token, query parameter, or rely on the `x-vercel-source: cron` header added by Vercel Cron jobs.
+
+`RSS2JSON_API_KEY` powers RSS fetching via [rss2json.com](https://rss2json.com).
