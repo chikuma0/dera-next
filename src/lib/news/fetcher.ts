@@ -13,7 +13,14 @@ function getSupabaseClient(): SupabaseClient {
 
 async function fetchRSSWithProxy(url: string): Promise<any[]> {
   console.log('Fetching RSS with proxy:', url);
-  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${process.env.RSS2JSON_API_KEY || ''}`;
+  
+  // Check if API key is available
+  if (!process.env.RSS2JSON_API_KEY) {
+    console.error('RSS2JSON_API_KEY is not set in environment variables');
+    throw new Error('RSS2JSON_API_KEY is not configured');
+  }
+  
+  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${process.env.RSS2JSON_API_KEY}`;
   
   try {
     const response = await fetch(proxyUrl);
@@ -38,7 +45,8 @@ async function fetchRSSWithProxy(url: string): Promise<any[]> {
       url,
       error: error instanceof Error ? error.message : 'Unknown error',
     });
-    throw error;
+    // Return empty array instead of throwing to prevent complete failure
+    return [];
   }
 }
 
@@ -121,69 +129,20 @@ function isTechnicalContent(text: string, isJapanese: boolean = false): boolean 
       'AI', '人工知能', '機械学習', '深層学習', 'ディープラーニング',
       'ニューラルネットワーク', '言語モデル', 'チャットボット',
       'コンピュータ', 'システム', 'ソフトウェア', 'アプリ',
-
-      // Development & Applications
-      '開発', '技術', '研究', '革新', '実装', '応用',
-      'プログラム', 'エンジニア', 'デジタル', '自動化',
-
-      // Specific Tech Areas
-      'クラウド', 'サーバー', 'データベース', 'ネットワーク',
-      'セキュリティ', 'プラットフォーム', 'アルゴリズム',
-      
-      // Common Tech Terms
-      'ツール', '機能', 'サービス', '処理', '分析',
-      'テクノロジー', '最適化', '効率化'
+      'テクノロジー', '技術', '開発', '研究', '革新'
     ] :
     [
       // Core AI & ML
       'artificial intelligence', 'machine learning', 'deep learning',
       'neural network', 'language model', 'llm', 'gpt',
-      'computer vision', 'nlp', 'natural language processing',
-      'ai model', 'foundation model', 'multimodal', 'ai system',
-      'ai technology', 'ai solution', 'ai application', 'ai platform',
-      'ai tool', 'ai capability', 'ai feature', 'ai development',
-      'ai research', 'ai breakthrough', 'ai advancement',
-
-      // Development & Engineering
-      'software development', 'engineering', 'programming',
-      'code', 'algorithm', 'api', 'sdk', 'framework',
-      'implementation', 'deployment', 'architecture',
-      'infrastructure', 'platform', 'system design',
-      'technical', 'technology', 'software', 'application',
-      'development', 'solution', 'innovation',
-
-      // Cloud & DevOps
-      'cloud computing', 'kubernetes', 'docker', 'container',
-      'microservices', 'serverless', 'devops', 'ci/cd',
-      'continuous integration', 'deployment automation',
-      'cloud', 'saas', 'paas', 'iaas',
-
-      // Emerging Tech
-      'quantum computing', 'blockchain', 'web3',
-      'edge computing', 'iot', 'augmented reality',
-      'virtual reality', 'metaverse', 'robotics',
-      'autonomous', 'automation',
-
-      // Data & Analytics
-      'big data', 'data science', 'analytics',
-      'data engineering', 'database', 'data processing',
-      'data pipeline', 'data architecture',
-
-      // Security & Network
-      'cybersecurity', 'network security', 'encryption',
-      'authentication', 'authorization', 'zero trust',
-      'security protocol', 'firewall'
+      'ai', 'technology', 'development', 'research', 'innovation',
+      'software', 'system', 'application', 'platform'
     ];
 
-  let matchCount = 0;
+  // For both languages, require only one match
   for (const keyword of technicalKeywords) {
     if (findKeywordInText(text, keyword, isJapanese)) {
-      matchCount++;
-      // For Japanese content, require only one match
-      // For English content, require two matches
-      if ((isJapanese && matchCount >= 1) || (!isJapanese && matchCount >= 2)) {
-        return true;
-      }
+      return true;
     }
   }
   return false;

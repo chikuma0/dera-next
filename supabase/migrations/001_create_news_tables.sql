@@ -7,6 +7,7 @@ create table if not exists public.news_items (
   published_date timestamp with time zone not null,
   language text not null check (language in ('en', 'ja')),
   summary text,
+  importance_score float,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
