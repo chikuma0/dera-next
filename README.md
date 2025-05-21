@@ -42,3 +42,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment Variables
+
+The application requires the following environment variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+
+PERPLEXITY_API_URL
+PERPLEXITY_API_KEY
+TRANSLATION_API_URL
+TRANSLATION_API_KEY
+```
+
+`PERPLEXITY_API_URL` and `PERPLEXITY_API_KEY` configure the Perplexity API used to generate article summaries. `TRANSLATION_API_URL` and `TRANSLATION_API_KEY` configure the translation service for converting summaries into Japanese when necessary.

@@ -9,7 +9,11 @@ export function validateEnv() {
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY'
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'PERPLEXITY_API_URL',
+    'PERPLEXITY_API_KEY',
+    'TRANSLATION_API_URL',
+    'TRANSLATION_API_KEY'
   ];
 
   const missing = required.filter(key => 
@@ -28,6 +32,14 @@ export function validateEnv() {
       url: process.env.NEXT_PUBLIC_SUPABASE_URL as string,
       anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
       serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY as string
+    },
+    perplexity: {
+      url: process.env.PERPLEXITY_API_URL as string,
+      apiKey: process.env.PERPLEXITY_API_KEY as string
+    },
+    translation: {
+      url: process.env.TRANSLATION_API_URL as string,
+      apiKey: process.env.TRANSLATION_API_KEY as string
     }
   };
 }

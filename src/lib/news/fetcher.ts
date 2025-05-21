@@ -3,6 +3,8 @@ import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { ArticleService } from '../services/articleService';
+import { TranslationService } from '../services/translationService';
+import { PerplexityService } from '../services/perplexityService';
 
 function getSupabaseClient(): SupabaseClient {
   const env = validateEnv();
@@ -192,6 +194,8 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
   const sources = NEWS_SOURCES.filter(source => source.language === language);
   const allItems: NewsItem[] = [];
   const articleService = new ArticleService();
+  const translationService = new TranslationService();
+  const perplexityService = new PerplexityService();
 
   console.log(`Starting fetch for ${sources.length} ${language} sources`);
 
@@ -200,41 +204,49 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
       console.log(`Fetching from ${source.name}...`);
       const items = await fetchRSSWithProxy(source.url);
       
-      const newsItems: NewsItem[] = items
-        .map((item: any) => {
-          const title = item.title?.trim() || '';
-          // Clean up description/content by removing HTML tags
-          const rawSummary = item.description?.trim() || item.content?.trim() || '';
-          const summary = rawSummary.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-          const fullText = `${title} ${summary}`;
+      const processed = await Promise.all(items.map(async (item: any) => {
+        const title = item.title?.trim() || '';
+        const rawSummary = item.description?.trim() || item.content?.trim() || '';
+        const cleanedSummary = rawSummary.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        const fullText = `${title} ${cleanedSummary}`;
 
-          // Skip non-technical content
-          if (!isTechnicalContent(fullText, language === 'ja')) {
-            return null;
+        if (!isTechnicalContent(fullText, language === 'ja')) {
+          return null;
+        }
+
+        let summary = cleanedSummary;
+
+        if (language === 'ja') {
+          try {
+            const perplexitySummary = await perplexityService.summarize(item.link);
+            if (/[\u3040-\u30FF\u4E00-\u9FFF]/.test(perplexitySummary)) {
+              summary = perplexitySummary;
+            } else {
+              summary = await translationService.translate(perplexitySummary, 'ja');
+            }
+          } catch (err) {
+            console.error('Perplexity summary error:', err);
           }
+        }
 
-          const newsItem: NewsItem = {
-            id: item.link ||
-                Buffer.from(`${source.name}-${title}`).toString('base64').replace(/[+/=]/g, ''),
-            title,
-            url: item.link?.trim() || '',
-            source: source.name,
-            published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
-            language,
-            summary,
-            created_at: new Date(),
-            updated_at: new Date()
-          };
+        const newsItem: NewsItem = {
+          id: item.link || Buffer.from(`${source.name}-${title}`).toString('base64').replace(/[+/=]/g, ''),
+          title,
+          url: item.link?.trim() || '',
+          source: source.name,
+          published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
+          language,
+          summary,
+          created_at: new Date(),
+          updated_at: new Date()
+        };
 
-          // Calculate importance score for new items
-          const { total: score } = articleService.calculateArticleScore(newsItem);
-          newsItem.importance_score = score;
+        const { total: score } = articleService.calculateArticleScore(newsItem);
+        newsItem.importance_score = score;
+        return newsItem;
+      }));
 
-          return newsItem;
-        })
-        .filter((item): item is NewsItem =>
-          Boolean(item !== null && item.title && item.url)
-        );
+      const newsItems: NewsItem[] = processed.filter((item): item is NewsItem => Boolean(item && item.title && item.url));
 
       console.log(`Found ${newsItems.length} valid technical items from ${source.name}`);
 
