@@ -13,7 +13,8 @@ export function validateEnv() {
     'PERPLEXITY_API_URL',
     'PERPLEXITY_API_KEY',
     'TRANSLATION_API_URL',
-    'TRANSLATION_API_KEY'
+    'TRANSLATION_API_KEY',
+    'RSS2JSON_API_KEY'
   ];
 
   const missing = required.filter(key => 
