@@ -5,6 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { ArticleService } from '../services/articleService';
 import { TranslationService } from '../services/translationService';
 import { PerplexityService } from '../services/perplexityService';
+import { createHash } from 'crypto';
 
 function getSupabaseClient(): SupabaseClient {
   const env = validateEnv();
@@ -48,6 +49,17 @@ async function fetchRSSWithProxy(url: string): Promise<any[]> {
     // Return empty array instead of throwing to prevent complete failure
     return [];
   }
+}
+
+function generateUUIDFromString(input: string): string {
+  const hash = createHash('sha256').update(input).digest('hex');
+  return [
+    hash.slice(0, 8),
+    hash.slice(8, 12),
+    hash.slice(12, 16),
+    hash.slice(16, 20),
+    hash.slice(20, 32)
+  ].join('-');
 }
 
 function findWordInArray(words: string[], target: string): boolean {
@@ -188,8 +200,9 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
           }
         }
 
+        const idSource = item.link || `${source.name}-${title}`;
         const newsItem: NewsItem = {
-          id: item.link || Buffer.from(`${source.name}-${title}`).toString('base64').replace(/[+/=]/g, ''),
+          id: generateUUIDFromString(idSource),
           title,
           url: item.link?.trim() || '',
           source: source.name,
