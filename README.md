@@ -1,17 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dera Next
+
+Dera Next is a [Next.js](https://nextjs.org) project that uses Supabase and Resend. It powers the Dera front‑end and includes a few utility scripts.
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+Run this step before network access is disabled so that all packages and Husky hooks are set up correctly.
+
+### 2. Create a `.env` file
+
+Use the provided example file and fill in your credentials:
+
+```bash
+cp .env.example .env
+```
+
+### 3. Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
