@@ -4,14 +4,14 @@ import { fetchAndStoreNews } from '@/lib/news/fetcher';
 import { ArticleService } from '@/lib/services/articleService';
 
 // Vercel Cron handler
-// Using standard runtime instead of edge for better environment variable support
+// Using the standard runtime instead of Edge for better environment variable support
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Maximum duration in seconds (60s is the limit for Vercel Hobby)
 
 export async function GET(request: Request) {
   try {
     // Debug: Log environment variables (will only show in server logs, not in client)
-    console.log('Environment variables in edge runtime:', {
+    console.log('Environment variables in standard runtime:', {
       CRON_SECRET: process.env.CRON_SECRET ? '*** (set)' : '❌ (not set)',
       NODE_ENV: process.env.NODE_ENV,
       VERCEL: process.env.VERCEL,
