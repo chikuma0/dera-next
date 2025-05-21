@@ -28,9 +28,8 @@ export async function GET(request: Request) {
     console.log('Vercel source header:', vercelSource || 'none');
     console.log('Vercel cron header:', vercelCron || 'none');
 
-    // Only enforce the secret if it is defined. Accept the secret via
-    // Authorization header, query parameter, or when invoked by Vercel Cron
-    if (process.env.CRON_SECRET) {
+    // Only enforce the secret if it is defined and not in development mode
+    if (process.env.CRON_SECRET && process.env.NODE_ENV !== 'development') {
       const validHeader = authHeader === `Bearer ${process.env.CRON_SECRET}`;
       const validQuery = secretParam === process.env.CRON_SECRET;
       const fromCron = vercelSource === 'cron' || vercelCron !== null;
@@ -39,34 +38,66 @@ export async function GET(request: Request) {
         console.error('Unauthorized cron invocation');
         return new NextResponse('Unauthorized', { status: 401 });
       }
+    } else {
+      console.log('Bypassing auth check in development mode');
     }
 
     console.log('Starting scheduled news fetch...');
     
-    // Fetch both English and Japanese news
-    const [englishNews, japaneseNews] = await Promise.all([
-      fetchAndStoreNews('en'),
-      fetchAndStoreNews('ja')
-    ]);
-
-    // Update scores after fetching
-    const articleService = new ArticleService();
-    await articleService.updateArticleScores();
-
-    return NextResponse.json({
-      success: true,
-      timestamp: new Date().toISOString(),
-      fetched: {
-        en: englishNews.length,
-        ja: japaneseNews.length
+    try {
+      // Fetch news for both languages
+      console.log('Fetching English news...');
+      const englishNews = await fetchAndStoreNews('en');
+      
+      console.log('Fetching Japanese news...');
+      const japaneseNews = await fetchAndStoreNews('ja');
+      
+      // Calculate total items fetched
+      const enCount = typeof englishNews === 'number' ? englishNews :
+                      Array.isArray(englishNews) ? englishNews.length : 0;
+      
+      const jaCount = typeof japaneseNews === 'number' ? japaneseNews :
+                      Array.isArray(japaneseNews) ? japaneseNews.length : 0;
+      
+      console.log(`Fetched ${enCount} English and ${jaCount} Japanese news items`);
+      
+      // Update scores after fetching
+      try {
+        console.log('Updating article scores...');
+        const articleService = new ArticleService();
+        await articleService.updateArticleScores();
+        console.log('Article scores updated successfully');
+      } catch (scoreError) {
+        console.error('Error updating article scores:', scoreError);
+        // Continue despite score update failure
       }
-    });
+
+      return NextResponse.json({
+        success: true,
+        timestamp: new Date().toISOString(),
+        fetched: {
+          en: enCount,
+          ja: jaCount
+        }
+      });
+    } catch (fetchError) {
+      console.error('News fetch error:', fetchError);
+      return NextResponse.json(
+        {
+          success: false,
+          error: fetchError instanceof Error ? fetchError.message : 'Failed to fetch news',
+          timestamp: new Date().toISOString()
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Scheduled fetch error:', error);
+    console.error('Unexpected error in cron handler:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to fetch news' 
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unexpected error in cron handler',
+        timestamp: new Date().toISOString()
       },
       { status: 500 }
     );

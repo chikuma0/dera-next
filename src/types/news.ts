@@ -4,6 +4,7 @@ export interface NewsItem {
   title: string;
   url: string;
   source: string;
+  source_id?: string; // Added to match the database schema
   published_date: Date;
   language: 'en' | 'ja';
   summary?: string;

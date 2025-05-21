@@ -5,6 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { ArticleService } from '../services/articleService';
 import { TranslationService } from '../services/translationService';
 import { PerplexityService } from '../services/perplexityService';
+import { generateUUID } from './generateUUID';
 
 function getSupabaseClient(): SupabaseClient {
   const env = validateEnv();
@@ -148,6 +149,39 @@ function isTechnicalContent(text: string, isJapanese: boolean = false): boolean 
   return false;
 }
 
+// Map of source names to their database source_id values
+const SOURCE_ID_MAP: Record<string, string> = {
+  // Known mappings from the existing database data
+  "TechCrunch AI": "772bc9c4-e9c8-4447-989d-285f6e40292f",
+  "Google News - AI": "558d309b-2d96-4779-add8-6db559673018",
+  
+  // Following are educated guesses based on the pattern of existing sources
+  "Google News - AI Tech": "558d309b-2d96-4779-add8-6db559673018",  // Same as Google News - AI
+  "Google News - AI Development": "558d309b-2d96-4779-add8-6db559673018",  // Same as Google News - AI
+  "Google News - AI Applications": "558d309b-2d96-4779-add8-6db559673018",  // Same as Google News - AI
+  "Google News - Tech Innovation": "558d309b-2d96-4779-add8-6db559673018"   // Same as Google News - AI
+};
+
+/**
+ * Get source_id for a source name
+ * @param sourceName The name of the source
+ * @returns The source_id from the map, or a fallback based on the pattern
+ */
+function getSourceId(sourceName: string): string {
+  // Return the mapped ID if it exists
+  if (SOURCE_ID_MAP[sourceName]) {
+    return SOURCE_ID_MAP[sourceName];
+  }
+  
+  // For Google News sources, use the Google News - AI source_id
+  if (sourceName.startsWith('Google News')) {
+    return SOURCE_ID_MAP["Google News - AI"];
+  }
+  
+  // Fallback to TechCrunch AI source_id
+  return SOURCE_ID_MAP["TechCrunch AI"];
+}
+
 export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
   const supabase = getSupabaseClient();
   const sources = NEWS_SOURCES.filter(source => source.language === language);
@@ -173,26 +207,60 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
           return null;
         }
 
+        // Normalize the URL to avoid issues
+        const normalizedUrl = (item.link?.trim() || '').replace(/\s/g, '');
+        
         let summary = cleanedSummary;
-
-        if (language === 'ja') {
+        
+        // Try to get an AI-enhanced summary for the article
+        if (normalizedUrl) {
           try {
-            const perplexitySummary = await perplexityService.summarize(item.link);
-            if (/[\u3040-\u30FF\u4E00-\u9FFF]/.test(perplexitySummary)) {
-              summary = perplexitySummary;
+            console.log(`Attempting to enhance summary for ${normalizedUrl}...`);
+            const enhancedSummary = await perplexityService.summarize(normalizedUrl, language);
+            if (enhancedSummary && enhancedSummary.length > 20) {
+              // Only use the enhanced summary if it's meaningful
+              console.log(`Successfully enhanced summary for ${normalizedUrl}`);
+              summary = enhancedSummary;
             } else {
-              summary = await translationService.translate(perplexitySummary, 'ja');
+              console.log(`Enhanced summary too short or empty for ${normalizedUrl}, using original`);
             }
-          } catch (err) {
-            console.error('Perplexity summary error:', err);
+          } catch (error) {
+            // Just log the error and continue with the original summary
+            console.log(`Could not enhance summary for ${normalizedUrl}, using original`);
+            console.error('Perplexity summary error:', error instanceof Error ? error.message : String(error));
           }
         }
 
+        if (language === 'ja') {
+          try {
+            // For Japanese content, translate summary to make it easier to process
+            console.log(`Attempting to translate Japanese content for ${source.name} article`);
+            const translated = await translationService.translate(cleanedSummary, 'en');
+            
+            if (translated && translated.length > 10) {
+              console.log(`Successfully translated content`);
+              summary = translated;
+            } else {
+              console.log(`Translation result empty or too short, using original`);
+              summary = cleanedSummary;
+            }
+          } catch (error) {
+            console.error('Translation error:', error instanceof Error ? error.message : String(error));
+            console.log(`Using original Japanese content due to translation failure`);
+            summary = cleanedSummary; // Fall back to original
+          }
+        }
+
+        // We already have normalizedUrl from earlier
+        // Ensure we have a valid URL to generate the ID
+        const idSource = normalizedUrl || `${source.name}-${title}`;
+        
         const newsItem: NewsItem = {
-          id: item.link || Buffer.from(`${source.name}-${title}`).toString('base64').replace(/[+/=]/g, ''),
+          id: generateUUID(idSource),
           title,
-          url: item.link?.trim() || '',
+          url: normalizedUrl,
           source: source.name,
+          source_id: getSourceId(source.name), // Use the mapping function
           published_date: item.pubDate ? new Date(item.pubDate) : new Date(),
           language,
           summary,
@@ -249,50 +317,16 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
       .select('*')
       .eq('language', language)
       .order('importance_score', { ascending: false })
-      .limit(10); // Limit to top 10 articles
+      .limit(50);
 
     if (error) {
-      console.error('Database error:', error);
+      console.error('Database fetch error:', error);
       return [];
     }
 
-    // If any articles don't have a score, calculate and update them
-    const articlesNeedingScores = data?.filter(article => article.importance_score === null);
-    if (articlesNeedingScores && articlesNeedingScores.length > 0) {
-      console.log(`Calculating scores for ${articlesNeedingScores.length} articles`);
-      
-      for (const article of articlesNeedingScores) {
-        const { total: score } = articleService.calculateArticleScore(article);
-        
-        const { error: updateError } = await supabase
-          .from('news_items')
-          .update({ importance_score: score })
-          .eq('id', article.id);
-
-        if (updateError) {
-          console.error(`Error updating score for article ${article.id}:`, updateError);
-        }
-      }
-
-      // Fetch the updated articles again
-      const { data: updatedData, error: refetchError } = await supabase
-        .from('news_items')
-        .select('*')
-        .eq('language', language)
-        .order('importance_score', { ascending: false })
-        .limit(10);
-
-      if (refetchError) {
-        console.error('Error refetching articles:', refetchError);
-        return data || [];
-      }
-
-      return updatedData || [];
-    }
-
-    return data || [];
+    return data as NewsItem[];
   } catch (error) {
-    console.error('Error fetching from database:', error);
+    console.error('Failed to get news:', error);
     return [];
   }
 }

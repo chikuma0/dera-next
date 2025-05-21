@@ -7,6 +7,7 @@ export type Database = {
             title: string
             url: string
             source: string
+            source_id: string
             published_date: string
             language: 'en' | 'ja'
             summary: string
@@ -27,6 +28,7 @@ export type Database = {
     title: string
     url: string
     source: string
+    source_id: string
     published_date: string
     language: 'en' | 'ja'
     summary: string
