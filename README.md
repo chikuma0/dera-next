@@ -1,8 +1,16 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Setup
+
+Run the provided script to install dependencies and configure git hooks:
+
+```bash
+./setup.sh
+```
+
 ## Getting Started
 
-First, run the development server:
+After the initial setup, start the development server:
 
 ```bash
 npm run dev
