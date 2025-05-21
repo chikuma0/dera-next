@@ -57,6 +57,8 @@ PERPLEXITY_API_KEY
 TRANSLATION_API_URL
 TRANSLATION_API_KEY
 RSS2JSON_API_KEY
+RESEND_API_KEY (optional)
+DISCORD_WEBHOOK_URL (optional)
 CRON_SECRET (optional)
 ```
 
@@ -65,3 +67,7 @@ CRON_SECRET (optional)
 `CRON_SECRET` secures the `/api/news/cron` endpoint. When set, you must supply this value as a Bearer token, query parameter, or rely on the `x-vercel-source: cron` header added by Vercel Cron jobs.
 
 `RSS2JSON_API_KEY` powers RSS fetching via [rss2json.com](https://rss2json.com).
+
+`RESEND_API_KEY` and `DISCORD_WEBHOOK_URL` enable optional notifications for
+contact-form submissions. When set, the API route sends emails via Resend and
+posts alerts to a Discord channel.
