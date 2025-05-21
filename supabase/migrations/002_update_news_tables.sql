@@ -4,8 +4,9 @@ add column if not exists by text,
 add column if not exists comments integer,
 add column if not exists score integer;
 
+-- Clean up obsolete index if it was created earlier
+drop index if exists idx_news_items_content_category;
 -- Add indices for performance
-create index if not exists idx_news_items_content_category on news_items using gin(content_category);
 create index if not exists idx_news_items_source on news_items(source);
 create index if not exists idx_news_items_by on news_items(by);
 
