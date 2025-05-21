@@ -133,14 +133,13 @@ export const mockNews: NewsItem[] = [
     content: 'The Japanese government has announced a $2 billion investment plan to accelerate artificial intelligence adoption across multiple sectors of the economy. The initiative will focus on healthcare, manufacturing, agriculture, and public services, with special emphasis on addressing Japan\'s aging population challenges.',
     source_id: '7',
     source_name: 'Japan Economic News',
+    source: 'Japan Economic News',
     url: 'https://example.com/japan-ai-investment',
     published_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    collected_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
     image_url: 'https://images.unsplash.com/photo-1532322608303-9f4bf8eb33e6?q=80&w=800',
     relevance_score: 92,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Policy', 'Industry']
+    categories: ['Policy', 'Industry'],
+    language: 'en',
   },
   {
     id: '8',
@@ -149,16 +148,15 @@ export const mockNews: NewsItem[] = [
     content: 'An international coalition of researchers, industry leaders, and policymakers has proposed a new ethics framework for artificial intelligence. The framework addresses key concerns including algorithmic transparency, fairness, privacy protection, and accountability in AI development and deployment.',
     source_id: '8',
     source_name: 'Tech Ethics Journal',
+    source: 'Tech Ethics Journal',
     url: 'https://example.com/ai-ethics-framework',
     published_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-    collected_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
     image_url: 'https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=800',
     relevance_score: 78,
-    ai_processed: true,
-    status: 'published',
     categories: ['Policy', 'Research'],
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    updated_at: new Date()
+    updated_at: new Date(),
+    language: 'en',
   },
   {
     id: '9',
@@ -167,13 +165,12 @@ export const mockNews: NewsItem[] = [
     content: 'Anthropic has unveiled Claude 3, its latest AI assistant model designed with a focus on safety and interpretability. The company claims the new system demonstrates significantly lower hallucination rates than competitors while providing more transparent reasoning for its outputs.',
     source_id: '9',
     source_name: 'AI Review',
+    source: 'AI Review',
     url: 'https://example.com/claude-3-release',
     published_date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), // 6 days ago
     language: 'en',
     image_url: 'https://images.unsplash.com/photo-1511376868136-742c0de277e5?q=80&w=800',
     relevance_score: 87,
-    ai_processed: true,
-    status: 'published',
     categories: ['AI & ML'],
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
     updated_at: new Date()
@@ -185,14 +182,13 @@ export const mockNews: NewsItem[] = [
     content: 'A new AI-powered drug discovery platform has successfully identified several novel antibiotic compounds effective against drug-resistant bacteria. The machine learning system, developed by a team at MIT, screened millions of chemical compounds to identify structures with potential antimicrobial properties not recognized by traditional discovery methods.',
     source_id: '10',
     source_name: 'BioTech Advances',
+    source: 'BioTech Advances',
     url: 'https://example.com/ai-antibiotics-discovery',
     published_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
-    collected_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
     image_url: 'https://images.unsplash.com/photo-1542736667-069246bdbc6d?q=80&w=800',
     relevance_score: 89,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Research', 'Industry']
+    categories: ['Research', 'Industry'],
+    language: 'en',
   },
   {
     id: '11',
@@ -201,14 +197,13 @@ export const mockNews: NewsItem[] = [
     content: 'Researchers have developed a revolutionary AI chip with a neuromorphic computing architecture that demonstrates power efficiency approaching that of biological brains. The chip uses novel materials and a spike-based processing approach to achieve significant improvements in energy consumption while maintaining high computational throughput.',
     source_id: '11',
     source_name: 'Computing Frontiers',
+    source: 'Computing Frontiers',
     url: 'https://example.com/neuromorphic-ai-chip',
     published_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-    collected_at: new Date(Date.now() - 16 * 60 * 60 * 1000), // 16 hours ago
     image_url: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800',
     relevance_score: 94,
-    ai_processed: true,
-    status: 'published',
-    categories: ['AI & ML', 'Research']
+    categories: ['AI & ML', 'Research'],
+    language: 'en',
   },
   {
     id: '12',
@@ -217,13 +212,12 @@ export const mockNews: NewsItem[] = [
     content: 'A new AI system has demonstrated the ability to autonomously optimize semiconductor manufacturing processes, improving yield rates by approximately 35% in commercial implementation. The self-learning system continuously adjusts manufacturing parameters based on real-time data analysis and predictive modeling.',
     source_id: '12',
     source_name: 'Semiconductor News',
+    source: 'Semiconductor News',
     url: 'https://example.com/ai-semiconductor-optimization',
     published_date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
-    collected_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
     image_url: 'https://images.unsplash.com/photo-1544986581-efac024faf62?q=80&w=800',
     relevance_score: 86,
-    ai_processed: true,
-    status: 'published',
-    categories: ['Industry', 'AI & ML']
+    categories: ['Industry', 'AI & ML'],
+    language: 'en',
   }
 ]; 

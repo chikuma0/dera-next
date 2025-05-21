@@ -694,14 +694,16 @@ export function Dashboard({}: DashboardProps) {
                                 <div className="mt-3 flex items-center text-xs text-green-400/70 space-x-4">
                                   <div>❤️ {tweet.likesCount}</div>
                                   <div>🔄 {tweet.retweetsCount}</div>
-                                  <Link
-                                    href={tweet.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="ml-auto text-blue-400 hover:underline"
-                                  >
-                                    View on X
-                                  </Link>
+                                  {tweet.url && (
+                                    <Link
+                                      href={tweet.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="ml-auto text-blue-400 hover:underline"
+                                    >
+                                      View on X
+                                    </Link>
+                                  )}
                                 </div>
                               </div>
                             </div>

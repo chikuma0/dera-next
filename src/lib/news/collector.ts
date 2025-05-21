@@ -4,9 +4,12 @@ import { NewsCache } from './cache';
 export class NewsCollector {
   private cache: NewsCache;
   private isRunning = false;
+  private retryCount = 0;
+  private readonly MAX_RETRIES = 3;
+  private readonly RETRY_DELAY = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    this.cache = new NewsCache();
+    this.cache = NewsCache.getInstance();
   }
 
   async start() {
@@ -28,8 +31,8 @@ export class NewsCollector {
       
       // Collect news for both languages
       const [enNews, jaNews] = await Promise.all([
-        fetchAndStoreNews('en', true),
-        fetchAndStoreNews('ja', true)
+        fetchAndStoreNews('en'),
+        fetchAndStoreNews('ja')
       ]);
       
       console.log(`Collected ${enNews.length} English and ${jaNews.length} Japanese news items`);
@@ -37,9 +40,25 @@ export class NewsCollector {
       // Invalidate cache to ensure fresh data
       await this.cache.invalidateCache();
       
+      // Reset retry count on success
+      this.retryCount = 0;
+      
       console.log('News collection completed');
     } catch (error) {
       console.error('Error in news collection:', error);
+      
+      // Implement retry logic
+      if (this.retryCount < this.MAX_RETRIES) {
+        this.retryCount++;
+        console.log(`Retrying news collection in ${this.RETRY_DELAY/1000} seconds (attempt ${this.retryCount}/${this.MAX_RETRIES})`);
+        
+        setTimeout(() => {
+          this.collectNews();
+        }, this.RETRY_DELAY);
+      } else {
+        console.error('Max retries reached. Will try again on next scheduled interval.');
+        this.retryCount = 0;
+      }
     }
   }
 } 

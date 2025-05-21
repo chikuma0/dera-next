@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 import { SonarDigestService } from '@/lib/services/sonarDigestService';
+import { translateDigest } from '@/lib/services/translateDynamic';
+import { redisCache } from '@/lib/cache/redis';
 
 // Use ISR (Incremental Static Regeneration) with a revalidation period of 1 week
 export const revalidate = 604800; // 7 days in seconds (7 * 24 * 60 * 60)
@@ -13,6 +15,7 @@ export async function GET(request: NextRequest) {
     
     // Always get the latest digest from the database
     console.log('API Route: Getting latest Sonar digest from database...');
+    const language = request.nextUrl.searchParams.get('language') || 'en';
     const digest = await sonarDigestService.getLatestWeeklyDigest();
     
     if (!digest) {
@@ -34,10 +37,21 @@ export async function GET(request: NextRequest) {
     
     console.log(`API Route: Retrieved Sonar digest`);
     
+    // Caching key: digest id + language
+    const cacheKey = `sonar-digest:${digest.id || digest.date.toISOString()}:${language}`;
+    let result;
+    if (language !== 'en') {
+      result = await redisCache.withCache(cacheKey, async () => {
+        return await translateDigest(digest, language);
+      }, 604800); // 7 days TTL
+    } else {
+      result = digest;
+    }
+    
     return new Response(
       JSON.stringify({
         success: true,
-        data: digest
+        data: result
       }),
       {
         headers: {

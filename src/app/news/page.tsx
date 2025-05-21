@@ -1,13 +1,16 @@
-import { headers } from 'next/headers';
-import { NewsService } from '@/lib/services/newsService';
+import { cookies } from 'next/headers';
+import { getLatestNews } from '@/lib/news/fetcher';
 import { NewsList } from '@/components/news/NewsList';
 
+async function getRequestLocale(): Promise<'en' | 'ja'> {
+  // NEXT_LOCALE cookie is set automatically by Next.js i18n
+  const cookieStore = await cookies();
+  return (cookieStore.get('NEXT_LOCALE')?.value as 'en' | 'ja') ?? 'en';
+}
+
 export default async function NewsPage() {
-  // Get the current locale from Next.js headers (for future use)
-  const locale = (await headers()).get('x-nextjs-locale') || 'en';
-  const newsService = new NewsService();
-  // Fetch all news (for now, only English is supported)
-  const { items: news } = await newsService.getPublishedNews(1, 20);
+  const locale = await getRequestLocale();
+  const news = await getLatestNews(locale);
 
   return (
     <main className="container mx-auto px-4 py-8">

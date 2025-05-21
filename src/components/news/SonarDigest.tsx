@@ -20,7 +20,6 @@ export function SonarDigest({}: SonarDigestProps) {
   const [activeTab, setActiveTab] = useState<'html' | 'structured'>('structured');
   const [isClient, setIsClient] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [translatedDigest, setTranslatedDigest] = useState<SonarWeeklyDigest | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<{ url: string; title: string } | null>(null);
 
   // Handle initial mount
@@ -141,57 +140,6 @@ export function SonarDigest({}: SonarDigestProps) {
     fetchDigest();
   }, [locale, mounted]);
 
-  // Translate digest when locale changes or digest is updated
-  useEffect(() => {
-    const translateDigest = async () => {
-      if (!digest || locale === 'en') {
-        setTranslatedDigest(digest);
-        return;
-      }
-
-      try {
-        // Translate the digest content
-        const translatedTitle = await translate(digest.title);
-        const translatedSummary = await translate(digest.summary);
-        
-        // Translate each topic
-        const translatedTopics = await Promise.all(
-          digest.topics.map(async (topic) => {
-            const translatedTopic = {
-              ...topic,
-              title: await translate(topic.title),
-              summary: await translate(topic.summary),
-              viralReason: await translate(topic.viralReason),
-              valueReason: await translate(topic.valueReason),
-              insights: await translate(topic.insights),
-              // Keep citations in English but translate their titles
-              citations: await Promise.all(
-                topic.citations.map(async (citation) => ({
-                  ...citation,
-                  title: await translate(citation.title)
-                }))
-              )
-            };
-            return translatedTopic;
-          })
-        );
-
-        setTranslatedDigest({
-          ...digest,
-          title: translatedTitle,
-          summary: translatedSummary,
-          topics: translatedTopics
-        });
-      } catch (error) {
-        console.error('Error translating digest:', error);
-        // Fallback to original digest if translation fails
-        setTranslatedDigest(digest);
-      }
-    };
-
-    translateDigest();
-  }, [digest, locale]);
-
   const formatDate = (dateString: string | Date) => {
     if (!mounted) return ''; // Return empty string during SSR
     
@@ -291,9 +239,6 @@ export function SonarDigest({}: SonarDigestProps) {
     );
   }
 
-  // Use translated digest for Japanese locale
-  const displayDigest = locale === 'ja' ? translatedDigest || digest : digest;
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {isLoading ? (
@@ -304,7 +249,7 @@ export function SonarDigest({}: SonarDigestProps) {
         <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 text-red-300">
           {error}
         </div>
-      ) : displayDigest ? (
+      ) : digest ? (
         <div className="space-y-8">
       {/* Enhanced Background with Cosmic Theme */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -329,7 +274,7 @@ export function SonarDigest({}: SonarDigestProps) {
                     <span className="bg-purple-600/80 text-white text-xs font-bold px-2 py-1 rounded-full mr-2 uppercase tracking-wider">
                       {locale === 'ja' ? '週間版' : 'Weekly Edition'}
                     </span>
-                    <span className="text-purple-300/70 text-sm">{formatDate(displayDigest.date)}</span>
+                    <span className="text-purple-300/70 text-sm">{formatDate(digest.date)}</span>
               </div>
                   <h1 className="text-3xl md:text-5xl font-bold tracking-tight font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-200">
                     {locale === 'ja' ? 'SONAR AI ニュースダイジェスト' : 'SONAR AI NEWS DIGEST'}
@@ -366,9 +311,9 @@ export function SonarDigest({}: SonarDigestProps) {
             <div className="bg-black/70 border-2 border-purple-500/40 rounded-lg p-6 mb-6 backdrop-blur-sm shadow-lg">
               {/* Weekly Summary Section */}
               <div className="mb-8">
-                    <h2 className="text-3xl font-bold mb-4 font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-purple-100">{displayDigest.title}</h2>
+                    <h2 className="text-3xl font-bold mb-4 font-serif bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-purple-100">{digest.title}</h2>
                 <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-                      <p className="text-lg text-purple-200/90 leading-relaxed">{displayDigest.summary}</p>
+                      <p className="text-lg text-purple-200/90 leading-relaxed">{digest.summary}</p>
                 </div>
               </div>
               
@@ -377,7 +322,7 @@ export function SonarDigest({}: SonarDigestProps) {
                     <h2 className="text-2xl font-bold text-purple-200">
                       {locale === 'ja' ? '今週のAIトピック TOP 5' : 'TOP 5 AI TOPICS THIS WEEK'}
                     </h2>
-                    {displayDigest.topics.map((topic, index) => (
+                    {digest.topics.map((topic, index) => (
                       <div
                         key={index}
                         className="bg-black/40 border border-purple-500/30 rounded-lg p-6"
@@ -386,7 +331,7 @@ export function SonarDigest({}: SonarDigestProps) {
                           {topic.title}
                         </h3>
                         <div className="prose prose-invert max-w-none">
-                          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(topic.details) }} />
+                          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(topic.summary) }} />
                         </div>
                         {topic.citations && topic.citations.length > 0 && (
                           <div className="mt-4 space-y-2">
@@ -414,7 +359,7 @@ export function SonarDigest({}: SonarDigestProps) {
               </div>
               
               {/* Technology Insights Section */}
-                {displayDigest.topics && displayDigest.topics.length > 0 && (
+                {digest.topics && digest.topics.length > 0 && (
                 <div className="mt-8">
                   <div className="flex items-center mb-4">
                       <h3 className="text-2xl font-bold font-serif text-purple-300 mr-3">
@@ -446,7 +391,7 @@ export function SonarDigest({}: SonarDigestProps) {
           <div className="bg-black/60 border-2 border-purple-400/30 rounded-lg p-6 mb-6 backdrop-blur-sm">
             <div 
               className="prose prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(displayDigest.rawHtml) }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(digest.rawHtml) }}
             />
           </div>
         )}
@@ -457,8 +402,8 @@ export function SonarDigest({}: SonarDigestProps) {
             <div className="text-sm text-purple-400/70 mb-2 md:mb-0">
                   <p className="font-medium">
                     {locale === 'ja'
-                      ? `週間Sonar AIニュースダイジェスト • ${formatDate(displayDigest.publishedAt)}に生成`
-                      : `Weekly Sonar AI News Digest • Generated on ${formatDate(displayDigest.publishedAt)}`}
+                      ? `週間Sonar AIニュースダイジェスト • ${formatDate(digest.publishedAt)}に生成`
+                      : `Weekly Sonar AI News Digest • Generated on ${formatDate(digest.publishedAt)}`}
                   </p>
             </div>
             <div className="flex items-center">

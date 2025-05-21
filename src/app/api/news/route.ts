@@ -1,43 +1,22 @@
 import { NextRequest } from 'next/server';
-import { fetchAndStoreNews, getLatestNews } from '@/lib/news/fetcher';
+import { fetchAndStoreNews, getLatestNews, getLatestNewsWithCache } from '@/lib/news/fetcher';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const language = (searchParams.get('language') as 'en' | 'ja') || 'en';
-  const refresh = searchParams.get('refresh') === 'true';
-  
+export const runtime = 'nodejs';
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const language = (searchParams.get('language') || 'en') as 'en' | 'ja';
+
+  if (!['en', 'ja'].includes(language)) {
+    return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
+  }
+
   try {
-    console.log(`API Route: Processing ${language} request, refresh=${refresh}`);
-    
-    // If refresh=true, fetch new data from RSS
-    if (refresh) {
-      console.log('API Route: Starting RSS fetch...');
-      const newItems = await fetchAndStoreNews(language);
-      console.log(`API Route: Fetched and stored ${newItems.length} new items`);
-    }
-    
-    // Get latest news from database
-    console.log('API Route: Getting latest news from database...');
-    const news = await getLatestNews(language);
-    console.log(`API Route: Retrieved ${news.length} items from database`);
-    
-    // Ensure we always return an array, even if empty
-    const newsArray = Array.isArray(news) ? news : [];
-    
-    return Response.json({ 
-      success: true, 
-      data: newsArray 
-    });
+    const news = await getLatestNewsWithCache(language);
+    return NextResponse.json(news);
   } catch (error) {
-    console.error('API Route Error:', error);
-    // Return an empty array with error status
-    return Response.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Failed to fetch news',
-        data: [] 
-      },
-      { status: 500 }
-    );
+    console.error('Error fetching news:', error);
+    return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
   }
 }

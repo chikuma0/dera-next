@@ -4,12 +4,18 @@ import { NewsDetail } from '@/components/news/NewsDetail';
 
 export const dynamic = 'force-dynamic';
 
-export default async function NewsDetailPage({ params }: { params: { id: string } }) {
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function NewsDetailPage({ params }: Props) {
+  const { id } = await params;
   try {
     const newsService = new NewsService();
-    const newsItem = await newsService.getNewsItem(params.id);
+    const newsItem = await newsService.getNewsItem(id);
     if (!newsItem) {
-      console.error('No news item found for id:', params.id);
+      console.error('No news item found for id:', id);
       notFound();
     }
     return <NewsDetail newsItem={newsItem} />;

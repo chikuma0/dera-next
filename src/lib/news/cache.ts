@@ -1,104 +1,89 @@
-import { Redis } from 'ioredis';
+import { getCache, setCache, deleteCache, withCache } from '@/lib/cache/redis';
 import { NewsItem } from '@/types/news';
+
+type Language = 'en' | 'ja';
+type CacheKey = 'EN' | 'JA' | 'LAST_UPDATE';
 
 export class NewsCache {
   private static instance: NewsCache;
-  private client: Redis;
-  private isConnected: boolean = false;
-  private connectionPromise: Promise<void> | null = null;
+  private readonly CACHE_TTL = 6 * 60 * 60; // 6 hours in seconds
+  private readonly CACHE_PREFIX = 'news:';
+  private readonly CACHE_KEYS: Record<CacheKey, string> = {
+    EN: 'en',
+    JA: 'ja',
+    LAST_UPDATE: 'last_update'
+  };
 
-  private constructor() {
-    this.client = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-      password: process.env.REDIS_PASSWORD,
-      retryStrategy: (times: number) => {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-      enableOfflineQueue: false,
-      maxRetriesPerRequest: 3,
-      connectTimeout: 10000,
-    });
+  private constructor() {}
 
-    this.client.on('error', (err: Error) => {
-      console.error('Redis client error:', err);
-      this.isConnected = false;
-    });
-
-    this.client.on('connect', () => {
-      console.log('Redis client connected');
-      this.isConnected = true;
-    });
-  }
-
-  public static getInstance(): NewsCache {
+  static getInstance(): NewsCache {
     if (!NewsCache.instance) {
       NewsCache.instance = new NewsCache();
     }
     return NewsCache.instance;
   }
 
-  private async connect(): Promise<void> {
-    if (this.isConnected) {
-      return;
-    }
-
-    if (!this.connectionPromise) {
-      this.connectionPromise = new Promise((resolve, reject) => {
-        if (this.isConnected) {
-          resolve();
-          return;
-        }
-
-        this.client.once('ready', () => {
-          this.isConnected = true;
-          this.connectionPromise = null;
-          resolve();
-        });
-
-        this.client.once('error', (err: Error) => {
-          this.connectionPromise = null;
-          reject(err);
-        });
-      });
-    }
-
-    return this.connectionPromise;
-  }
-
-  async getNews(language: 'en' | 'ja', page: number, category?: string): Promise<NewsItem[] | null> {
+  async getNews(language: Language): Promise<NewsItem[] | null> {
     try {
-      await this.connect();
-      const key = this.getCacheKey(language, page, category);
-      const data = await this.client.get(key);
-      return data ? JSON.parse(data) : null;
+      const cacheKey = `${this.CACHE_PREFIX}${this.CACHE_KEYS[language.toUpperCase() as CacheKey]}`;
+      const cachedData = await getCache<string>(cacheKey);
+      
+      if (!cachedData) {
+        return null;
+      }
+
+      // Check if cache is still valid
+      const lastUpdate = await this.getLastUpdate();
+      if (lastUpdate && Date.now() - lastUpdate > this.CACHE_TTL * 1000) {
+        await this.invalidateCache();
+        return null;
+      }
+
+      return JSON.parse(cachedData);
     } catch (error) {
-      console.error('Cache get error:', error);
+      console.error('Error getting news from cache:', error);
       return null;
     }
   }
 
-  async setNews(language: 'en' | 'ja', page: number, news: NewsItem[], category?: string): Promise<void> {
+  async setNews(language: Language, news: NewsItem[]): Promise<void> {
     try {
-      await this.connect();
-      const key = this.getCacheKey(language, page, category);
-      await this.client.set(key, JSON.stringify(news), 'EX', 3600); // Cache for 1 hour
+      const cacheKey = `${this.CACHE_PREFIX}${this.CACHE_KEYS[language.toUpperCase() as CacheKey]}`;
+      await setCache(cacheKey, JSON.stringify(news), this.CACHE_TTL);
+      await this.updateLastUpdate();
     } catch (error) {
-      console.error('Cache set error:', error);
+      console.error('Error setting news in cache:', error);
     }
   }
 
   async invalidateCache(): Promise<void> {
     try {
-      await this.connect();
-      await this.client.flushall();
+      const keys = Object.values(this.CACHE_KEYS).map(key => `${this.CACHE_PREFIX}${key}`);
+      await Promise.all(keys.map(key => deleteCache(key)));
     } catch (error) {
-      console.error('Cache invalidation error:', error);
+      console.error('Error invalidating cache:', error);
     }
   }
 
-  private getCacheKey(language: 'en' | 'ja', page: number, category?: string): string {
-    return `news:${language}:${page}${category ? `:${category}` : ''}`;
+  private async getLastUpdate(): Promise<number | null> {
+    try {
+      const lastUpdate = await getCache<string>(`${this.CACHE_PREFIX}${this.CACHE_KEYS.LAST_UPDATE}`);
+      return lastUpdate ? parseInt(lastUpdate, 10) : null;
+    } catch (error) {
+      console.error('Error getting last update timestamp:', error);
+      return null;
+    }
+  }
+
+  private async updateLastUpdate(): Promise<void> {
+    try {
+      await setCache(
+        `${this.CACHE_PREFIX}${this.CACHE_KEYS.LAST_UPDATE}`,
+        Date.now().toString(),
+        this.CACHE_TTL
+      );
+    } catch (error) {
+      console.error('Error updating last update timestamp:', error);
+    }
   }
 } 

@@ -1,22 +1,43 @@
+'use server';
+
 // src/lib/news/fetcher.ts
 import { NewsItem, NEWS_SOURCES } from '@/types/news';
 import { validateEnv } from '../config/env';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
-import { redisCache } from '@/lib/cache/redis';
+import { withCache } from '@/lib/cache/redis';
 import { SummaryService } from '@/lib/services/summaryService';
+import { getBaseUrl } from '../getBaseUrl';
+
+const RATE_LIMIT_DELAY = 1000; // 1 second between requests
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 5000; // 5 seconds
 
 function getSupabaseClient(): SupabaseClient {
   const env = validateEnv();
   return createClient(env.supabase.url, env.supabase.serviceRoleKey);
 }
 
-async function fetchRSSWithProxy(url: string): Promise<any[]> {
+async function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchRSSWithProxy(url: string, retryCount = 0): Promise<any[]> {
   console.log('Fetching RSS with proxy:', url);
   const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&api_key=${process.env.RSS2JSON_API_KEY || ''}`;
   
   try {
     const response = await fetch(proxyUrl);
+    
+    if (response.status === 429) { // Rate limit
+      if (retryCount < MAX_RETRIES) {
+        console.log(`Rate limited, retrying in ${RETRY_DELAY/1000} seconds...`);
+        await delay(RETRY_DELAY);
+        return fetchRSSWithProxy(url, retryCount + 1);
+      }
+      throw new Error('Max retries reached for rate limit');
+    }
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -51,6 +72,9 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
 
   for (const source of sources) {
     try {
+      // Add delay between requests to respect rate limits
+      await delay(RATE_LIMIT_DELAY);
+
       // First, get or create the news source
       const { data: sourceData, error: sourceError } = await supabase
         .from('news_sources')
@@ -118,58 +142,86 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
   return allItems;
 }
 
-export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
+// Server-only function with Redis caching
+export async function getLatestNewsWithCache(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
   const cacheKey = `news:latest:${language}`;
-  // Use Redis cache with 60s TTL
-  return await redisCache.withCache(cacheKey, async () => {
-    const supabase = getSupabaseClient();
-    console.log('Getting latest news from database:', language);
-    const summaryService = new SummaryService();
+  try {
+    const result = await withCache(cacheKey, async () => {
+      return await getLatestNewsFromDB(language);
+    }, 60); // 60 seconds TTL
+    return Array.isArray(result) ? result : [];
+  } catch (e) {
+    return [];
+  }
+}
 
-    try {
-      const { data, error } = await supabase
-        .from('news_items')
-        .select('*')
-        .eq('language', 'en') // Always fetch English base articles
-        .order('published_date', { ascending: false })
-        .limit(30);
+// Database-only function (no Redis)
+async function getLatestNewsFromDB(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
+  const supabase = getSupabaseClient();
+  console.log('Getting latest news from database:', language);
+  const summaryService = new SummaryService();
 
-      if (error) {
-        console.error('Database error:', error);
-        return [];
-      }
+  try {
+    const { data, error } = await supabase
+      .from('news_items')
+      .select('*')
+      .eq('language', 'en') // Always fetch English base articles
+      .order('published_date', { ascending: false })
+      .limit(30);
 
-      if (!data) return [];
+    if (error) {
+      console.error('Database error:', error);
+      return [];
+    }
 
-      // For Japanese, ensure each article has a translated summary
-      if (language === 'ja') {
-        for (const item of data) {
-          if (!item.translated_summary) {
-            try {
-              // Generate summary with Perplexity
-              const jaSummary = await summaryService.summarizeArticle(item.url, item.title);
-              // Save to DB
-              await supabase
-                .from('news_items')
-                .update({ translated_summary: jaSummary })
-                .eq('id', item.id);
-              item.translated_summary = jaSummary;
-            } catch (err) {
-              console.error('Failed to generate Japanese summary:', err);
-              item.translated_summary = '';
-            }
+    if (!data) return [];
+
+    // For Japanese, ensure each article has a translated summary
+    if (language === 'ja') {
+      for (const item of data) {
+        if (!item.translated_summary) {
+          try {
+            // Generate summary with Perplexity
+            const jaSummary = await summaryService.summarizeArticle(item.url, item.title);
+            // Save to DB
+            await supabase
+              .from('news_items')
+              .update({ translated_summary: jaSummary })
+              .eq('id', item.id);
+            item.translated_summary = jaSummary;
+          } catch (err) {
+            console.error('Failed to generate Japanese summary:', err);
+            item.translated_summary = '';
           }
         }
       }
-
-      // Return news with the correct summary for the language
-      return data.map(item => ({
-        ...item,
-        summary: language === 'ja' ? item.translated_summary || '' : item.summary || ''
-      }));
-    } catch (error) {
-      console.error('Error fetching from database:', error);
-      return [];
     }
-  }, 60); // 60 seconds TTL
+
+    // Return news with the correct summary for the language
+    return data.map(item => ({
+      ...item,
+      summary: language === 'ja' ? item.translated_summary || '' : item.summary || ''
+    }));
+  } catch (error) {
+    console.error('Error fetching from database:', error);
+    return [];
+  }
+}
+
+// Client-safe function that uses the API route
+export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
+  try {
+    const baseUrl = await getBaseUrl();
+    const url = new URL('/api/news', baseUrl || 'http://localhost:3000');
+    url.searchParams.set('language', language);
+
+    const response = await fetch(url.href);
+    if (!response.ok) {
+      throw new Error('Failed to fetch news');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    return [];
+  }
 }

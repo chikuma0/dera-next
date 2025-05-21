@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { fetchAndStoreNews } from '@/lib/news/fetcher';
 
 // Vercel Cron handler
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // Maximum duration in seconds (5 minutes)
 

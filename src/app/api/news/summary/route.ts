@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     // Optionally, translate the summary if needed (e.g., for other languages)
     if (targetLang && targetLang !== 'ja' && targetLang !== 'en') {
       const translationService = new TranslationService();
-      summary = await translationService.translateText(summary, targetLang);
+      summary = await translationService.translateText(summary);
     }
 
     return new NextResponse(JSON.stringify({ summary }), { status: 200, headers: { 'Content-Type': 'application/json' } });
