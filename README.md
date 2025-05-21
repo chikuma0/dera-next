@@ -57,8 +57,15 @@ PERPLEXITY_API_KEY
 TRANSLATION_API_URL
 TRANSLATION_API_KEY
 CRON_SECRET (optional)
+
+RESEND_API_KEY (optional)
+DISCORD_WEBHOOK_URL (optional)
 ```
 
 `PERPLEXITY_API_URL` and `PERPLEXITY_API_KEY` configure the Perplexity API used to generate article summaries. `TRANSLATION_API_URL` and `TRANSLATION_API_KEY` configure the translation service for converting summaries into Japanese when necessary.
 
 `CRON_SECRET` secures the `/api/news/cron` endpoint. When set, you must supply this value as a Bearer token, query parameter, or rely on the `x-vercel-source: cron` header added by Vercel Cron jobs.
+
+`RESEND_API_KEY` and `DISCORD_WEBHOOK_URL` allow the contact form to send email
+and Discord notifications. If you do not need the contact form, these variables
+can be omitted.
