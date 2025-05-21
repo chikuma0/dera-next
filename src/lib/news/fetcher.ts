@@ -268,6 +268,9 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
 
 export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
   const supabase = getSupabaseClient();
+  const env = validateEnv();
+  const lookbackMs = env.newsLookbackHours * 60 * 60 * 1000;
+  const since = new Date(Date.now() - lookbackMs).toISOString();
   const articleService = new ArticleService();
   console.log('Getting latest news from database:', language);
 
@@ -277,6 +280,7 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
       .from('news_items')
       .select('*')
       .eq('language', language)
+      .gte('published_date', since)
       .order('importance_score', { ascending: false })
       .limit(10); // Limit to top 10 articles
 
@@ -308,6 +312,7 @@ export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsI
         .from('news_items')
         .select('*')
         .eq('language', language)
+        .gte('published_date', since)
         .order('importance_score', { ascending: false })
         .limit(10);
 
