@@ -22,16 +22,18 @@ export async function GET(request: Request) {
     // Check for cron secret if you want to secure the endpoint
     const authHeader = request.headers.get('authorization');
     const vercelSource = request.headers.get('x-vercel-source');
+    const vercelCron = request.headers.get('x-vercel-cron');
     const secretParam = new URL(request.url).searchParams.get('secret');
     console.log('Auth header received:', authHeader ? '*** (present)' : '❌ (missing)');
     console.log('Vercel source header:', vercelSource || 'none');
+    console.log('Vercel cron header:', vercelCron || 'none');
 
     // Only enforce the secret if it is defined. Accept the secret via
     // Authorization header, query parameter, or when invoked by Vercel Cron
     if (process.env.CRON_SECRET) {
       const validHeader = authHeader === `Bearer ${process.env.CRON_SECRET}`;
       const validQuery = secretParam === process.env.CRON_SECRET;
-      const fromCron = vercelSource === 'cron';
+      const fromCron = vercelSource === 'cron' || vercelCron !== null;
 
       if (!validHeader && !validQuery && !fromCron) {
         console.error('Unauthorized cron invocation');

@@ -1,11 +1,8 @@
 {
-  "crons": [
+  "cron": [
     {
       "path": "/api/news/cron",
-      "schedule": "0 6 * * *",
-      "headers": {
-        "Authorization": "Bearer YOUR_CRON_SECRET"
-      }
+      "schedule": "0 6 * * *"
     }
   ],
   "buildCommand": "next build",
