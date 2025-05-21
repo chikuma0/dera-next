@@ -12,6 +12,7 @@ export type Database = {
             summary: string
             created_at: string
             updated_at: string
+            importance_score: number
           }
           Insert: NewsItemInsert
           Update: Partial<NewsItemInsert>
@@ -32,4 +33,5 @@ export type Database = {
     summary: string
     created_at?: string
     updated_at?: string
+    importance_score?: number
   }
