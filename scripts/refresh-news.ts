@@ -1,8 +1,11 @@
 async function refreshNews() {
   try {
-    const response = await fetch('http://localhost:3000/api/news/refresh', {
-      method: 'POST',
-    });
+    const response = await fetch(
+      'http://localhost:3000/api/news?refresh=true',
+      {
+        method: 'GET',
+      }
+    );
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
