@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { ArticleService } from '../src/lib/services/articleService.js';
+import { ArticleService } from '../src/lib/services/articleService.ts';
 
 async function testScoring() {
   const articleService = new ArticleService();

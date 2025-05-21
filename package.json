@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "refresh-news": "ts-node scripts/refresh-news.ts",
-    "test-scoring": "ts-node scripts/test-scoring.ts",
+    "test-scoring": "ts-node --compiler-options '{\"module\":\"CommonJS\",\"allowImportingTsExtensions\":true}' scripts/test-scoring.ts",
     "precommit": "npm run typecheck",
     "prepare": "husky"
   },
