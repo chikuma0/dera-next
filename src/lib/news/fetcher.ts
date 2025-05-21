@@ -1,13 +1,7 @@
 // src/lib/news/fetcher.ts
 import { NewsItem, NEWS_SOURCES } from '@/types/news';
-import { validateEnv } from '../config/env';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { supabase } from '../supabase';
 import { ArticleService } from '../services/articleService';
-
-function getSupabaseClient(): SupabaseClient {
-  const env = validateEnv();
-  return createClient(env.supabase.url, env.supabase.serviceRoleKey);
-}
 
 async function fetchRSSWithProxy(url: string): Promise<any[]> {
   console.log('Fetching RSS with proxy:', url);
@@ -188,7 +182,6 @@ function isTechnicalContent(text: string, isJapanese: boolean = false): boolean 
 }
 
 export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
-  const supabase = getSupabaseClient();
   const sources = NEWS_SOURCES.filter(source => source.language === language);
   const allItems: NewsItem[] = [];
   const articleService = new ArticleService();
@@ -267,7 +260,6 @@ export async function fetchAndStoreNews(language: 'en' | 'ja' = 'en'): Promise<N
 }
 
 export async function getLatestNews(language: 'en' | 'ja' = 'en'): Promise<NewsItem[]> {
-  const supabase = getSupabaseClient();
   const articleService = new ArticleService();
   console.log('Getting latest news from database:', language);
 

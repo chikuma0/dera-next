@@ -1,7 +1,6 @@
 // src/lib/services/articleService.ts
 import { NewsItem } from '@/types/news';
-import { createClient } from '@supabase/supabase-js';
-import { validateEnv } from '../config/env';
+import { supabase } from '../supabase';
 
 export class ArticleService {
   private keywordWeights: Record<string, number> = {
@@ -295,8 +294,6 @@ export class ArticleService {
   }
 
   public async updateArticleScores(): Promise<void> {
-    const env = validateEnv();
-    const supabase = createClient(env.supabase.url, env.supabase.serviceRoleKey);
 
     const { data: articles, error } = await supabase
       .from('news_items')
@@ -322,8 +319,6 @@ export class ArticleService {
   }
 
   public async getTopArticles(language: 'en' | 'ja', limit: number = 10): Promise<Array<NewsItem & { score_breakdown?: any }>> {
-    const env = validateEnv();
-    const supabase = createClient(env.supabase.url, env.supabase.serviceRoleKey);
 
     const { data: articles, error } = await supabase
       .from('news_items')

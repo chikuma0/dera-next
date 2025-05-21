@@ -16,12 +16,12 @@ export const supabase = createClient<Database>(
   }
 );
 
-// Test the connection
-void (async () => {
+export async function testConnection(): Promise<void> {
   try {
     await supabase.from('news_items').select('count');
     console.log('Supabase: Connection successful');
   } catch (err) {
     console.error('Supabase: Connection error:', err);
+    throw err;
   }
-})();
+}

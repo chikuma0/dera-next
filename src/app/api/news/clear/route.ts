@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
-import { validateEnv } from '@/lib/config/env';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
   try {
-    const env = validateEnv();
-    const supabase = createClient(env.supabase.url, env.supabase.serviceRoleKey);
 
     // Delete all news items
     const { error } = await supabase
