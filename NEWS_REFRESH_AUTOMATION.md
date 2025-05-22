@@ -2,6 +2,16 @@
 
 We've implemented automated news refreshes at multiple levels to keep your news feed updated with the latest articles.
 
+## Existing Refresh Systems
+
+Before our changes, your project already had:
+
+1. **GitHub Actions Workflow (Hourly)**
+   - Defined in `.github/workflows/fetch-news.yml`
+   - Runs every hour via GitHub's scheduler
+   - Calls `/api/news?refresh=true` for both English and Japanese
+   - Triggers a full refresh from RSS sources
+
 ## Changes Made
 
 ### 1. Server-Side Scheduled Fetches (Every 4 Hours)
@@ -50,9 +60,10 @@ const fullRefreshInterval = setInterval(() => {
 
 With these changes, articles are refreshed through multiple mechanisms:
 
-1. **Server-side cron job** fetches new articles every 4 hours
-2. **Client-side full refresh** fetches new articles every 10 minutes when users are actively viewing the page
-3. **Client-side database refresh** ensures the latest sorted articles are displayed every 30 seconds
+1. **GitHub Actions workflow** fetches new articles every hour
+2. **Server-side Vercel cron job** fetches new articles every 4 hours
+3. **Client-side full refresh** fetches new articles every 10 minutes when users are actively viewing the page
+4. **Client-side database refresh** ensures the latest sorted articles are displayed every 30 seconds
 
 This multi-tiered approach ensures your news feed stays current with minimal server load, as:
 - The most resource-intensive operation (RSS fetching) happens at reasonable intervals
