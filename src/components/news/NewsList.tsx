@@ -47,11 +47,21 @@ export function NewsList({ language = 'en', autoRefresh }: NewsListProps) {
   useEffect(() => {
     if (!autoRefresh) return;
 
-    const interval = setInterval(() => {
-      fetchNews(true);
+    // Regular refresh from database (every 30 seconds typically)
+    const dbRefreshInterval = setInterval(() => {
+      fetchNews(false);
     }, autoRefresh * 1000);
 
-    return () => clearInterval(interval);
+    // Full refresh from RSS sources every 10 minutes
+    const fullRefreshInterval = setInterval(() => {
+      console.log("Triggering full RSS refresh");
+      fetchNews(true);
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => {
+      clearInterval(dbRefreshInterval);
+      clearInterval(fullRefreshInterval);
+    };
   }, [autoRefresh, fetchNews]);
 
   if (isLoading) {

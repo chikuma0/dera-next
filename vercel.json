@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/news/cron",
-      "schedule": "0 6 * * *"
+      "schedule": "0 */4 * * *"
     }
   ],
   "buildCommand": "next build",
