@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
         ) : (
           <div className="space-y-6 text-green-300">
             <p className="mb-4">
-              dera Inc. (hereinafter referred to as "the Company") recognizes the importance of protecting your personal information.
+              dera Inc. (hereinafter referred to as &quot;the Company&quot;) recognizes the importance of protecting your personal information.
               The Company handles your personal information in accordance with the following privacy policy.
             </p>
             
