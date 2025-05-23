@@ -13,6 +13,11 @@
     "lastUpdated": "Last updated",
     "invalidDate": "Invalid Date"
   },
+  "footer": {
+    "companyInfo": "Company Info",
+    "privacyPolicy": "Privacy Policy",
+    "transactions": "Specified Commercial Transactions Act"
+  },
   "news": {
     "subtitle": "Curated updates from the world of Artificial Intelligence",
     "topStories": "Top Stories",

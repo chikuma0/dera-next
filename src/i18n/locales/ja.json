@@ -13,6 +13,11 @@
     "lastUpdated": "最終更新日",
     "invalidDate": "無効な日付"
   },
+  "footer": {
+    "companyInfo": "会社概要",
+    "privacyPolicy": "プライバシーポリシー",
+    "transactions": "特定商取引に関する表記"
+  },
   "news": {
     "subtitle": "厳選された最新AIニュース",
     "topStories": "トップニュース",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from '@/components/ui/Header';
+import Footer from '@/components/ui/Footer';
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { headers } from 'next/headers';
 import { Locale } from "@/i18n";
@@ -37,6 +38,7 @@ export default async function RootLayout({
           <MatrixBackground />
           <Header />
           {children}
+          <Footer />
         </LanguageProvider>
       </body>
     </html>
